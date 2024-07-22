@@ -1,9 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Threatter</title>
+    <link rel="stylesheet" href="/static/styles/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
   </head>
-  <body></body>
+  <body>
+    <div class="creat-post">
+      <form class="post-form">
+        <div class="user-info">
+          <img
+            src="/static/images/image/user (1).png"
+            class="profile-pic"
+            alt="Profile Picture"
+          />
+        </div>
+
+        <input
+          type="text"
+          id="text"
+          name="text"
+          placeholder="發表串文"
+          class="input-text"
+        />
+
+        <div class="file-upload">
+          <label for="img" class="upload-label">
+            <div class="upload-icon"></div>
+          </label>
+          <input
+            type="file"
+            id="img"
+            name="img"
+            accept="image/png, image/jpeg"
+            class="input-file"
+          />
+        </div>
+
+        <button type="submit" class="send-button">發佈</button>
+      </form>
+    </div>
+
+    <div class="post">
+      <div class="post-header">
+        <img
+          src="/static/images/image/user (1).png"
+          alt="User Profile"
+          class="profile-pic"
+        />
+        <span class="username">greenline1662</span>
+      </div>
+      <div class="post-content">
+        <div class="media"></div>
+        <div class="text">
+          只剩在土林尋時，還有那些步道，一位小夫婦完整紀錄全部新的單車道與我到訪據點中。
+          我走了一路跟蹤他們在這條單車道。
+          她說：我認為偶爾的小困難也有看清楚的機利。
+          每次慢到她都還是會說大佬好人一生平安。
+        </div>
+      </div>
+      <div class="post-stats">
+        <div class="stat"><i class="fa fa-heart"></i> <span>304</span></div>
+        <div class="stat"><i class="fa fa-comment"></i> <span>10</span></div>
+        <div class="stat"><i class="fa fa-share"></i> <span>38</span></div>
+      </div>
+    </div>
+  </body>
 </html>
