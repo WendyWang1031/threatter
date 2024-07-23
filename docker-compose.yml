@@ -4,10 +4,9 @@ services:
   app:
     image: threatter
     ports:
-      - "8000"
+      - "8000:8000"
     depends_on:
       - redis
-      - mysql
     environment:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -15,6 +14,11 @@ services:
       ALGORITHM: ${ALGORITHM}
       connection_db_user: ${connection_db_user}
       connection_db_password: ${connection_db_password}
+      DB_HOST: ${AWS_DB_HOST}
+      DB_PORT: 3306
+      DB_USER: ${AWS_DB_USER}
+      DB_PASSWORD: ${AWS_DB_PASSWORD}
+      DB_NAME: threatter-database
 
   nginx:
     image: nginx
@@ -29,18 +33,3 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-
-  mysql:
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: test
-      MYSQL_DATABASE: threatter
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
-volumes:
-  mysql_data:
