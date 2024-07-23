@@ -17,10 +17,10 @@ body {
   flex-direction: column;
   background-color: #fff;
   border: 1px solid $border-color;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
   max-width: 600px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   .post-form {
     display: flex;
@@ -99,42 +99,54 @@ body {
   }
 }
 
-.post {
-  display: flex;
-  flex-direction: column;
-
-  background-color: $bg-color;
-  border: 1px solid $border-color;
-  border-radius: 10px;
-
-  max-width: 600px;
-
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .post-header {
+section.postsContainer {
+  .post {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    flex-direction: column;
 
-    .profile-pic {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
+    background-color: $bg-color;
+    border: 1px solid $border-color;
+    // border-radius: 0 0 10px 10px;
+
+    max-width: 600px;
+
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+
+      .profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .username {
+        font-size: 16px;
+        color: $font-color;
+        font-weight: bold;
+      }
     }
 
-    .username {
-      font-size: 16px;
+    .post-content {
+      font-size: 14px;
       color: $font-color;
-      font-weight: bold;
+      margin-bottom: 10px;
+      padding-left: 30px;
+      .text {
+        margin-bottom: 10px;
+      }
+      .media {
+        img {
+          width: 100%;
+          border-radius: 10px;
+        }
+      }
     }
-  }
-
-  .post-content {
-    font-size: 14px;
-    color: $font-color;
-    margin-bottom: 10px;
   }
 }
 
