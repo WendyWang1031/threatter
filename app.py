@@ -30,9 +30,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
             }
          }
          )
-async def fetch_post_post(content: str = Form(...) , image_url: UploadFile = File(...)) -> JSONResponse :
-    post_data = PostDataRequest(content=content)
-    return await update_post_data(post_data , image_url)
+async def fetch_post_post(text: str = Form( default = None) , img: UploadFile = File( default = None)) -> JSONResponse :
+    return await create_post_data(text , img)
 
 @app.get("/api/post",
         tags= ["Post"],

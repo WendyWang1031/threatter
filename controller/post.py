@@ -30,21 +30,35 @@ def upload_file_to_s3(file: UploadFile):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-async def update_post_data(
-        post_data: PostDataRequest ,
-        image_url: UploadFile = File(None) ) -> JSONResponse :
+async def create_post_data(
+        content: str = Form(default = None) ,
+        image_url: UploadFile = File(default = None) ) -> JSONResponse :
     try:
-
-        # 檢查頭像文件是否已上傳
-        if image_url.filename :
+        print("content1:",content)
+        # 檢查圖片與文件是否已上傳
+        if image_url and image_url.filename :
             result_image_url = upload_file_to_s3(image_url)
+            if not result_image_url:
+                error_response = ErrorResponse(error=True, message="圖片上傳失敗")
+                return JSONResponse(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                    content=error_response.dict())
         else:
             result_image_url = None 
 
-        post_data_instance = PostData(content=post_data.content, image_url=result_image_url)
-        result = db_update_post_data(post_data_instance , result_image_url)
+        if not content and not image_url.filename:
+            error_response = ErrorResponse(error=True, message="請至少要提供文字或圖片")
+            response = JSONResponse (
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                content=error_response.dict())
+            return response
+
+        content = content if content else "" 
+        post_data_instance = PostData(content=content, image_url=result_image_url)
+        result = db_update_post_data(post_data_instance)
+        
         if result is True:
-            success_response = PostGetResponse(ok=True, data=post_data_instance)
+            success_response = PostGetResponse(ok=True, data=[post_data_instance])
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=success_response.dict()

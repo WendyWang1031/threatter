@@ -3,11 +3,11 @@ from typing import List , Optional
 from datetime import datetime
 
 class PostData(BaseModel):
-    content: str = Field(..., example="這是留言板測試文字內容")
+    content: Optional[str] = Field(None, example="這是留言板測試文字內容")
     image_url: Optional[str]= Field(None, example="http://123456789/images/92-0.jpg")
 
 class PostDataRequest(BaseModel):
-    content: str = Field(..., example="這是留言板測試文字內容")
+    content: Optional[str] = Field(..., example="這是留言板測試文字內容")
 
 class PostGetResponse(BaseModel):
     ok: bool

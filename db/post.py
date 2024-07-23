@@ -10,7 +10,7 @@ def db_get_post_data() -> PostData | None:
     try:
         connection.begin()
         
-        sql = "select * from test_post"
+        sql = "select * from test_post ORDER BY id DESC"
         cursor.execute( sql , )
         post_data = cursor.fetchall()
         connection.commit()
@@ -27,7 +27,7 @@ def db_get_post_data() -> PostData | None:
         cursor.close()
         connection.close()
 
-def db_update_post_data(post_data : PostData , image_url:str ) -> bool :
+def db_update_post_data(post_data : PostData ) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -40,7 +40,7 @@ def db_update_post_data(post_data : PostData , image_url:str ) -> bool :
             return value.strip() or None
         
         content = validate(post_data.content)
-        image_url = validate(image_url)
+        image_url = validate(post_data.image_url)
         
         sql = """
             INSERT INTO test_post (content, image_url)
