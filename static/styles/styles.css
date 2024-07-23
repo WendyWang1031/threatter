@@ -152,4 +152,9 @@ section.postsContainer .post .post-content .media img {
 }
 .stat:hover i {
   color: #777777;
+}
+
+.media img[src=""],
+.text:null {
+  display: none;
 }/*# sourceMappingURL=styles.css.map */
