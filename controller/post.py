@@ -26,7 +26,7 @@ def upload_file_to_s3(file: UploadFile):
                 'ContentType': content_type  
             }
         )
-        return f"https://{bucket_name}.s3.amazonaws.com/{file_key}"
+        return f"https://d2z39jwxl0fy6f.cloudfront.net/{file_key}"
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
