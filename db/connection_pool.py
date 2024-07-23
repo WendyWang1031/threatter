@@ -4,18 +4,21 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-user = os.getenv("connection_db_user")
-password = os.getenv("connection_db_password")
-
+maxconnections = int(os.getenv('AWS_DB_maxconnections'))
+database = os.getenv('AWS_DB_database')  
+user = os.getenv('AWS_DB_USER')  
+password = os.getenv('AWS_DB_PASSWORD')
+host = os.getenv('AWS_DB_HOST', 'localhost')
+port = int(os.getenv('AWS_DB_PORT'))
 
 pool = PooledDB(
     creator = pymysql,
-    maxconnections = 10,
-    database = "threatter",
+    maxconnections = maxconnections,
+    database = database,
     user = user,
     password = password,
-    host = "mysql",
-    port = 3306
+    host = host,
+    port = port
 )
 
 

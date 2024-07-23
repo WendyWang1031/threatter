@@ -3,16 +3,18 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-user = os.getenv("connection_db_user")
-password = os.getenv("connection_db_password")
-
+database = os.getenv('AWS_DB_database')  
+user = os.getenv('AWS_DB_USER')  
+password = os.getenv('AWS_DB_PASSWORD')
+host = os.getenv('AWS_DB_HOST', 'localhost')
+port = int(os.getenv('AWS_DB_PORT'))
 
 db =  pymysql.connect(
-    host = "mysql",
-    port = 3306,
+    host = host,
+    port = port,
     user = user,
     password = password,
-    db = "threatter"
+    db = database
 )
 
 cursor = db.cursor()
