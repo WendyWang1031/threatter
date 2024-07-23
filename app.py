@@ -2,14 +2,13 @@ from fastapi import *
 from fastapi.responses import FileResponse 
 from controller.post import * 
 from model.model import *
+from fastapi.staticfiles import StaticFiles
 
 
 
 
 app = FastAPI()
-@app.get("/")
-def get_post():
-    return {"Hello": "World"}
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 會員頁面
 @app.post("/api/post",
