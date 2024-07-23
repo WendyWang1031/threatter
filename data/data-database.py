@@ -8,7 +8,7 @@ password = os.getenv("connection_db_password")
 
 
 db =  pymysql.connect(
-    host = "localhost",
+    host = "mysql",
     port = 3306,
     user = user,
     password = password,
