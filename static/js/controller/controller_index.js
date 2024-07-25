@@ -1,18 +1,50 @@
 import { displayPostElement } from "../view/view_index.js";
+import { getPresignedUrl, uploadFileToS3 } from "./controller_upload.js";
 document.addEventListener("DOMContentLoaded", function () {
+  // 更新貼文內容
   fetchGetPost();
 
+  // 提交貼文按鈕
   const submitButton = document.querySelector(".send-button");
-  submitButton.addEventListener("click", fetchUpdatePost);
+  submitButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    const form = document.querySelector(".post-form");
+    const content = form.querySelector("[name='text']").value;
+    const file = form.querySelector("[name='img']").files[0];
+    submitPost(content, file);
+  });
 });
 
 const postURL = "/api/post";
 
-async function fetchUpdatePost() {
-  const form = document.querySelector(".post-form");
+async function submitPost(content, file) {
+  let postData = { content };
+  console.log("file:", file);
 
-  const formData = new FormData(form);
+  if (file) {
+    try {
+      const urls = await getPresignedUrl(file.name, file.type);
 
+      await uploadFileToS3(urls.presigned_url, file);
+
+      postData.image_url = urls.cdn_url;
+    } catch (error) {
+      console.log("Error uploading file 1: " + error.message);
+      return;
+    }
+  } else {
+    postData.image_url = null;
+  }
+  try {
+    await fetchUpdatePost(postData);
+  } catch (error) {
+    console.error("Error submitting post:", error);
+    alert("Failed to submit post: " + error.message);
+  }
+}
+
+async function fetchUpdatePost(postData) {
+  console.log("postData2:", postData);
   if (!validateForm()) {
     return;
   }
@@ -20,7 +52,10 @@ async function fetchUpdatePost() {
   try {
     const response = await fetch(postURL, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
     });
 
     if (!response.ok) {
@@ -28,10 +63,10 @@ async function fetchUpdatePost() {
 
       throw new Error(`HTTP status ${response.status}`);
     } else {
-      // window.location.reload();
+      window.location = "/";
     }
   } catch (error) {
-    console.error("Error updating profile", error);
+    console.error("Error updating post data", error);
   } finally {
   }
 }
