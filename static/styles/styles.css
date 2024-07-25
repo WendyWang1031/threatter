@@ -4,9 +4,10 @@ body {
   padding: 20px;
 }
 
-.creat-post {
-  display: flex;
-  flex-direction: column;
+section.creat-post-container .creat-post {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 10px;
   background-color: #fff;
   border: 1px solid #e1e4e8;
   border-radius: 10px 10px 0 0;
@@ -14,33 +15,30 @@ body {
   padding: 20px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
-.creat-post .post-form {
+section.creat-post-container .creat-post .post-form {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   flex-direction: row;
 }
-.creat-post .post-form .user-info {
+section.creat-post-container .creat-post .post-form .user-info {
   display: flex;
   align-items: center;
 }
-.creat-post .post-form .user-info .profile-pic {
+section.creat-post-container .creat-post .post-form .user-info .profile-pic {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
 }
-.creat-post .post-form .input-text {
-  width: 60%;
-  padding: 10px;
-  border: 1px solid #ccd0d5;
+section.creat-post-container .creat-post .post-form .input-text {
+  width: 70%;
+  padding-left: 10px;
+  border: none;
   border-radius: 8px;
 }
-.creat-post .post-form .file-upload {
+section.creat-post-container .creat-post .post-form .file-upload {
   position: relative;
   display: inline-block;
 }
-.creat-post .post-form .file-upload .upload-label {
+section.creat-post-container .creat-post .post-form .file-upload .upload-label {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,10 +54,10 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-.creat-post .post-form .file-upload .upload-label:hover {
+section.creat-post-container .creat-post .post-form .file-upload .upload-label:hover {
   background-image: url("/static/images/icon/image-solid.svg");
 }
-.creat-post .post-form .file-upload .input-file {
+section.creat-post-container .creat-post .post-form .file-upload .input-file {
   width: 1px;
   height: 1px;
   opacity: 0;
@@ -67,7 +65,7 @@ body {
   position: absolute;
   z-index: -1;
 }
-.creat-post .post-form .send-button {
+section.creat-post-container .creat-post .post-form .send-button {
   background-color: white;
   font-weight: bold;
   border: 1px solid #ccd0d5;
@@ -76,13 +74,14 @@ body {
   padding: 8px 15px;
   cursor: pointer;
 }
-.creat-post .post-form .send-button:hover {
+section.creat-post-container .creat-post .post-form .send-button:hover {
   background-color: #ebebeb;
 }
 
 section.postsContainer .post {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "content" "stats";
   background-color: #fff;
   border: 1px solid #e1e4e8;
   max-width: 600px;
@@ -109,7 +108,7 @@ section.postsContainer .post .post-content {
   font-size: 14px;
   color: #333;
   margin-bottom: 10px;
-  padding-left: 30px;
+  padding-left: 50px;
 }
 section.postsContainer .post .post-content .text {
   margin-bottom: 10px;
@@ -118,24 +117,23 @@ section.postsContainer .post .post-content .media img {
   width: 100%;
   border-radius: 10px;
 }
-
-.post-stats {
+section.postsContainer .post .post-stats {
   display: flex;
   justify-content: flex-start;
-  padding-left: 30px;
+  padding-left: 50px;
   font-size: 14px;
   color: #666;
   gap: 20px;
 }
-.post-stats .stat {
+section.postsContainer .post .post-stats .stat {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.post-stats .stat span {
+section.postsContainer .post .post-stats .stat span {
   margin-right: 5px;
 }
-.post-stats .stat i {
+section.postsContainer .post .post-stats .stat i {
   font-size: 16px;
 }
 
@@ -157,4 +155,74 @@ section.postsContainer .post .post-content .media img {
 .media img[src=""],
 .text:null {
   display: none;
+}
+
+section.create-poster-card .create-poster-container {
+  display: flex;
+  justify-content: center;
+}
+section.create-poster-card .create-poster-container .post-form {
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 600px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+section.create-poster-card .create-poster-container .post-form .form-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+section.create-poster-card .create-poster-container .post-form .form-header .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+section.create-poster-card .create-poster-container .post-form .post-input {
+  padding: 10px;
+  border: none;
+  margin-left: 50px;
+}
+section.create-poster-card .create-poster-container .post-form .form-actions {
+  display: flex;
+  padding: 10px;
+  margin-left: 50px;
+}
+section.create-poster-card .create-poster-container .post-form .form-actions .action-btn,
+section.create-poster-card .create-poster-container .post-form .form-actions .submit-btn {
+  border: none;
+  background: transparent;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+section.create-poster-card .create-poster-container .post-form .form-actions .action-btn i,
+section.create-poster-card .create-poster-container .post-form .form-actions .submit-btn i {
+  font-size: 16px;
+  color: #989898;
+}
+section.create-poster-card .create-poster-container .post-form .form-actions .action-btn i:hover,
+section.create-poster-card .create-poster-container .post-form .form-actions .submit-btn i:hover {
+  color: #676767;
+}
+section.create-poster-card .create-poster-container .post-form .create-submit {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+section.create-poster-card .create-poster-container .post-form .create-submit .submit-btn {
+  background: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+section.create-poster-card .create-poster-container .post-form .create-submit .submit-btn:hover {
+  background-color: #ebebeb;
 }/*# sourceMappingURL=styles.css.map */

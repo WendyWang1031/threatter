@@ -11,40 +11,70 @@
     />
   </head>
   <body>
-    <div class="creat-post">
-      <form class="post-form">
-        <div class="user-info">
-          <img
-            src="/static/images/image/user (1).png"
-            class="profile-pic"
-            alt="Profile Picture"
-          />
-        </div>
+    <section class="creat-post-container">
+      <div class="creat-post">
+        <form class="post-form">
+          <div class="user-info">
+            <img
+              src="/static/images/image/user (1).png"
+              class="profile-pic"
+              alt="Profile Picture"
+            />
+          </div>
 
-        <input
-          type="text"
-          id="text"
-          name="text"
-          placeholder="發表串文"
-          class="input-text"
-        />
-
-        <div class="file-upload">
-          <label for="img" class="upload-label">
-            <div class="upload-icon"></div>
-          </label>
           <input
-            type="file"
-            id="img"
-            name="img"
-            accept="image/png, image/jpeg"
-            class="input-file"
+            type="text"
+            id="text"
+            name="text"
+            placeholder="建立串文....."
+            class="input-text"
           />
-        </div>
 
-        <button type="submit" class="send-button">發佈</button>
-      </form>
-    </div>
+          <div class="file-upload">
+            <label for="img" class="upload-label">
+              <div class="upload-icon"></div>
+            </label>
+            <input
+              type="file"
+              id="img"
+              name="img"
+              accept="image/*, video/*"
+              class="input-file"
+            />
+          </div>
+
+          <button class="send-button">發佈</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="create-poster-card">
+      <div class="create-poster-container">
+        <form class="post-form">
+          <div class="form-header">
+            <img
+              src="/static/images/image/user (1).png"
+              alt="User Profile"
+              class="profile-pic"
+            />
+            <span class="username">帳號名稱</span>
+          </div>
+          <input type="text" placeholder="建立串文" class="post-input" />
+          <div class="form-actions">
+            <button type="button" class="action-btn">
+              <i class="fa fa-image"></i>
+            </button>
+
+            <button type="button" class="action-btn">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+          </div>
+          <div class="create-submit">
+            <button type="submit" class="submit-btn">發佈</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
     <section class="postsContainer">
       <div class="post">
