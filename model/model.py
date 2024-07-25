@@ -3,8 +3,8 @@ from typing import List , Optional
 from datetime import datetime
 
 class PostData(BaseModel):
-    content: Optional[str] = Field(None, example="這是留言板測試文字內容")
-    image_url: Optional[str]= Field(None, example="http://123456789/images/92-0.jpg")
+    content: Optional[str] = Field(default=None, example="這是留言板測試文字內容")
+    image_url: Optional[str]= Field(default=None, example="http://123456789/images/92-0.jpg")
 
 class PostDataRequest(BaseModel):
     content: Optional[str] = Field(..., example="這是留言板測試文字內容")
@@ -12,6 +12,10 @@ class PostDataRequest(BaseModel):
 class PostGetResponse(BaseModel):
     ok: bool
     data: List[PostData]
+
+class PresignedUrlRequest(BaseModel):
+    file_name: str
+    file_type: str
 
 # 用戶
 class UserReadDetail(BaseModel):

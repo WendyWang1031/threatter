@@ -10,11 +10,19 @@ from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# 會員頁面
+# 貼文頁面
+@app.post("/api/post/generate-presigned-url",
+        tags= ["Post"], 
+        summary = "S3 產生欲簽名 URL",
+         )
+async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
+    print("presignedUrl_request:", presignedUrl_request)
+    return await generate_presigned_url(presignedUrl_request.file_name , presignedUrl_request.file_type)
+
 @app.post("/api/post",
         tags= ["Post"],
         response_model = PostGetResponse , 
-        summary = "修改會員資料",
+        summary = "新增貼文資料",
         responses = {
             200:{
                 "model" : PostGetResponse,
@@ -30,13 +38,14 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
             }
          }
          )
-async def fetch_post_post(text: str = Form( default = None) , img: UploadFile = File( default = None)) -> JSONResponse :
-    return await create_post_data(text , img)
+async def fetch_post_post(post_data : PostData) -> JSONResponse :
+    print("post_data:",post_data)
+    return await create_post_data(post_data)
 
 @app.get("/api/post",
         tags= ["Post"],
         response_model = PostGetResponse , 
-        summary = "根據當前用戶取得會員資訊",
+        summary = "根據id取得貼文資訊",
         responses = {
             200:{
                 "model" : PostGetResponse,
