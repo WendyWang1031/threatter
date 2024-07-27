@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-const postURL = "/api/post";
+const postURL = "/api/post_test";
 
 async function submitPost(content, file) {
   let postData = { content };
