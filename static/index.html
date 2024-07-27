@@ -11,15 +11,23 @@
     />
   </head>
   <body>
-    <section class="creat-post-container">
-      <div class="creat-post">
+    <section class="main-sider">
+      <div class="icon logo"><i class="fa-solid fa-at"></i></div>
+      <div class="sidebar">
+        <div class="icon home"><i class="fa-solid fa-house"></i></div>
+        <div class="icon search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <div class="icon heart"><i class="fa-regular fa-heart"></i></div>
+        <div class="icon profile"><i class="fa-regular fa-user"></i></div>
+      </div>
+    </section>
+
+    <section class="user-post-container">
+      <div class="user-post">
         <form class="post-form">
           <div class="user-info">
-            <img
-              src="/static/images/image/user (1).png"
-              class="profile-pic"
-              alt="Profile Picture"
-            />
+            <i class="fa-regular fa-circle-user profile-pic"></i>
           </div>
 
           <input
@@ -52,11 +60,7 @@
       <div class="create-poster-container">
         <form class="post-form">
           <div class="form-header">
-            <img
-              src="/static/images/image/user (1).png"
-              alt="User Profile"
-              class="profile-pic"
-            />
+            <i class="fa-regular fa-circle-user profile-pic"></i>
             <span class="username">帳號名稱</span>
           </div>
           <input type="text" placeholder="建立串文" class="post-input" />
@@ -79,11 +83,7 @@
     <section class="postsContainer">
       <div class="post">
         <div class="post-header">
-          <img
-            src="/static/images/image/user (1).png"
-            alt="User Profile"
-            class="profile-pic"
-          />
+          <i class="fa-regular fa-circle-user profile-pic"></i>
           <span class="username">meow</span>
         </div>
         <div class="post-content">
@@ -96,6 +96,10 @@
           <div class="stat"><i class="fa fa-share"></i> <span>38</span></div>
         </div>
       </div>
+    </section>
+
+    <section class="creat-post-btn">
+      <i class="fa-solid fa-plus"></i>
     </section>
   </body>
   <script type="module" src="static/js/controller/controller_index.js"></script>
