@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field , field_validator
+from pydantic import BaseModel, Field , field_validator , HttpUrl
 from typing import List , Optional 
 from datetime import datetime
 
@@ -17,69 +17,147 @@ class PresignedUrlRequest(BaseModel):
     file_name: str
     file_type: str
 
-# 用戶
-class UserReadDetail(BaseModel):
-    id: str = Field(...,example=1)
-    name: str = Field(... , example="彭彭彭")
-    email: str = Field(... , example="ply@ply.com")				
-
-class UserLoginRequest(BaseModel):
-    email: str = Field(... , example="ply@ply.com")
-    password: str = Field(... , example="12345678")
-    
-    @field_validator("*")
-    def validate_login_space(cls , v):
-        if isinstance(v,str) and (not v or v.isspace()):
-             raise ValueError("The Login Input Value can not be blank.")
-        return v
-
-class UserCreateRequest(BaseModel):
-    name: str = Field(... , example="彭彭彭")
-    email: str = Field(... , example="ply@ply.com")
-    password: str = Field(... , example="12345678")	
-    
-    @field_validator("*")
-    def validate_register_space(cls , v):
-        if isinstance(v,str) and (not v or v.isspace()):
-             raise ValueError("The Register Input Value can not be blank.")
-        return v
-    
-    @field_validator("email")
-    def validate_email(cls , v):
-        if "@" not in v :
-             raise ValueError("Email must included '@'")
-        return v
-
-class SuccessfulResponseForMemberRegister(BaseModel):
-    ok : bool = Field(..., description = "註冊成功")
-
-class SuccessfulResponseForMember(BaseModel):
-    data : UserReadDetail = Field(..., description = "取得當前登入資訊")
-
-class SuccessfulResponseForMemberBase(BaseModel):
-    token : str = Field(..., description = "FHSTHSGHFtrhsthfghs")
-
+# error
 class ErrorResponse(BaseModel):
     error : bool = Field(True, description = "指示是否為錯誤響應")
     message : str = Field(..., description = "錯誤訊息描述" , example="請按照情境提供對應的錯誤訊息")
 
-
-
 # 登入相關Error Response
 class ServiceError(BaseModel):
-     error : bool
-     status : int 
-     error_code : str
-     error_message :str
+    error : bool
+    status : int 
+    message :str
 
-class ForbiddenError(ServiceError):
-     error : bool = Field(True , description="錯誤")
-     status : int = Field(403 , description = "403-禁止訪問")
-     error_code : str = Field("403-001" , description = "403-禁止訪問")
-     error_message : str = Field("無權限" , description = "該用戶並無權限")
+# 共用
+class SuccessfulRes(BaseModel):
+    success : bool = Field(..., description = "成功")
+    
+
+# Member 會員
+class MemberBase(BaseModel):
+    name: str = Field(..., example="王黑喵")
+    account_id: str = Field(... , example="abc123456")
+    avatar: Optional[str]= Field(None, example="http://123456789/images/92-0.jpg")
+
+    @field_validator("name" , "account_id")
+    def validate_space(cls , v):
+        if v is not None and (not v or v.isspace()):
+             raise ValueError("The Register Input Value can not be blank.")
+        return v  
+
+class MemberDetail(MemberBase):
+    self_intro: Optional[str] = Field(None, example="安安你好我是黑貓")
+    fans_counts: int = Field(default=0, example=1456000)
+    public: bool = Field(default=True , example="公開帳號")
+
+class MemberUpdateReq(BaseModel):
+    name: Optional[str] = Field(None, example="王黑喵")
+    public: Optional[bool] = Field(None , example="公開帳號")
+    self_intro: Optional[str] = Field(None, example="安安你好我是黑貓")
+    avatar: Optional[str]= Field(None, example="http://123456789/images/92-0.jpg")
+    
+    @field_validator("self_intro" , "name")
+    def check_length(cls, v):
+        if v and len(v) > 100:
+            raise ValueError("自我介紹或名字不能超過100個字")
+        return v
+
+# Follow 追蹤  
+class FollowReq(BaseModel):
+    follow: bool
+    account_id: str
+
+class FollowMember(BaseModel):
+    user: MemberBase
+    follow_state: str = Field(default="None", example="following, pending, beingFollow ,None") # following, pending, beingFollow
+
+class FollowMemberListRes(BaseModel):
+    next_page: Optional[int] = Field(None, description="下一頁的頁面，如果沒有更多頁為None")
+    fans_counts: int = Field(default=0, example=368)
+    data: List[FollowMember]
+
+# Post 貼文  
+class Media(BaseModel):
+    images: Optional[HttpUrl] = None
+    videos: Optional[HttpUrl] = None
+    audios: Optional[HttpUrl] = None
+    @field_validator('*')
+    def check_at_least_one(cls, v):
+        if not (v):
+            raise ValueError("至少需要上傳文字內容或影音其一項目。")
+        return v
+
+class PostContent(BaseModel):
+    text: Optional[str] = Field(None,example="這是貼文的內容，有什麼想說的？", max_length=500)
+    media: Optional[Media] = None
+
+    @field_validator('*')
+    def check_at_least_one(cls, v, values):
+        if not (v or values.get('text')):
+            raise ValueError("至少需要上傳文字內容或影音其一項目。")
+        return v
+
+class PostCounts(BaseModel):
+    like_counts: int = Field(default=0, example=6568)
+    reply_counts: int = Field(default=0, example=590)
+    forward_counts: int = Field(default=0, example=56)
+    
+    @field_validator("*")
+    def check_positive(cls, v):
+        if v < 0:
+            raise ValueError("計數不能為負數")
+        return v
+
+class PostCreateReq(BaseModel):
+    post_parent_id: Optional[str] = Field(None,example="abc123456", description="回覆該貼文的id，如果是None則是自己的貼文")
+    content: PostContent
+    visibility: str = Field(...,example="public" , description="觀賞貼文的權限，例如 public, private, friends")
+
+class ParentPostId(BaseModel):
+    account_id: str = Field(... , example="abc123456")
+    post_id: str = Field(... , example="ec-abc123456")
+    
+class Post(BaseModel):
+    post_id: str = Field(... , example="ec-abc123456")
+    parent: Optional[ParentPostId]
+    created_at: datetime = Field(... , example="2024/07/28:00:15:43:56")
+    user: MemberBase  
+    content: PostContent
+    visibility: str = Field(..., example="public", description="觀賞貼文的權限，例如 public, private, friends")
+    counts: PostCounts
+
+class PostListRes(BaseModel):
+    next_page: Optional[int] = Field(None, description="下一頁的頁面，如果沒有更多頁為None")
+    data: List[Post]
+
+class Comment(BaseModel):
+    comment_id: str = Field(... , example="ec-abc45678")
+    user: MemberBase
+    content: PostContent
+    visibility: str = Field(... , example="public" , description="觀賞貼文的權限，例如 public, private, friends")
+    created_at: datetime = Field(... , example="2024/07/28:00:15:43:56")
+    counts: PostCounts
+
+class CommentDetail(BaseModel):
+    comment: Comment
+    replies: List[Comment]
+
+class CommentDetailListRes(BaseModel):
+    next_page: Optional[int] = Field(None, description="下一頁的頁面，如果沒有更多頁為None")
+    data: List[CommentDetail]
+
+class LikeReq(BaseModel):
+    like: bool = Field(... , example="對貼文按讚")
+
+class LikeRes(BaseModel):
+    total_likes: int = Field(... , example="1")
 
 
-# 會員頁面
+class CommentReq(BaseModel):
+    content:PostContent
+    visibility: str = Field(... , example="public")
+
+# User 用戶
 class MemberDataRequest(BaseModel):
     name: Optional[str] = Field(None, example="彭彭彭")
     email: Optional[str] = Field(None, example="ply@ply.com")
@@ -106,19 +184,4 @@ class MemberDataRequest(BaseModel):
             if len(v) != 10:
                 raise ValueError("Phone number must be 10 digits long")
          return v
-
-
-class MemberData(BaseModel):
-    name: str = Field(..., example="彭彭彭")
-    email: str = Field(..., example="ply@ply.com")
-    phone_number: Optional[str] = Field(None, example="0912345678")
-    avatar: Optional[str]= Field(None, example="http://123456789/images/92-0.jpg")
-
-class MemberGetResponse(BaseModel):
-    ok: bool
-    data: MemberData
-
-class MemberUpdateResponse(BaseModel):
-    ok: bool = Field(..., example="會員更新成功")
-
 

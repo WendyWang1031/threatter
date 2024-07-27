@@ -2,25 +2,35 @@ from fastapi import *
 from fastapi.responses import FileResponse 
 from controller.post import * 
 from model.model import *
+from model.model_user import *
 from fastapi.staticfiles import StaticFiles
-
 
 
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# 貼文頁面
-@app.post("/api/post/generate-presigned-url",
-        tags= ["Post"], 
+def get_token(authorization: str = Header(...)):
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Authorization header missing")
+    return authorization
+
+def get_optional_token(authorization: str = Header(None)):
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Authorization header missing")
+    return authorization
+
+# 貼文
+@app.post("/api/post/generate-presigned-url_test",
+        tags= ["Post-Test"], 
         summary = "S3 產生欲簽名 URL",
          )
-async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
+async def fetch_post_generate_presigned_url_test(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
     print("presignedUrl_request:", presignedUrl_request)
     return await generate_presigned_url(presignedUrl_request.file_name , presignedUrl_request.file_type)
 
-@app.post("/api/post",
-        tags= ["Post"],
+@app.post("/api/post_test",
+        tags= ["Post-Test"],
         response_model = PostGetResponse , 
         summary = "新增貼文資料",
         responses = {
@@ -38,12 +48,12 @@ async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRe
             }
          }
          )
-async def fetch_post_post(post_data : PostData) -> JSONResponse :
+async def fetch_post_post_test(post_data : PostData) -> JSONResponse :
     print("post_data:",post_data)
     return await create_post_data(post_data)
 
-@app.get("/api/post",
-        tags= ["Post"],
+@app.get("/api/post_test",
+        tags= ["Post-Test"],
         response_model = PostGetResponse , 
         summary = "根據id取得貼文資訊",
         responses = {
@@ -56,8 +66,415 @@ async def fetch_post_post(post_data : PostData) -> JSONResponse :
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_get_post() -> JSONResponse :
+async def fetch_get_post_test() -> JSONResponse :
     return await get_post_data()
+
+
+# 會員
+@app.patch("/api/member",
+        tags= ["Member"],
+        response_model = MemberDetail , 
+        summary = "編輯會員資料",
+        dependencies=[Depends(get_token)], 
+        responses = {
+            200:{
+                "model" : MemberDetail,
+                "description" : "成功編輯會員資料"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_patch_member(member_update : MemberUpdateReq) -> JSONResponse :
+    pass
+
+@app.get("/api/member/{account_id}",
+        tags= ["Member"],
+        response_model = MemberDetail ,
+        summary = "顯示會員資料",
+        responses = {
+            200:{
+                "model" : MemberDetail,
+                "description" : "成功顯示會員資料"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_member(account_id: str = Path(..., description="該會員的帳號")) -> JSONResponse :
+    pass
+
+# 追蹤
+@app.post("/api/follow",
+        tags= ["Follow"],
+        response_model = FollowMember , 
+        summary = "追蹤對方",
+        dependencies=[Depends(get_token)],
+        responses = {
+            200:{
+                "model" : FollowMember,
+                "description" : "成功追蹤對方"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_follow(follow : FollowReq) -> JSONResponse :
+    pass
+
+@app.get("/api/member/{account_id}/follow/target",
+        tags= ["Follow"],
+        response_model = FollowMemberListRes , 
+        dependencies=[Depends(get_optional_token)], 
+        summary = "顯示追蹤中對象",
+        responses = {
+            200:{
+                "model" : FollowMemberListRes,
+                "description" : "成功顯示顯示追蹤中對象"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_follow_target(
+    account_id: str = Path(..., description="該會員的帳號"),
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
+    ) -> JSONResponse :
+    pass
+
+@app.get("/api/member/{account_id}/follow/fans",
+        tags= ["Follow"],
+        response_model = FollowMemberListRes ,
+        dependencies=[Depends(get_optional_token)], 
+        summary = "顯示追蹤本人的粉絲",
+        responses = {
+            200:{
+                "model" : FollowMemberListRes,
+                "description" : "成功顯示追蹤本人的粉絲"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_follow_fans(
+    account_id: str = Path(..., description="該會員的帳號"),
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
+    ) -> JSONResponse :
+    pass
+
+# 貼文
+@app.post("/api/post",
+        tags= ["Post"],
+        response_model = Post , 
+        summary = "新增貼文",
+        dependencies=[Depends(get_token)],
+        responses = {
+            200:{
+                "model" : Post,
+                "description" : "成功新增貼文"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_post(create_post : PostCreateReq) -> JSONResponse :
+    pass
+
+@app.delete("/api/post/{post_id}",
+        tags= ["Post"],
+        response_model = SuccessfulRes , 
+        summary = "刪除貼文",
+        dependencies=[Depends(get_token)],
+        responses = {
+            200:{
+                "model" : SuccessfulRes,
+                "description" : "成功刪除貼文"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_delete_post(post_id: str = Path(..., description="該貼文的id")) -> JSONResponse :
+    pass
+
+@app.get("/api/post/home",
+        tags= ["Post"],
+        response_model = PostListRes , 
+        summary = "顯示首頁貼文",
+        responses = {
+            200:{
+                "model" : PostListRes,
+                "description" : "成功顯示首頁貼文"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_home_post(page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
+    pass
+
+@app.get("/api/member/{account_id}/posts",
+        tags= ["Post"],
+        response_model = PostListRes , 
+        dependencies=[Depends(get_optional_token)],
+        summary = "顯示用戶檔案下方貼文",
+        responses = {
+            200:{
+                "model" : PostListRes,
+                "description" : "成功顯示單頁貼文"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_member_post(account_id: str = Path(..., description="該會員的帳號")) -> JSONResponse :
+    pass
+
+@app.get("/api/member/{account_id}/post/{post_id}",
+        tags= ["Post"],
+        response_model = Post , 
+        dependencies=[Depends(get_optional_token)],
+        summary = "顯示單頁貼文",
+        responses = {
+            200:{
+                "model" : Post,
+                "description" : "成功顯示單頁貼文"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_single_post(
+    account_id: str = Path(..., description="該會員的帳號") , 
+    post_id: str = Path(..., description="該貼文的id")
+    ) -> JSONResponse :
+    pass
+
+@app.get("/api/member/{account_id}/post/{post_id}/detail",
+        tags= ["Post"],
+        response_model = CommentDetailListRes , 
+        dependencies=[Depends(get_optional_token)],
+        summary = "顯示單頁貼文留言與留言回覆",
+        responses = {
+            200:{
+                "model" : CommentDetailListRes,
+                "description" : "成功顯示單頁貼文留言與留言回覆"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_comments_and_replies(
+    account_id: str = Path(..., description="該會員的帳號"),
+    post_id: str = Path(..., description="該貼文的id")
+) -> JSONResponse :
+    pass
+
+@app.post("/api/member/{account_id}/post/{post_id}/like",
+        tags= ["Post"],
+        response_model = LikeRes ,
+        dependencies=[Depends(get_token)], 
+        summary = "對貼文按讚",
+        responses = {
+            200:{
+                "model" : LikeRes,
+                "description" : "成功對貼文按讚"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_post_like(
+    post_like:LikeReq,
+    account_id: str = Path(..., description="該會員的帳號"),
+    post_id: str = Path(..., description="該貼文的id")
+    ) -> JSONResponse :
+    pass
+
+@app.post("/api/member/{account_id}/post/{post_id}/reply",
+        tags= ["Post"],
+        response_model = Comment , 
+        dependencies=[Depends(get_token)],
+        summary = "在某則貼文底下留言",
+        responses = {
+            200:{
+                "model" : Comment,
+                "description" : "成功在某則貼文底下留言"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_comment(content_req:CommentReq,
+                            account_id: str = Path(..., description="該會員的帳號"),
+                            post_id: str = Path(..., description="該貼文的id")
+                             ) -> JSONResponse :
+    pass
+
+
+
+# 留言
+@app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/like",
+        tags= ["Comment"],
+        response_model = LikeRes , 
+        summary = "對貼文的某則留言按讚",
+        dependencies=[Depends(get_token)],
+        responses = {
+            200:{
+                "model" : LikeRes,
+                "description" : "成功對貼文的某則留言按讚"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_comments_like(
+    comment_like:LikeReq,
+    account_id: str = Path(..., description="該會員的帳號"),
+    post_id: str = Path(..., description="該貼文的id"),
+    comment_id: str = Path(..., description="該留言的id")
+    ) -> JSONResponse :
+    pass
+
+@app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
+        tags= ["Comment"],
+        response_model = Comment , 
+        dependencies=[Depends(get_token)],
+        summary = "在貼文底下某則留言回覆留言",
+        responses = {
+            200:{
+                "model" : Comment,
+                "description" : "成功在某則貼文底下留言"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_comment_comment(
+    content_req:CommentReq,
+    account_id: str = Path(..., description="該會員的帳號"),
+    post_id: str = Path(..., description="該貼文的id"),
+    comment_id: str = Path(..., description="該留言的id")
+    ) -> JSONResponse :
+    pass
+
+@app.delete("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
+        tags= ["Comment"],
+        response_model = Comment , 
+        dependencies=[Depends(get_token)],
+        summary = "刪除某則留言",
+        responses = {
+            200:{
+                "model" : SuccessfulRes,
+                "description" : "成功刪除某則留言"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_delete_comment(account_id: str = Path(..., description="該會員的帳號"),
+                                post_id: str = Path(..., description="該貼文的id"),
+                                comment_id: str = Path(..., description="該留言的id")
+                                )-> JSONResponse :
+    pass
+
+# 搜尋
+@app.get("/api/search",
+        tags= ["Search"],
+        response_model = FollowMemberListRes , 
+        summary = "搜尋用戶帳號",
+        responses = {
+            200:{
+                "model" : FollowMemberListRes,
+                "description" : "成功搜尋用戶帳號"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_single_post(
+    search: str = Query(..., description="輸入想要搜尋的帳號"), 
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
+    pass
+
+# 用戶
+@app.post("/api/user" , 
+         tags= ["User"],
+         response_model = UserPutReq ,
+         summary = "註冊一個新會員",
+        
+         responses = {
+            200:{
+                "model" : SuccessfulResponseForRegister,
+                "description" : "註冊成功"
+            },
+            400:{
+                "model" : ErrorResponse,
+                "description" : "註冊失敗，重複的 Email 或其他原因"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_user_signup(user_request : UserRegisterReq) -> JSONResponse :
+    pass
+    # return await register_user(user_request)
+
+@app.get("/api/user/auth" , 
+         tags= ["User"],
+         response_model = UserGetCheck ,
+         summary = "取得當前的登入資訊",
+        
+         responses = {
+            200:{
+                "model" : UserGetCheck,
+                "description" : "已登入的會員資料，null 表示未登入"
+            }
+         })
+async def fetch_get_user(user: dict )-> JSONResponse :
+    pass
+    # return await get_user_details(user)
+
+@app.put("/api/user/auth" , 
+         tags= ["User"],
+         response_model = UserPutReq ,
+         summary = "登入會員帳戶",
+        
+         responses = {
+            200:{
+                "model" : Token,
+                "description" : "登入成功，取得有效期為七天的 JWT 加密字串"
+            },
+            400:{
+                "model" : ErrorResponse,
+                "description" : "登入失敗，帳號或密碼錯誤或其他原因"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_put_user_signin(user_login_request : UserPutReq) -> JSONResponse :
+    pass
+    # return await authenticate_user(user_login_request)
 
 # ----------------------------------------------------------
 
