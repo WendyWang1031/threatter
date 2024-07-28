@@ -86,6 +86,8 @@ section.user-post-container .user-post .post-form .send-button:hover {
 section.postsContainer {
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 section.postsContainer .post {
   display: grid;
@@ -122,15 +124,18 @@ section.postsContainer .post .post-content {
 section.postsContainer .post .post-content .text {
   margin-bottom: 10px;
 }
-section.postsContainer .post .post-content .media img {
-  width: 100%;
+section.postsContainer .post .post-content .media img,
+section.postsContainer .post .post-content .media video {
+  max-width: 100%;
+  max-height: 500px;
+  height: auto;
+  width: auto;
   border-radius: 10px;
 }
 section.postsContainer .post .post-stats {
   display: flex;
   justify-content: flex-start;
   padding-left: 50px;
-  font-size: 17px;
   color: #666;
   gap: 20px;
 }
@@ -139,11 +144,12 @@ section.postsContainer .post .post-stats .stat {
   align-items: center;
   gap: 10px;
 }
+section.postsContainer .post .post-stats .stat i {
+  font-size: 20px;
+}
 section.postsContainer .post .post-stats .stat span {
   margin-right: 5px;
-}
-section.postsContainer .post .post-stats .stat i {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .stat {
@@ -197,21 +203,26 @@ section.create-poster-card .create-poster-container .post-form .form-header .pro
   border-radius: 50%;
   margin-right: 10px;
 }
+section.create-poster-card .create-poster-container .post-form .form-header .username {
+  font-size: 16px;
+  color: #424242;
+  font-weight: bold;
+}
 section.create-poster-card .create-poster-container .post-form .post-input {
   padding: 10px;
   border: none;
   margin-left: 50px;
+  outline: none;
 }
 section.create-poster-card .create-poster-container .post-form .form-actions {
   display: flex;
-  padding: 10px;
   margin-left: 50px;
 }
 section.create-poster-card .create-poster-container .post-form .form-actions .action-btn,
 section.create-poster-card .create-poster-container .post-form .form-actions .submit-btn {
   border: none;
   background: transparent;
-  padding: 10px;
+  padding: 6px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -240,6 +251,17 @@ section.create-poster-card .create-poster-container .post-form .create-submit .s
 }
 section.create-poster-card .create-poster-container .post-form .create-submit .submit-btn:hover {
   background-color: #ebebeb;
+}
+
+#preview {
+  margin-top: 10px;
+}
+
+#preview img,
+#preview video,
+#preview audio {
+  max-width: 100%;
+  height: auto;
 }
 
 section.main-sider .logo {
@@ -286,10 +308,10 @@ section.main-sider .sidebar .icon:active {
   position: fixed;
   right: 20px;
   bottom: 20px;
-  width: 50px;
-  height: 50px;
+  width: 90px;
+  height: 70px;
   background-color: #fff;
-  border-radius: 10px;
+  border-radius: 15px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
