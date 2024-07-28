@@ -365,7 +365,7 @@ async def fetch_post_comments_like(
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_post_comment_comment(
+async def fetch_post_comment_relpy(
     content_req:CommentReq,
     account_id: str = Path(..., description="該會員的帳號"),
     post_id: str = Path(..., description="該貼文的id"),
@@ -394,6 +394,7 @@ async def fetch_delete_comment(account_id: str = Path(..., description="該會�
                                 )-> JSONResponse :
     pass
 
+
 # 搜尋
 @app.get("/api/search",
         tags= ["Search"],
@@ -409,7 +410,7 @@ async def fetch_delete_comment(account_id: str = Path(..., description="該會�
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_get_single_post(
+async def fetch_search(
     search: str = Query(..., description="輸入想要搜尋的帳號"), 
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
     pass
