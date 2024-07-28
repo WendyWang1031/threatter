@@ -11,8 +11,6 @@ import os
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')  
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')  
-print("AWS Access Key:", aws_access_key_id)
-print("AWS Secret Access Key:", aws_secret_access_key)
 
 
 def generate_presigned_post_to_s3(file_name: str, file_type: str):
