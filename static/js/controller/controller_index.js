@@ -1,8 +1,12 @@
-import { displayPostElement } from "../view/view_index.js";
+import { displayPostElement, previewCreatePost } from "../view/view_index.js";
 import { getPresignedUrl, uploadFileToS3 } from "./controller_upload.js";
 document.addEventListener("DOMContentLoaded", function () {
   // 更新貼文內容
   fetchGetPost();
+
+  document
+    .getElementById("file-input")
+    .addEventListener("change", previewCreatePost);
 
   // 提交貼文按鈕
   const submitButton = document.querySelector(".send-button");

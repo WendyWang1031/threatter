@@ -29,7 +29,7 @@ export function displayPostElement(post) {
   const textContent = post.content || defaultText;
   postElement.innerHTML = `
           <div class="post-header">
-            <img src="/static/images/image/user (1).png" alt="User Profile" class="profile-pic" />
+            <i class="fa-regular fa-circle-user profile-pic"></i>
             <span class="username"></span>  
           </div>
           <div class="post-content">
@@ -42,4 +42,25 @@ export function displayPostElement(post) {
             <div class="stat"><i class="fa fa-share"></i> <span></span></div>
           </div>`;
   return postElement;
+}
+
+export function previewCreatePost(event) {
+  const file = event.target.files[0];
+  const preview = document.getElementById("preview");
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const url = e.target.result;
+      if (file.type.startsWith("image/")) {
+        preview.innerHTML = `<img src="${url}" alt="Image preview">`;
+      } else if (file.type.startsWith("video/")) {
+        preview.innerHTML = `<video src="${url}" controls></video>`;
+      } else if (file.type.startsWith("audio/")) {
+        preview.innerHTML = `<audio src="${url}" controls></audio>`;
+      }
+    };
+
+    reader.readAsDataURL(file);
+  }
 }

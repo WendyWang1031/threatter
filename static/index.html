@@ -63,14 +63,43 @@
             <i class="fa-regular fa-circle-user profile-pic"></i>
             <span class="username">帳號名稱</span>
           </div>
-          <input type="text" placeholder="建立串文" class="post-input" />
+          <textarea
+            type="text"
+            placeholder="建立串文"
+            class="post-input"
+          ></textarea>
+          <input
+            type="file"
+            id="file-input"
+            accept="image/*,video/*,audio/*"
+            class="input-file"
+            hidden
+          />
           <div class="form-actions">
             <button type="button" class="action-btn">
-              <i class="fa fa-image"></i>
+              <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                class="input-file"
+                hidden
+              />
+              <label for="image-upload" class="action-btn">
+                <i class="fa fa-image"></i>
+              </label>
             </button>
 
             <button type="button" class="action-btn">
-              <i class="fa-solid fa-microphone"></i>
+              <input
+                type="file"
+                id="audio-upload"
+                accept="audio/*"
+                class="input-file"
+                hidden
+              />
+              <label for="audio-upload" class="action-btn">
+                <i class="fa-solid fa-microphone"></i>
+              </label>
             </button>
           </div>
           <div class="create-submit">
@@ -98,7 +127,7 @@
       </div>
     </section>
 
-    <section class="creat-post-btn">
+    <section class="create-post-btn">
       <i class="fa-solid fa-plus"></i>
     </section>
   </body>
