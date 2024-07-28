@@ -48,11 +48,11 @@ class MemberBase(BaseModel):
 class MemberDetail(MemberBase):
     self_intro: Optional[str] = Field(None, example="安安你好我是黑貓")
     fans_counts: int = Field(default=0, example=1456000)
-    public: bool = Field(default=True , example="公開帳號")
+    visibility: str = Field(..., example="public", description="帳號的權限，例如 public, private")
 
 class MemberUpdateReq(BaseModel):
     name: Optional[str] = Field(None, example="王黑喵")
-    public: Optional[bool] = Field(None , example="公開帳號")
+    visibility: str = Field(..., example="public", description="帳號的權限，例如 public, private")
     self_intro: Optional[str] = Field(None, example="安安你好我是黑貓")
     avatar: Optional[str]= Field(None, example="http://123456789/images/92-0.jpg")
     
@@ -81,11 +81,7 @@ class Media(BaseModel):
     images: Optional[HttpUrl] = None
     videos: Optional[HttpUrl] = None
     audios: Optional[HttpUrl] = None
-    @field_validator('*')
-    def check_at_least_one(cls, v):
-        if not (v):
-            raise ValueError("至少需要上傳文字內容或影音其一項目。")
-        return v
+
 
 class PostContent(BaseModel):
     text: Optional[str] = Field(None,example="這是貼文的內容，有什麼想說的？", max_length=500)
@@ -124,6 +120,7 @@ class Post(BaseModel):
     user: MemberBase  
     content: PostContent
     visibility: str = Field(..., example="public", description="觀賞貼文的權限，例如 public, private, friends")
+    like_state: bool = Field(default=False , example="未按讚")
     counts: PostCounts
 
 class PostListRes(BaseModel):
@@ -134,8 +131,8 @@ class Comment(BaseModel):
     comment_id: str = Field(... , example="ec-abc45678")
     user: MemberBase
     content: PostContent
-    visibility: str = Field(... , example="public" , description="觀賞貼文的權限，例如 public, private, friends")
     created_at: datetime = Field(... , example="2024/07/28:00:15:43:56")
+    like_state: bool = Field(default=False , example="未按讚")
     counts: PostCounts
 
 class CommentDetail(BaseModel):
@@ -159,7 +156,7 @@ class CommentReq(BaseModel):
 
 # User 用戶
 class MemberDataRequest(BaseModel):
-    name: Optional[str] = Field(None, example="彭彭彭")
+    name: Optional[str] = Field(None, example="王黑喵")
     email: Optional[str] = Field(None, example="ply@ply.com")
     phone: Optional[str] = Field(None, example="0912345678")
     
