@@ -5,6 +5,9 @@ from model.model import *
 from model.model_user import *
 from fastapi.staticfiles import StaticFiles
 
+from service.security import security_get_current_user
+from controller.user import *
+
 
 
 app = FastAPI()
@@ -436,8 +439,7 @@ async def fetch_search(
             }
          })
 async def fetch_post_user_signup(user_request : UserRegisterReq) -> JSONResponse :
-    pass
-    # return await register_user(user_request)
+    return await register_user(user_request)
 
 @app.get("/api/user/auth" , 
          tags= ["User"],
@@ -450,9 +452,8 @@ async def fetch_post_user_signup(user_request : UserRegisterReq) -> JSONResponse
                 "description" : "已登入的會員資料，null 表示未登入"
             }
          })
-async def fetch_get_user(user: dict )-> JSONResponse :
-    pass
-    # return await get_user_details(user)
+async def fetch_get_user(user: UserGetCheck = Depends(security_get_current_user) )-> JSONResponse :
+    return await get_user_details(user)
 
 @app.put("/api/user/auth" , 
          tags= ["User"],
@@ -474,8 +475,7 @@ async def fetch_get_user(user: dict )-> JSONResponse :
             }
          })
 async def fetch_put_user_signin(user_login_request : UserPutReq) -> JSONResponse :
-    pass
-    # return await authenticate_user(user_login_request)
+    return await authenticate_user(user_login_request)
 
 # ----------------------------------------------------------
 

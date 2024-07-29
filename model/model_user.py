@@ -38,7 +38,7 @@ class UserCheckExistReq(BaseModel):
         return v
 
 class UserGetCheck(BaseModel):
-    name: str = Field(... , example="彭彭彭")
+    name: str = Field(... , example="王黑喵")
     account_id: str = Field(... , example="meow20240728")		
 
 class UserPutReq(BaseModel):

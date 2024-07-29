@@ -33,14 +33,7 @@ def security_decode_access_token(token: str):
             raise HTTPException(status_code=403 , detail="Token 失效")
     
 def security_get_current_user(token: HTTPAuthorizationCredentials = Security(security)) :
-    if token is None :
-            error_response = ForbiddenError(
-                 error = True ,
-                 status =  403 ,
-                 error_code = "403-001" ,
-                 error_message = "User not authenticated")
-            return error_response   
-    
+ 
     user_info = security_decode_access_token(token.credentials)
     
     if not user_info:
