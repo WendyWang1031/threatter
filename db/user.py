@@ -1,5 +1,4 @@
 import bcrypt
-import uuid
 import pymysql.cursors
 from model.model_user import *
 from typing import Any
@@ -11,9 +10,10 @@ def db_insert_new_user(user_register_req : UserRegisterReq) -> bool :
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
+        hashed_password = bcrypt.hashpw(user_register_req.password.encode('utf-8'), bcrypt.gensalt())
 
         sql = "insert into member (name , account_id , email , password) values (%s , %s , %s , %s)"
-        cursor.execute(sql ,(user_register_req.account_id,  user_register_req.name , user_register_req.email , user_register_req.password))
+        cursor.execute(sql ,(user_register_req.name,  user_register_req.account_id , user_register_req.email , hashed_password))
         
         connection.commit()
 
@@ -36,7 +36,7 @@ def db_check_user_accountId_email_exists(check_exist : UserCheckExistReq) -> boo
     try:
         connection.begin()
 
-        sql = "select account_id , email  from member where account_id = %s and email = %s"
+        sql = "select account_id , email  from member where account_id = %s or email = %s"
         cursor.execute(sql , (check_exist.account_id , check_exist.email,))
         user_account_email = cursor.fetchone()
 
