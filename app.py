@@ -1,9 +1,11 @@
 from fastapi import *
 from fastapi.responses import FileResponse 
 from controller.post import * 
+from controller.post_new import * 
 from model.model import *
 from model.model_user import *
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import HTTPBearer
 
 from service.security import security_get_current_user
 from controller.user import *
@@ -12,6 +14,7 @@ from controller.user import *
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+security = HTTPBearer(auto_error=False)  
 
 def get_token(authorization: str = Header(...)):
     if authorization is None:
@@ -23,7 +26,7 @@ def get_optional_token(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail="Authorization header missing")
     return authorization
 
-# 貼文
+# 測試版－作業－貼文
 @app.post("/api/post/generate-presigned-url_test",
         tags= ["Post-Test"], 
         summary = "S3 產生欲簽名 URL",
@@ -52,7 +55,6 @@ async def fetch_post_generate_presigned_url_test(presignedUrl_request: Presigned
          }
          )
 async def fetch_post_post_test(post_data : PostData) -> JSONResponse :
-    print("post_data:",post_data)
     return await create_post_data(post_data)
 
 @app.get("/api/post_test",
@@ -171,14 +173,22 @@ async def fetch_get_follow_fans(
     pass
 
 # 貼文
+@app.post("/api/post/generate-presigned-url",
+        tags= ["Post"], 
+        summary = "S3 產生欲簽名 URL",
+         )
+async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
+    print("presignedUrl_request:", presignedUrl_request)
+    return await generate_presigned_url(presignedUrl_request.file_name , presignedUrl_request.file_type)
+
+
 @app.post("/api/post",
         tags= ["Post"],
-        response_model = Post , 
+        response_model = SuccessfulRes , 
         summary = "新增貼文",
-        dependencies=[Depends(get_token)],
         responses = {
             200:{
-                "model" : Post,
+                "model" : SuccessfulRes,
                 "description" : "成功新增貼文"
             },
             500:{
@@ -186,14 +196,14 @@ async def fetch_get_follow_fans(
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_post_post(create_post : PostCreateReq) -> JSONResponse :
-    pass
+async def fetch_post_post(create_post : PostCreateReq , 
+                          current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+    return await create_post_data(create_post , current_user)
 
 @app.delete("/api/post/{post_id}",
         tags= ["Post"],
         response_model = SuccessfulRes , 
         summary = "刪除貼文",
-        dependencies=[Depends(get_token)],
         responses = {
             200:{
                 "model" : SuccessfulRes,
@@ -204,8 +214,10 @@ async def fetch_post_post(create_post : PostCreateReq) -> JSONResponse :
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_delete_post(post_id: str = Path(..., description="該貼文的id")) -> JSONResponse :
-    pass
+async def fetch_delete_post(
+    post_id: str = Path(..., description="該貼文的id"), 
+    current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+    return await delete_post(post_id , current_user)
 
 @app.get("/api/post/home",
         tags= ["Post"],
@@ -221,8 +233,12 @@ async def fetch_delete_post(post_id: str = Path(..., description="該貼文的id
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_get_home_post(page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
-    pass
+async def fetch_get_home_post(
+    user: Optional[dict] = Depends(security_get_current_user),
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
+    print("api router user:",user)
+    print("api router page:",page)
+    return await get_post_home(user , page)
 
 @app.get("/api/member/{account_id}/posts",
         tags= ["Post"],

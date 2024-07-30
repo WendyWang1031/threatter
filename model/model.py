@@ -81,6 +81,16 @@ class Media(BaseModel):
     images: Optional[HttpUrl] = None
     videos: Optional[HttpUrl] = None
     audios: Optional[HttpUrl] = None
+    
+    @field_validator('*')
+    def check_media_types(cls, v):
+        if v is None:
+            return v
+        valid_types = {'images', 'videos', 'audios'}
+        for item in v:
+            if item.type not in valid_types:
+                raise ValueError(f"Unsupported media type: {item.type}")
+        return v
 
 
 class PostContent(BaseModel):
@@ -92,6 +102,8 @@ class PostContent(BaseModel):
         if not (v or values.get('text')):
             raise ValueError("至少需要上傳文字內容或影音其一項目。")
         return v
+    
+
 
 class PostCounts(BaseModel):
     like_counts: int = Field(default=0, example=6568)
@@ -123,6 +135,7 @@ class Post(BaseModel):
     like_state: bool = Field(default=False , example="未按讚")
     counts: PostCounts
 
+    
 class PostListRes(BaseModel):
     next_page: Optional[int] = Field(None, description="下一頁的頁面，如果沒有更多頁為None")
     data: List[Post]

@@ -10,7 +10,7 @@ from model.model import *
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-security = HTTPBearer()
+
 
 def security_create_access_token(data: dict , expires_delta: timedelta = timedelta(days = 7)):
     to_encode = data.copy()
@@ -31,17 +31,21 @@ def security_decode_access_token(token: str):
             raise HTTPException(status_code=403 , detail="Token 已過期")
     except JOSEError:
             raise HTTPException(status_code=403 , detail="Token 失效")
-    
-def security_get_current_user(token: HTTPAuthorizationCredentials = Security(security)) :
- 
-    user_info = security_decode_access_token(token.credentials)
-    
-    if not user_info:
-            error_response = ServiceError(
-                 error = True ,
-                 status =  404 ,
-                 error_code = "404-001" ,
-                 error_message = "User not found")
-            return None 
+
+security = HTTPBearer(auto_error=False)
+def security_get_current_user(
+          token: Optional[HTTPAuthorizationCredentials] = Security(security)) -> Optional[dict] | None:
+    print("security_get_current_user called")
+    if token:
+        print(f"Token: {token}")
     else:
+        print("No token provided")
+
+    if token is None:
+        return None
+    try:  
+        user_info = security_decode_access_token(token.credentials)
         return user_info
+    except Exception as e:
+        print(f"Token verification failed: {e}")
+        return None 
