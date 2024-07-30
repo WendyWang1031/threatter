@@ -70,14 +70,13 @@ async def generate_presigned_url(file_name: str , file_type: str):
 
 async def create_post_data(post_data : PostCreateReq , current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
     try:
-
         if not current_user :
             error_response = ErrorResponse(error=True, message="User not authenticated")
             response = JSONResponse (
                     status_code=status.HTTP_403_FORBIDDEN, 
                     content=error_response.dict())
             return response
-        
+
         if not post_data.content.text and not (post_data.content.media and (post_data.content.media.images or post_data.content.media.videos or post_data.content.media.audios)):
             error_response = ErrorResponse(error=True, message="請至少要提供文字或圖片")
             response = JSONResponse (

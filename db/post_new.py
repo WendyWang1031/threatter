@@ -131,6 +131,7 @@ def db_create_post_data( post_data : PostCreateReq , member_id : str ) -> bool :
 
         if isinstance(post_data.content.media, Media):
             image_url = validate(post_data.content.media.images)
+            print("Validated image URL:", image_url)
             video_url = validate(post_data.content.media.videos)
             audio_url = validate(post_data.content.media.audios)
         

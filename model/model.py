@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field , field_validator , HttpUrl
+from pydantic import BaseModel, Field , field_validator , model_validator
 from typing import List , Optional 
 from datetime import datetime
 
@@ -78,30 +78,31 @@ class FollowMemberListRes(BaseModel):
 
 # Post 貼文  
 class Media(BaseModel):
-    images: Optional[HttpUrl] = None
-    videos: Optional[HttpUrl] = None
-    audios: Optional[HttpUrl] = None
+    images: Optional[str] = None
+    videos: Optional[str] = None
+    audios: Optional[str] = None
     
-    @field_validator('*')
-    def check_media_types(cls, v):
-        if v is None:
-            return v
-        valid_types = {'images', 'videos', 'audios'}
-        for item in v:
-            if item.type not in valid_types:
-                raise ValueError(f"Unsupported media type: {item.type}")
-        return v
+    @model_validator(mode='after')
+    def check(cls, values):
+
+        if not values.images and not values.videos and not values.audios:
+            raise ValueError('images, videos and audios cannot both be empty')
+        
+        return values
 
 
 class PostContent(BaseModel):
     text: Optional[str] = Field(None,example="這是貼文的內容，有什麼想說的？", max_length=500)
     media: Optional[Media] = None
 
-    @field_validator('*')
-    def check_at_least_one(cls, v, values):
-        if not (v or values.get('text')):
-            raise ValueError("至少需要上傳文字內容或影音其一項目。")
-        return v
+    # 驗證一整個 Model CLASS model_validator，所以可以抓取所有欄位
+    @model_validator(mode='after')
+    def check(cls, values):
+
+        if not values.text and not values.media:
+            raise ValueError('text and media cannot both be empty')
+        
+        return values
     
 
 
