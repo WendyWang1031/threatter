@@ -1,16 +1,18 @@
 from fastapi import *
 from fastapi import Request
-
-from fastapi.responses import FileResponse 
-from controller.post import * 
-from controller.post_new import * 
-from model.model import *
-from model.model_user import *
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer
+from fastapi.responses import FileResponse 
 
-from service.security import security_get_current_user
+from controller.post import * 
+from controller.post_new import * 
 from controller.user import *
+from controller.member import *
+from model.model import *
+from model.model_user import *
+from service.security import security_get_current_user
+from service.presigned_url import *
+
 
 
 
@@ -76,16 +78,23 @@ async def fetch_post_post_test(post_data : PostData) -> JSONResponse :
 async def fetch_get_post_test() -> JSONResponse :
     return await get_post_data()
 
+# 共用
+@app.post("/api/post/generate-presigned-url",
+        tags= ["Common"], 
+        summary = "S3 產生欲簽名 URL",
+         )
+async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
+    return await generate_presigned_url(presignedUrl_request.file_name , presignedUrl_request.file_type)
+
 
 # 會員
 @app.patch("/api/member",
         tags= ["Member"],
-        response_model = MemberDetail , 
+        response_model = SuccessfulRes , 
         summary = "編輯會員資料",
-        dependencies=[Depends(get_token)], 
         responses = {
             200:{
-                "model" : MemberDetail,
+                "model" : SuccessfulRes,
                 "description" : "成功編輯會員資料"
             },
             500:{
@@ -93,8 +102,9 @@ async def fetch_get_post_test() -> JSONResponse :
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_patch_member(member_update : MemberUpdateReq) -> JSONResponse :
-    pass
+async def fetch_patch_member(member_update : MemberUpdateReq , 
+                             current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+    return await update_member_data(member_update , current_user)
 
 @app.get("/api/member/{account_id}",
         tags= ["Member"],
@@ -111,7 +121,7 @@ async def fetch_patch_member(member_update : MemberUpdateReq) -> JSONResponse :
             }
          })
 async def fetch_get_member(account_id: str = Path(..., description="該會員的帳號")) -> JSONResponse :
-    pass
+    return await get_member_data(account_id)
 
 # 追蹤
 @app.post("/api/follow",
@@ -175,13 +185,6 @@ async def fetch_get_follow_fans(
     pass
 
 # 貼文
-@app.post("/api/post/generate-presigned-url",
-        tags= ["Post"], 
-        summary = "S3 產生欲簽名 URL",
-         )
-async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
-    print("presignedUrl_request:", presignedUrl_request)
-    return await generate_presigned_url(presignedUrl_request.file_name , presignedUrl_request.file_type)
 
 
 @app.post("/api/post",
@@ -245,7 +248,6 @@ async def fetch_get_home_post(
 @app.get("/api/member/{account_id}/posts",
         tags= ["Post"],
         response_model = PostListRes , 
-        dependencies=[Depends(get_optional_token)],
         summary = "顯示用戶檔案下方貼文",
         responses = {
             200:{
@@ -257,8 +259,11 @@ async def fetch_get_home_post(
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_get_member_post(account_id: str = Path(..., description="該會員的帳號")) -> JSONResponse :
-    pass
+async def fetch_get_member_post(
+    user: Optional[dict] = Depends(security_get_current_user),
+    account_id: str = Path(..., description="該會員的帳號"),
+    page: int = Query(0, description="頁碼")) -> JSONResponse :
+    return await get_post_member_page(user, account_id, page)
 
 @app.get("/api/member/{account_id}/post/{post_id}",
         tags= ["Post"],
