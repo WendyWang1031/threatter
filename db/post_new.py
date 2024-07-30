@@ -16,7 +16,7 @@ def generate_short_uuid(content_type: str) -> str:
     short_uuid = str(uuid.uuid4())[:8]  
     return f"{prefix}{short_uuid}"
 
-def db_get_post_data(member_id: Optional[str] , page : int) -> Optional[PostListRes] | None:
+def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[PostListRes] | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -114,7 +114,7 @@ def db_get_post_data(member_id: Optional[str] , page : int) -> Optional[PostList
         cursor.close()
         connection.close()
 
-def db_create_post_data( post_data : PostCreateReq , member_id : str ) -> bool :
+def db_create_post_data(post_data : PostCreateReq , member_id : str ) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -178,6 +178,105 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
         connection.rollback()
         return False
 
+    finally:
+        cursor.close()
+        connection.close()
+
+def db_get_member_post_data(member_id: Optional[str] , account_id : str , page : int) -> Optional[PostListRes] | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+
+        limit = 15 
+        offset = page * limit
+
+        # 預設狀況下，用戶只能看到公開的內容
+        visibility_clause = "visibility = 'Public'"
+        
+        if member_id : 
+            # 檢查已登入用戶
+            relation_sql = """select relation_state
+            FROM member_relation
+            where member_id = %s AND target_id = %s
+            """
+            cursor.execute( relation_sql , (member_id , account_id) )
+            relation = cursor.fetchone()
+            if relation : 
+                relation_state = relation['relation_state']
+                if member_id == account_id or relation_state == 'Following':
+                    visibility_clause = "visibility = 'Public' OR visibility = 'Private'"
+        
+        sql = f"""select content.* ,
+            member.name , member.account_id , member.avatar,  
+            likes.like_state
+        FROM contentß
+        
+        Left Join member on content.member_id = member.account_id
+        Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+        WHERE  content.member_id = %s AND ({visibility_clause})
+        ORDER BY created_at DESC LIMIT %s OFFSET %s
+        """
+        cursor.execute( sql , (member_id , account_id , limit+1 , offset) )
+        
+        post_data = cursor.fetchall()
+
+        if not post_data:
+            return None
+        
+        has_more_data = len(post_data) > limit
+        
+        if has_more_data :
+            post_data.pop()
+
+        posts = []
+        for data in post_data:
+        
+            media = Media(
+            images=data.get('image'),
+            videos=data.get('video'),
+            audios=data.get('audio')
+            )
+
+            created_at = data['created_at']
+            if isinstance(created_at, str):
+                created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+
+
+            post = Post(
+                post_id = data['content_id'] ,
+                parent=ParentPostId(id=data['parent_id']) if data.get('parent_id') else None ,
+                created_at = created_at ,
+                user = MemberBase(
+                    name = data['name'],
+                    account_id = data['account_id'],
+                    avatar = data['avatar']
+                ),
+                content = PostContent(
+                    text = data['text'],
+                    media = media,
+                ),
+                visibility = data['visibility'],
+                like_state = bool(data.get('like_state' , False)),
+                counts = PostCounts(
+                    like_counts = int(data.get('like_counts') or 0),
+                    reply_counts = int(data.get('reply_counts') or 0),
+                    forward_counts = int(data.get('forward_counts') or 0),
+                )
+            )
+            posts.append(post)
+
+            print("posts:",posts)
+
+        connection.commit()
+        
+        next_page = page + 1 if has_more_data else None
+        return PostListRes(next_page = next_page , data = posts )
+        
+    except Exception as e:
+        print(f"Error getting post data details: {e}")
+        connection.rollback()
+        return None
     finally:
         cursor.close()
         connection.close()
