@@ -82,13 +82,7 @@ class Media(BaseModel):
     videos: Optional[str] = None
     audios: Optional[str] = None
     
-    @model_validator(mode='after')
-    def check(cls, values):
 
-        if not values.images and not values.videos and not values.audios:
-            raise ValueError('images, videos and audios cannot both be empty')
-        
-        return values
 
 
 class PostContent(BaseModel):

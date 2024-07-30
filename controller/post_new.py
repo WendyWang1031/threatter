@@ -189,7 +189,7 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
             return response
             
         else:
-            error_response = ErrorResponse(error=True, message="No post Data details found for user")
+            error_response = ErrorResponse(error=True, message="No member's post data details found for user")
             response = JSONResponse (
                 status_code=status.HTTP_404_NOT_FOUND, 
                 content=error_response.dict())
