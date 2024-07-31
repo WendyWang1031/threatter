@@ -258,10 +258,10 @@ async def fetch_get_home_post(
             }
          })
 async def fetch_get_member_post(
-    user: Optional[dict] = Depends(security_get_current_user),
+    current_user: Optional[dict] = Depends(security_get_current_user),
     account_id: str = Path(..., description="該會員的帳號"),
     page: int = Query(0, description="頁碼")) -> JSONResponse :
-    return await get_post_member_page(user, account_id, page)
+    return await get_post_member_page(current_user, account_id, page)
 
 @app.get("/api/member/{account_id}/post/{post_id}",
         tags= ["Post"],
