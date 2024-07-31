@@ -1,14 +1,24 @@
-import { displayPostElement, previewCreatePost } from "../view/view_index.js";
+import {
+  displayPostElement,
+  previewCreatePost,
+  displayCreatePostAccount,
+  displayCreatePost,
+} from "../view/view_index.js";
 import {
   getPresignedUrl,
   uploadFileToS3,
   uploadMediaFile,
 } from "./controller_upload.js";
 
+import { closeCreatePost } from "./controller_createPost.js";
+
 const postURL = "/api/post";
 const postHomeURL = "/api/post/home";
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  displayCreatePost();
+  closeCreatePost();
+  await displaymemberDetail();
   // 更新貼文內容
   fetchGetPost();
 
@@ -19,6 +29,39 @@ document.addEventListener("DOMContentLoaded", function () {
     validateForm();
   });
 });
+
+function validateForm() {
+  const form = document.querySelector(".post-form");
+  const content = form.querySelector("textarea").value;
+
+  // 初始媒體類型的值
+  let imageFile = null;
+  let videoFile = null;
+  let audioFile = null;
+
+  // 抓取所有媒體類型
+  const imageUploadInput = document.getElementById("image-upload");
+  const videoUploadInput = document.getElementById("video-upload");
+  const audioUploadInput = document.getElementById("audio-upload");
+
+  if (imageUploadInput.files.length > 0) {
+    imageFile = imageUploadInput.files[0];
+  }
+  if (videoUploadInput.files.length > 0) {
+    videoFile = videoUploadInput.files[0];
+  }
+  if (audioUploadInput.files.length > 0) {
+    audioFile = audioUploadInput.files[0];
+  }
+  console.log("videoUploadInput:", videoUploadInput);
+
+  if (content === "" && !imageFile && !videoFile && !audioFile) {
+    alert("請填寫文字欄位或上傳圖片、影片或音源");
+    return false;
+  }
+  submitPost(content, imageFile, videoFile, audioFile);
+  return true;
+}
 
 async function submitPost(content, imageFile, videoFile, audioFile) {
   let postData = {
@@ -96,13 +139,11 @@ async function fetchUpdatePost(postData) {
 async function fetchGetPost() {
   try {
     const response = await fetch(postHomeURL);
-    console.log("GET response:", response);
+
     const result = await response.json();
-    console.log("GET result:", result);
 
     if (result) {
       const postsContainer = document.querySelector(".postsContainer");
-
       result.data.forEach((post) => {
         const postElement = displayPostElement(post);
         postsContainer.appendChild(postElement);
@@ -115,35 +156,30 @@ async function fetchGetPost() {
   }
 }
 
-function validateForm() {
-  const form = document.querySelector(".post-form");
-  const content = form.querySelector("textarea").value;
-
-  // 初始媒體類型的值
-  let imageFile = null;
-  let videoFile = null;
-  let audioFile = null;
-
-  // 抓取所有媒體類型
-  const imageUploadInput = document.getElementById("image-upload");
-  const videoUploadInput = document.getElementById("video-upload");
-  const audioUploadInput = document.getElementById("audio-upload");
-
-  if (imageUploadInput.files.length > 0) {
-    imageFile = imageUploadInput.files[0];
+async function displaymemberDetail() {
+  const account_id = localStorage.getItem("account_id");
+  const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
+  if (!account_id) {
+    console.log("User not logged in, using default avatar.");
+    return;
   }
-  if (videoUploadInput.files.length > 0) {
-    videoFile = videoUploadInput.files[0];
-  }
-  if (audioUploadInput.files.length > 0) {
-    audioFile = audioUploadInput.files[0];
-  }
-  console.log("videoUploadInput:", videoUploadInput);
+  try {
+    const response = await fetch(memberUrl);
+    const result = await response.json();
 
-  if (content === "" && !imageFile && !videoFile && !audioFile) {
-    alert("請填寫文字欄位或上傳圖片、影片或音源");
-    return false;
+    if (result) {
+      const accountIdSpan = document.querySelector(".account_id");
+      accountIdSpan.textContent = result.account_id;
+
+      const avatar = document.querySelector(".profile-pic");
+      const img = document.createElement("img");
+      img.src = result.avatar;
+      img.classList.add("profile-pic");
+      avatar.replaceWith(img);
+    } else {
+      console.error("Failed to retrieve post data.");
+    }
+  } catch (error) {
+    console.error("Error fetching post data:", error);
   }
-  submitPost(content, imageFile, videoFile, audioFile);
-  return true;
 }

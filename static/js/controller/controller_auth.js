@@ -114,11 +114,12 @@ export async function checkUserState(callback) {
   }
 
   const result = await Model.fetchUserState(token);
-  console.log("result:", result);
+  // console.log("result:", result);
 
   if (result) {
     View.displayUserInterface(true);
     localStorage.setItem("userName", result.name);
+    localStorage.setItem("account_id", result.account_id);
     if (typeof callback === "function") {
       callback(result);
     }

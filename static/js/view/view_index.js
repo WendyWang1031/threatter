@@ -15,13 +15,13 @@ export function displayPostElement(post) {
 
   // 用戶資料
   const user = post.user || {};
-  const username = user.name;
+  const account_id = user.account_id;
   const avatar = user.avatar;
 
   // 生成頭像的 HTML
   let avatarHtml;
   if (avatar) {
-    avatarHtml = `<img src="${avatar}" alt="${username}'s avatar" class="profile-pic">`;
+    avatarHtml = `<img src="${avatar}" alt="${account_id}'s avatar" class="profile-pic">`;
   } else {
     avatarHtml = `<i class="fa-regular fa-circle-user profile-pic"></i>`;
   }
@@ -58,7 +58,7 @@ export function displayPostElement(post) {
   postElement.innerHTML = `
           <div class="post-header">
           ${avatarHtml}
-          <span class="username">${username}</span>    
+          <a href="" class="account_id">${account_id}</a>    
           </div>
           <div class="post-content">
             <div class="text">${textContent}</div>
@@ -80,6 +80,12 @@ export function displayPostElement(post) {
   return indivisial_postElement;
 }
 
+export function displayCreatePostAccount() {
+  const account_id_value = localStorage.getItem("account_id");
+  const account_id = document.querySelector(".account_id");
+  account_id.textContent = account_id_value;
+}
+
 export function previewCreatePost(event) {
   const file = event.target.files[0];
   const preview = document.getElementById("preview");
@@ -98,5 +104,29 @@ export function previewCreatePost(event) {
     };
 
     reader.readAsDataURL(file);
+  }
+}
+
+export function displayCreatePost() {
+  const token = localStorage.getItem("userToken");
+  const userPostContainer = document.querySelector(".user-post-container");
+  const createPosterCard = document.querySelector(".create-poster-card");
+  const plusBtn = document.querySelector(".create-post-btn");
+  const signin_mask = document.querySelector(".signin-mask");
+
+  if (!token) {
+    userPostContainer.addEventListener("click", function () {
+      signin_mask.style.display = "flex";
+    });
+    plusBtn.addEventListener("click", function () {
+      signin_mask.style.display = "flex";
+    });
+  } else {
+    userPostContainer.addEventListener("click", function () {
+      createPosterCard.style.display = "flex";
+    });
+    plusBtn.addEventListener("click", function () {
+      createPosterCard.style.display = "flex";
+    });
   }
 }

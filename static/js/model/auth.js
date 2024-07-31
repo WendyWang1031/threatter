@@ -9,7 +9,7 @@ export async function fetchUserState(token) {
       },
     });
     const data = await response.json();
-    console.log("fetchUserState data:", data);
+    // console.log("fetchUserState data:", data);
     return data;
   } catch (error) {
     console.error("Error Cheking User's State:", error);
@@ -61,4 +61,5 @@ export async function fetchApi(url, method, data) {
 
 export function clearUserSession() {
   localStorage.removeItem("userToken");
+  localStorage.removeItem("account_id");
 }
