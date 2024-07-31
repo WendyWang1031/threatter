@@ -37,6 +37,7 @@ export async function uploadFileToS3(presignedUrlData, file) {
 
     xhr.send(file);
   });
+
   //--------------BACKUP CODE--------------
   // console.log(
   //   "Presigned URL Data1:",
@@ -131,4 +132,19 @@ export async function uploadFileToS3(presignedUrlData, file) {
   // xhr.onerror = function () {
   //   alert("File upload failed");
   // };
+}
+
+export async function uploadMediaFile(file) {
+  if (!file) return null;
+
+  try {
+    const urls = await getPresignedUrl(file.name, file.type);
+
+    await uploadFileToS3(urls.presigned_url, file);
+
+    return urls.cdn_url;
+  } catch (error) {
+    console.log(`Error uploading ${file.type}: ${error.message}`);
+    return null;
+  }
 }

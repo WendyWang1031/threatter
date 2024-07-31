@@ -1,5 +1,9 @@
 import { displayPostElement, previewCreatePost } from "../view/view_index.js";
-import { getPresignedUrl, uploadFileToS3 } from "./controller_upload.js";
+import {
+  getPresignedUrl,
+  uploadFileToS3,
+  uploadMediaFile,
+} from "./controller_upload.js";
 
 const postURL = "/api/post";
 const postHomeURL = "/api/post/home";
@@ -7,9 +11,6 @@ const postHomeURL = "/api/post/home";
 document.addEventListener("DOMContentLoaded", function () {
   // 更新貼文內容
   fetchGetPost();
-  // document
-  //   .getElementById("file-input")
-  //   .addEventListener("change", previewCreatePost);
 
   // 提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");
@@ -19,8 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-async function submitPost(content, file) {
-  console.log("file:", file);
+async function submitPost(content, imageFile, videoFile, audioFile) {
   let postData = {
     post_parent_id: null,
     content: {
@@ -35,22 +35,27 @@ async function submitPost(content, file) {
   };
   console.log("postData:", postData);
 
-  if (file) {
-    try {
-      const urls = await getPresignedUrl(file.name, file.type);
-      await uploadFileToS3(urls.presigned_url, file);
+  // 圖片
+  if (imageFile) {
+    const imageUrl = await uploadMediaFile(imageFile);
+    if (imageUrl) {
+      postData.content.media.images = imageUrl;
+    }
+  }
 
-      // 根據類型設定對應的 media 字段
-      if (file.type.startsWith("image/")) {
-        postData.content.media.images = urls.cdn_url;
-      } else if (file.type.startsWith("video/")) {
-        postData.content.media.videos = urls.cdn_url;
-      } else if (file.type.startsWith("audio/")) {
-        postData.content.media.audios = urls.cdn_url;
-      }
-    } catch (error) {
-      console.log("Error uploading file: " + error.message);
-      return;
+  // 影片
+  if (videoFile) {
+    const videoUrl = await uploadMediaFile(videoFile);
+    if (videoUrl) {
+      postData.content.media.videos = videoUrl;
+    }
+  }
+
+  // 音檔
+  if (audioFile) {
+    const audioUrl = await uploadMediaFile(audioFile);
+    if (audioUrl) {
+      postData.content.media.audios = audioUrl;
     }
   }
 
@@ -133,15 +138,12 @@ function validateForm() {
   if (audioUploadInput.files.length > 0) {
     audioFile = audioUploadInput.files[0];
   }
+  console.log("videoUploadInput:", videoUploadInput);
 
-  if (
-    content === "" &&
-    imageUploadInput === 0 &&
-    videoUploadInput === 0 &&
-    audioUploadInput === 0
-  ) {
+  if (content === "" && !imageFile && !videoFile && !audioFile) {
     alert("請填寫文字欄位或上傳圖片、影片或音源");
     return false;
   }
   submitPost(content, imageFile, videoFile, audioFile);
+  return true;
 }
