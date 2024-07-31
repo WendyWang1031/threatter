@@ -213,6 +213,7 @@ section.create-poster-card .create-poster-container .post-form .post-input {
   border: none;
   margin-left: 50px;
   outline: none;
+  resize: none;
 }
 section.create-poster-card .create-poster-container .post-form .form-actions {
   display: flex;
@@ -264,21 +265,27 @@ section.create-poster-card .create-poster-container .post-form .create-submit .s
   height: auto;
 }
 
-section.main-sider .logo {
+section.main-sider-area {
+  width: 100%;
   position: fixed;
-  top: 20px;
+}
+section.main-sider-area div.main-sider {
+  display: flex;
+  align-items: center;
+}
+section.main-sider-area div.main-sider .logo {
   z-index: 1000;
   font-size: 40px;
   color: #5e5e5e;
   transition: transform 0.2s ease;
 }
-section.main-sider .logo:hover {
+section.main-sider-area div.main-sider .logo:hover {
   color: #999999;
 }
-section.main-sider .logo:active {
+section.main-sider-area div.main-sider .logo:active {
   transform: scale(1.2);
 }
-section.main-sider .sidebar {
+section.main-sider-area div.main-sider .sidebar {
   position: fixed;
   left: 0;
   top: 40px;
@@ -291,17 +298,37 @@ section.main-sider .sidebar {
   gap: 35px;
   padding-top: 30px;
 }
-section.main-sider .sidebar .icon {
+section.main-sider-area div.main-sider .sidebar .icon {
   color: #b0b0b0;
   font-size: 25px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
-section.main-sider .sidebar .icon:hover {
-  color: #b7b7b7;
+section.main-sider-area div.main-sider .sidebar .icon:hover {
+  color: #747474;
 }
-section.main-sider .sidebar .icon:active {
+section.main-sider-area div.main-sider .sidebar .icon:active {
   transform: scale(1.2);
+}
+section.main-sider-area .login-signin-area {
+  margin-left: 80%;
+  display: flex;
+  align-items: center;
+}
+section.main-sider-area .login-signin-area .login-signin {
+  color: #fff;
+  background: #333;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+section.main-sider-area .login-signin-area .login-signin:hover {
+  background-color: #6c6c6c;
+}
+section.main-sider-area .login-signin-area .logout {
+  display: none;
 }
 
 .create-post-btn {
@@ -322,4 +349,223 @@ section.main-sider .sidebar .icon:active {
 }
 .create-post-btn:hover {
   background-color: #f8f8f8;
+}
+
+.signin-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+  z-index: 1000;
+}
+.signin-mask form.signin {
+  height: 275px;
+  width: 340px;
+  box-shadow: 0px 4px 60px 0px #aaaaaa;
+  border-radius: 6px;
+  margin: 0 auto;
+}
+.signin-mask form.signin .sign-content {
+  background: #f0f4f8;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.signin-mask form.signin .sign-content .decorator-bar {
+  height: 10px;
+  background: linear-gradient(270deg, #808080 0%, #c2c2c2 100%);
+  border-radius: 6px 6px 0px 0px;
+  margin-bottom: 20px;
+}
+.signin-mask form.signin .sign-content .close {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.signin-mask form.signin .sign-content .close .close-signin {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.signin-mask form.signin .sign-content .close .close-signin img {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 15px;
+  top: -5px;
+  transition: transform 0.1s ease-in-out;
+}
+.signin-mask form.signin .sign-content .close .close-signin img:active {
+  transform: scale(1.2);
+}
+.signin-mask form.signin .sign-content .close h1 {
+  color: #666666;
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  font-family: Noto Sans TC;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+.signin-mask form.signin .sign-content .main {
+  padding: 15px;
+}
+.signin-mask form.signin .sign-content .main input[type=email],
+.signin-mask form.signin .sign-content .main input[type=text],
+.signin-mask form.signin .sign-content .main input[type=password] {
+  width: 93%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  color: #757575;
+}
+.signin-mask form.signin .sign-content .main input[type=email]:focus,
+.signin-mask form.signin .sign-content .main input[type=text]:focus,
+.signin-mask form.signin .sign-content .main input[type=password]:focus {
+  border-color: #757575;
+  outline: none;
+}
+.signin-mask form.signin .sign-content .main .signin-button,
+.signin-mask form.signin .sign-content .main .go-to-signup {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #a8a8a8;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.signin-mask form.signin .sign-content .main .signin-button:hover,
+.signin-mask form.signin .sign-content .main .go-to-signup:hover {
+  background-color: #777575;
+}
+.signin-mask form.signin .sign-content .main .go-to-signup {
+  background-color: #f0f4f8;
+  color: #666666;
+  text-decoration: none;
+}
+.signin-mask form.signin .sign-content .main .go-to-signup:hover {
+  background-color: #dae0e5;
+}
+
+.signup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+  z-index: 1000;
+}
+.signup-mask form.signup {
+  width: 340px;
+  height: auto;
+  box-shadow: 0px 4px 60px 0px #aaaaaa;
+  border-radius: 6px;
+  margin: 0 auto;
+  background: #f0f4f8;
+}
+.signup-mask form.signup .signup-content {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+.signup-mask form.signup .signup-content .decorator-bar {
+  height: 10px;
+  background: linear-gradient(270deg, #808080 0%, #c2c2c2 100%);
+  border-radius: 6px 6px 0 0;
+  margin-bottom: 20px;
+}
+.signup-mask form.signup .signup-content .close {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.signup-mask form.signup .signup-content .close button.close-signup {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.signup-mask form.signup .signup-content .close button.close-signup img {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 15px;
+  top: -5px;
+  transition: transform 0.1s ease-in-out;
+}
+.signup-mask form.signup .signup-content .close button.close-signup img:active {
+  transform: scale(1.2);
+}
+.signup-mask form.signup .signup-content .close h1 {
+  color: #666666;
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  font-family: Noto Sans TC;
+  font-weight: 700;
+  line-height: 24px;
+}
+.signup-mask form.signup .signup-content .main {
+  padding: 15px;
+}
+.signup-mask form.signup .signup-content .main input[type=email],
+.signup-mask form.signup .signup-content .main input[type=text],
+.signup-mask form.signup .signup-content .main input[type=password] {
+  width: 93%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  color: #757575;
+}
+.signup-mask form.signup .signup-content .main input[type=email]:focus,
+.signup-mask form.signup .signup-content .main input[type=text]:focus,
+.signup-mask form.signup .signup-content .main input[type=password]:focus {
+  border-color: #757575;
+  outline: none;
+}
+.signup-mask form.signup .signup-content .main .signup-button,
+.signup-mask form.signup .signup-content .main .go-to-signin {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #a8a8a8;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.signup-mask form.signup .signup-content .main .signup-button:hover,
+.signup-mask form.signup .signup-content .main .go-to-signin:hover {
+  background-color: #777575;
+}
+.signup-mask form.signup .signup-content .main .go-to-signin {
+  background-color: #f0f4f8;
+  color: #666666;
+  text-decoration: none;
+}
+.signup-mask form.signup .signup-content .main .go-to-signin:hover {
+  background-color: #dae0e5;
 }/*# sourceMappingURL=styles.css.map */
