@@ -103,7 +103,7 @@ async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRe
             }
          })
 async def fetch_patch_member(member_update : MemberUpdateReq , 
-                             current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+                             current_user : Optional[dict] = Depends(security_get_current_user)) -> JSONResponse :
     return await update_member_data(member_update , current_user)
 
 @app.get("/api/member/{account_id}",
@@ -239,11 +239,9 @@ async def fetch_delete_post(
             }
          })
 async def fetch_get_home_post(
-    user: Optional[dict] = Depends(security_get_current_user),
+    current_user: Optional[dict] = Depends(security_get_current_user),
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
-    print("api router user:",user)
-    print("api router page:",page)
-    return await get_post_home(user , page)
+    return await get_post_home(current_user , page)
 
 @app.get("/api/member/{account_id}/posts",
         tags= ["Post"],
@@ -268,7 +266,6 @@ async def fetch_get_member_post(
 @app.get("/api/member/{account_id}/post/{post_id}",
         tags= ["Post"],
         response_model = Post , 
-        dependencies=[Depends(get_optional_token)],
         summary = "顯示單頁貼文",
         responses = {
             200:{
@@ -281,10 +278,11 @@ async def fetch_get_member_post(
             }
          })
 async def fetch_get_single_post(
+    user: Optional[dict] = Depends(security_get_current_user),
     account_id: str = Path(..., description="該會員的帳號") , 
     post_id: str = Path(..., description="該貼文的id")
     ) -> JSONResponse :
-    pass
+    return await get_post_single_page(user, account_id, post_id)
 
 @app.get("/api/member/{account_id}/post/{post_id}/detail",
         tags= ["Post"],

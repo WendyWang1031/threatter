@@ -203,3 +203,31 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
             content=error_response.dict())
         return response
   
+
+async def get_post_single_page(current_user: Optional[dict], account_id: str , post_id : str) -> JSONResponse :
+    try:
+        member_id = current_user["account_id"] if current_user else None
+        post_data = db_get_single_post_data(member_id , account_id , post_id)
+        
+        if post_data :
+            
+            response = JSONResponse(
+            status_code = status.HTTP_200_OK,
+            content=json.loads(post_data.json())
+            )
+            return response
+            
+        else:
+            error_response = ErrorResponse(error=True, message="No member's post data details found for user")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+
+        
+    except Exception as e :
+        error_response = ErrorResponse(error=True, message=str(e))
+        response = JSONResponse (
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            content=error_response.dict())
+        return response

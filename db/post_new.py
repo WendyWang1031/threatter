@@ -280,3 +280,92 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
     finally:
         cursor.close()
         connection.close()
+
+
+def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_id : int) -> Optional[Post] | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+
+
+        # 預設狀況下，用戶只能看到公開的內容
+        visibility_clause = "visibility = 'Public'"
+        
+        if member_id : 
+            # 檢查已登入用戶
+            relation_sql = """select relation_state
+            FROM member_relation
+            where member_id = %s AND target_id = %s
+            """
+            cursor.execute( relation_sql , (member_id , account_id) )
+            relation = cursor.fetchone()
+            if relation : 
+                relation_state = relation['relation_state']
+                if member_id == account_id or relation_state == 'Following':
+                    visibility_clause = "visibility = 'Public' OR visibility = 'Private'"
+        
+        sql = """select content.* ,
+            member.name , member.account_id , member.avatar,  
+            likes.like_state
+        FROM content
+        
+        Left Join member on content.member_id = member.account_id
+        Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+        WHERE content.member_id = %s AND (content.visibility = 'Public' OR content.visibility = 'Private') 
+        AND content.content_id = %s
+        """
+        cursor.execute( sql , (member_id , account_id , post_id) )
+        
+        post_data = cursor.fetchall()
+
+        if not post_data:
+            return None
+        
+        for data in post_data:
+        
+            media = Media(
+            images=data.get('image'),
+            videos=data.get('video'),
+            audios=data.get('audio')
+            )
+
+            created_at = data['created_at']
+            if isinstance(created_at, str):
+                created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+
+
+            post = Post(
+                post_id = data['content_id'] ,
+                parent=ParentPostId(id=data['parent_id']) if data.get('parent_id') else None ,
+                created_at = created_at ,
+                user = MemberBase(
+                    name = data['name'],
+                    account_id = data['account_id'],
+                    avatar = data['avatar']
+                ),
+                content = PostContent(
+                    text = data['text'],
+                    media = media,
+                ),
+                visibility = data['visibility'],
+                like_state = bool(data.get('like_state' , False)),
+                counts = PostCounts(
+                    like_counts = int(data.get('like_counts') or 0),
+                    reply_counts = int(data.get('reply_counts') or 0),
+                    forward_counts = int(data.get('forward_counts') or 0),
+                )
+            )
+            
+        connection.commit()
+        
+        return post
+        
+    except Exception as e:
+        print(f"Error getting post data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
