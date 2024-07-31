@@ -102,6 +102,11 @@ section.postsContainer .indivisial-area .post .post-header {
   margin-bottom: 10px;
 }
 section.postsContainer .indivisial-area .post .post-header .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
   font-size: 40px;
   color: #d7d7d7;
   border-radius: 50%;
@@ -238,7 +243,7 @@ section.create-poster-card .create-poster-container .post-form .create-submit {
   right: 20px;
   bottom: 20px;
 }
-section.create-poster-card .create-poster-container .post-form .create-submit .submit-btn {
+section.create-poster-card .create-poster-container .post-form .create-submit .submit-post-btn {
   background: #fff;
   color: #333;
   padding: 10px 20px;
@@ -247,7 +252,7 @@ section.create-poster-card .create-poster-container .post-form .create-submit .s
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
-section.create-poster-card .create-poster-container .post-form .create-submit .submit-btn:hover {
+section.create-poster-card .create-poster-container .post-form .create-submit .submit-post-btn:hover {
   background-color: #ebebeb;
 }
 

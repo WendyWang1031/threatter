@@ -127,6 +127,10 @@ section.postsContainer {
         margin-bottom: 10px;
 
         .profile-pic {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
           font-size: 40px;
           color: #d7d7d7;
           border-radius: 50%;
@@ -278,7 +282,7 @@ section.create-poster-card {
         position: absolute;
         right: 20px;
         bottom: 20px;
-        .submit-btn {
+        .submit-post-btn {
           background: #fff;
           color: #333;
           padding: 10px 20px;

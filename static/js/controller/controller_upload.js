@@ -1,6 +1,6 @@
 export async function getPresignedUrl(file_name, file_type) {
   try {
-    const response = await fetch("/api/post/generate-presigned-url_test", {
+    const response = await fetch("/api/post/generate-presigned-url", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
