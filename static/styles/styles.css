@@ -31,6 +31,13 @@ section.user-post-container .user-post .post-form .user-info {
 section.user-post-container .user-post .post-form .user-info .profile-pic {
   font-size: 40px;
   color: #d7d7d7;
+  width: 40px;
+  height: 40px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  color: #d7d7d7;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 section.user-post-container .user-post .post-form .input-text {
   width: 70%;

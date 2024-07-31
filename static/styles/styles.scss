@@ -37,6 +37,13 @@ section.user-post-container {
         .profile-pic {
           font-size: 40px;
           color: #d7d7d7;
+          width: 40px;
+          height: 40px;
+
+          object-fit: cover;
+          color: #d7d7d7;
+          border-radius: 50%;
+          margin-right: 10px;
         }
       }
 
