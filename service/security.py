@@ -35,11 +35,11 @@ def security_decode_access_token(token: str):
 security = HTTPBearer(auto_error=False)
 def security_get_current_user(
           token: Optional[HTTPAuthorizationCredentials] = Security(security)) -> Optional[dict] | None:
-    print("security_get_current_user called")
-    if token:
-        print(f"Token: {token}")
-    else:
-        print("No token provided")
+    # print("security_get_current_user called")
+    # if token:
+    #     print(f"Token: {token}")
+    # else:
+    #     print("No token provided")
 
     if token is None:
         return None

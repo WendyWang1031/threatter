@@ -99,7 +99,7 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             )
             posts.append(post)
 
-            print("posts:",posts)
+            # print("posts:",posts)
 
         connection.commit()
         

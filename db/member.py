@@ -37,7 +37,7 @@ def db_get_member_data( account_id : str ) -> MemberDetail | None:
         )
         
         connection.commit()
-        print("member_detail:",member_detail)
+        # print("member_detail:",member_detail)
         return member_detail
     
     except Exception as e:
