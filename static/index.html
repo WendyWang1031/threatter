@@ -11,9 +11,22 @@
     />
   </head>
   <body>
+    <header class="navigation sticky">
+      <div class="navi-content">
+        <div class="icon logo"><i class="fa-solid fa-at"></i></div>
+
+        <div class="header-button-area">
+          <div class="header-2-buttons-area">
+            <button class="login-signin">登入</button>
+            <button class="logout" style="display: none">登出</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
     <section class="main-sider-area">
       <div class="main-sider">
-        <div class="icon logo"><i class="fa-solid fa-at"></i></div>
+        <!-- <div class="icon logo"><i class="fa-solid fa-at"></i></div> -->
         <div class="sidebar">
           <div class="icon home"><i class="fa-solid fa-house"></i></div>
           <div class="icon search">
@@ -23,10 +36,10 @@
           <div class="icon profile"><i class="fa-regular fa-user"></i></div>
         </div>
 
-        <section class="login-signin-area">
+        <!-- <section class="login-signin-area">
           <button class="login-signin">登入</button>
           <button class="logout" style="display: none">登出</button>
-        </section>
+        </section> -->
       </div>
     </section>
 
@@ -117,19 +130,23 @@
     </section>
 
     <section class="postsContainer">
-      <div class="post">
-        <div class="post-header">
-          <i class="fa-regular fa-circle-user profile-pic"></i>
-          <span class="username">meow</span>
-        </div>
-        <div class="post-content">
-          <div class="text">這是範例串文，請留言</div>
-          <div class="media"></div>
-        </div>
-        <div class="post-stats">
-          <div class="stat"><i class="fa fa-heart"></i> <span>304</span></div>
-          <div class="stat"><i class="fa fa-comment"></i> <span>10</span></div>
-          <div class="stat"><i class="fa fa-share"></i> <span>38</span></div>
+      <div class="indivisial-area">
+        <div class="post">
+          <div class="post-header">
+            <i class="fa-regular fa-circle-user profile-pic"></i>
+            <span class="username">meow</span>
+          </div>
+          <div class="post-content">
+            <div class="text">這是範例串文，請留言</div>
+            <div class="media"></div>
+          </div>
+          <div class="post-stats">
+            <div class="stat"><i class="fa fa-heart"></i> <span>304</span></div>
+            <div class="stat">
+              <i class="fa fa-comment"></i> <span>10</span>
+            </div>
+            <div class="stat"><i class="fa fa-share"></i> <span>38</span></div>
+          </div>
         </div>
       </div>
     </section>

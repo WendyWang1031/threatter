@@ -6,6 +6,8 @@ export function updateMessage(selector, message) {
 
 export function displayPostElement(post) {
   let defaultText = "";
+  const indivisial_postElement = document.createElement("div");
+  indivisial_postElement.className = "indivisial-area";
   const postElement = document.createElement("div");
   postElement.className = "post";
   let mediaHtml = ""; // 初始化媒體HTML
@@ -41,7 +43,9 @@ export function displayPostElement(post) {
             <div class="stat"><i class="fa fa-comment"></i> <span></span></div>
             <div class="stat"><i class="fa fa-share"></i> <span></span></div>
           </div>`;
-  return postElement;
+
+  indivisial_postElement.appendChild(postElement);
+  return indivisial_postElement;
 }
 
 export function previewCreatePost(event) {
