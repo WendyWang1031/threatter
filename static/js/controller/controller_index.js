@@ -7,37 +7,53 @@ const postHomeURL = "/api/post/home";
 document.addEventListener("DOMContentLoaded", function () {
   // 更新貼文內容
   fetchGetPost();
-  document
-    .getElementById("file-input")
-    .addEventListener("change", previewCreatePost);
+  // document
+  //   .getElementById("file-input")
+  //   .addEventListener("change", previewCreatePost);
 
   // 提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");
   submitPostButton.addEventListener("click", function (event) {
     event.preventDefault();
-    const form = document.querySelector(".post-form");
-    const content = form.querySelector("textarea").value;
-    const file = form.querySelector("[type='file']").files[0];
-
-    submitPost(content, file);
+    validateForm();
   });
 });
 
 async function submitPost(content, file) {
-  let postData = { content };
+  console.log("file:", file);
+  let postData = {
+    post_parent_id: null,
+    content: {
+      text: content,
+      media: {
+        images: null,
+        videos: null,
+        audios: null,
+      },
+    },
+    visibility: "public",
+  };
+  console.log("postData:", postData);
 
   if (file) {
     try {
       const urls = await getPresignedUrl(file.name, file.type);
       await uploadFileToS3(urls.presigned_url, file);
-      postData.image_url = urls.cdn_url;
+
+      // 根據類型設定對應的 media 字段
+      if (file.type.startsWith("image/")) {
+        postData.content.media.images = urls.cdn_url;
+      } else if (file.type.startsWith("video/")) {
+        postData.content.media.videos = urls.cdn_url;
+      } else if (file.type.startsWith("audio/")) {
+        postData.content.media.audios = urls.cdn_url;
+      }
     } catch (error) {
-      console.log("Error uploading file 1: " + error.message);
+      console.log("Error uploading file: " + error.message);
       return;
     }
-  } else {
-    postData.image_url = null;
   }
+
   try {
     await fetchUpdatePost(postData);
   } catch (error) {
@@ -47,14 +63,13 @@ async function submitPost(content, file) {
 }
 
 async function fetchUpdatePost(postData) {
-  if (!validateForm()) {
-    return;
-  }
+  const token = localStorage.getItem("userToken");
 
   try {
     const response = await fetch(postURL, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
@@ -98,12 +113,35 @@ async function fetchGetPost() {
 function validateForm() {
   const form = document.querySelector(".post-form");
   const content = form.querySelector("textarea").value;
-  const fileInput = document.getElementById("file-input");
-  const fileCount = fileInput ? fileInput.files.length : 0;
 
-  if (content === "" && fileCount === 0) {
-    alert("請填寫文字欄位或上傳圖片");
+  // 初始媒體類型的值
+  let imageFile = null;
+  let videoFile = null;
+  let audioFile = null;
+
+  // 抓取所有媒體類型
+  const imageUploadInput = document.getElementById("image-upload");
+  const videoUploadInput = document.getElementById("video-upload");
+  const audioUploadInput = document.getElementById("audio-upload");
+
+  if (imageUploadInput.files.length > 0) {
+    imageFile = imageUploadInput.files[0];
+  }
+  if (videoUploadInput.files.length > 0) {
+    videoFile = videoUploadInput.files[0];
+  }
+  if (audioUploadInput.files.length > 0) {
+    audioFile = audioUploadInput.files[0];
+  }
+
+  if (
+    content === "" &&
+    imageUploadInput === 0 &&
+    videoUploadInput === 0 &&
+    audioUploadInput === 0
+  ) {
+    alert("請填寫文字欄位或上傳圖片、影片或音源");
     return false;
   }
-  return true;
+  submitPost(content, imageFile, videoFile, audioFile);
 }

@@ -27,7 +27,7 @@ export function displayPostElement(post) {
   }
 
   // 文字內容
-  const textContent = post.content.text;
+  const textContent = post.content.text || "";
 
   // 媒體內容
   let mediaHtml = "";

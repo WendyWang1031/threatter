@@ -92,34 +92,46 @@
             type="file"
             id="file-input"
             accept="image/*,video/*,audio/*"
-            class="input-file"
+            class="file-input"
             hidden
           />
           <div class="form-actions">
             <button type="button" class="action-btn">
+              <label for="image-upload" class="action-btn">
+                <i class="fa fa-image"></i>
+              </label>
               <input
                 type="file"
                 id="image-upload"
                 accept="image/*"
-                class="input-file"
+                class="file-input"
                 hidden
               />
-              <label for="image-upload" class="action-btn">
-                <i class="fa fa-image"></i>
+            </button>
+            <button type="button" class="action-btn">
+              <label for="video-upload" class="action-btn">
+                <i class="fa-solid fa-video"></i>
               </label>
+              <input
+                type="file"
+                id="video-upload"
+                accept="video/*"
+                class="file-input"
+                hidden
+              />
             </button>
 
             <button type="button" class="action-btn">
+              <label for="audio-upload" class="action-btn">
+                <i class="fa-solid fa-microphone"></i>
+              </label>
               <input
                 type="file"
                 id="audio-upload"
                 accept="audio/*"
-                class="input-file"
+                class="file-input"
                 hidden
               />
-              <label for="audio-upload" class="action-btn">
-                <i class="fa-solid fa-microphone"></i>
-              </label>
             </button>
           </div>
           <div class="create-submit">
