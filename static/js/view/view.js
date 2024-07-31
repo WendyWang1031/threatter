@@ -6,7 +6,7 @@ export function setElementDisplay(selector, display) {
 export function updateMessage(selector, message, isSuccess) {
   const element = document.querySelector(selector);
   element.textContent = message;
-  element.style.color = isSuccess ? "#367688" : "red";
+  element.style.color = isSuccess ? "#666666" : "red";
   element.style.display = "block";
 }
 

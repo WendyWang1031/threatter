@@ -114,16 +114,17 @@ export async function checkUserState(callback) {
   }
 
   const result = await Model.fetchUserState(token);
+  console.log("result:", result);
 
-  if (result.ok && result.data.data) {
+  if (result) {
     View.displayUserInterface(true);
-    localStorage.setItem("userName", result.data.data.name);
+    localStorage.setItem("userName", result.name);
     if (typeof callback === "function") {
-      callback(result.data.data);
+      callback(result);
     }
     return true;
   } else {
-    console.error("驗證用戶狀態失敗：", result.data.data);
+    console.error("驗證用戶狀態失敗：", result);
     View.displayUserInterface(false);
     if (result.status == 403) {
       localStorage.clear();

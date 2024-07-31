@@ -315,16 +315,18 @@ section.main-sider-area .login-signin-area {
   display: flex;
   align-items: center;
 }
-section.main-sider-area .login-signin-area .login-signin {
+section.main-sider-area .login-signin-area .login-signin,
+section.main-sider-area .login-signin-area .logout {
   color: #fff;
-  background: #333;
+  background: #454545;
   padding: 10px 20px;
   border-radius: 8px;
   border: 1px solid #ccc;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 5px rgba(74, 74, 74, 0.15);
 }
-section.main-sider-area .login-signin-area .login-signin:hover {
+section.main-sider-area .login-signin-area .login-signin:hover,
+section.main-sider-area .login-signin-area .logout:hover {
   background-color: #6c6c6c;
 }
 section.main-sider-area .login-signin-area .logout {

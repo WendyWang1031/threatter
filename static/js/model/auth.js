@@ -9,10 +9,11 @@ export async function fetchUserState(token) {
       },
     });
     const data = await response.json();
-    return { ok: response.ok, data: data };
+    console.log("fetchUserState data:", data);
+    return data;
   } catch (error) {
     console.error("Error Cheking User's State:", error);
-    return { ok: false, message: "Network error" };
+    return { suceess: false, message: "Network error" };
   }
 }
 
