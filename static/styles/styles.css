@@ -603,7 +603,6 @@ section.main-sider-area div.main-sider .sidebar .icon:active {
 
 section.member-self-area {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
