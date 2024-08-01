@@ -159,6 +159,10 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
   display: none;
 }
 
+audio {
+  width: 100%;
+}
+
 section.create-poster-card {
   position: fixed;
   top: 0;
