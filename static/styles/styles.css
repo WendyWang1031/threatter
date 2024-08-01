@@ -647,19 +647,19 @@ section.member-self-area .profile-header .profile-info .profile-avatar img {
 section.member-self-area .profile-header .profile-info .profile-details {
   flex-grow: 1;
 }
-section.member-self-area .profile-header .profile-info .profile-details .name {
+section.member-self-area .profile-header .profile-info .profile-details .user-name {
   font-size: 24px;
   font-weight: bold;
   margin: 0;
 }
-section.member-self-area .profile-header .profile-info .profile-details .account-id {
+section.member-self-area .profile-header .profile-info .profile-details .user-account-id {
   font-size: 16px;
   color: #888;
 }
-section.member-self-area .profile-header .profile-info .profile-details .fans {
+section.member-self-area .profile-header .profile-info .profile-details .user-fans {
   margin: 10px 0;
 }
-section.member-self-area .profile-header .profile-info .profile-details .fans p {
+section.member-self-area .profile-header .profile-info .profile-details .user-fans p {
   margin: 0;
 }
 section.member-self-area .profile-header .edit-profile-button {

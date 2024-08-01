@@ -724,18 +724,18 @@ section.member-self-area {
       .profile-details {
         flex-grow: 1;
 
-        .name {
+        .user-name {
           font-size: 24px;
           font-weight: bold;
           margin: 0;
         }
 
-        .account-id {
+        .user-account-id {
           font-size: 16px;
           color: #888;
         }
 
-        .fans {
+        .user-fans {
           margin: 10px 0;
 
           p {
