@@ -14,6 +14,10 @@ import { closeCreatePost } from "../view/view_closePost.js";
 const postURL = "/api/post";
 const postHomeURL = "/api/post/home";
 
+let currentPage = 0;
+let hasNextPage = true;
+let isWaitingForData = false;
+
 document.addEventListener("DOMContentLoaded", async function () {
   displayCreatePost();
   PermissionAllIcon();
@@ -139,21 +143,37 @@ async function fetchUpdatePost(postData) {
 
 async function fetchGetPost() {
   try {
-    const response = await fetch(postHomeURL);
+    //開始新的資料加載前設定
+    isWaitingForData = true;
 
+    const response = await fetch(`${postHomeURL}?page=${currentPage}`);
     const result = await response.json();
 
-    if (result) {
+    let lastItem = document.querySelector(".indivisial-area:last-child");
+    if (result && result.data.length > 0) {
+      currentPage++;
+      hasNextPage = result.next_page != null;
+      console.log("hasNextPage :", hasNextPage);
+      console.log("currentPage :", currentPage);
+
       const postsContainer = document.querySelector(".postsContainer");
       result.data.forEach((post) => {
         const postElement = displayPostElement(post);
         postsContainer.appendChild(postElement);
       });
+
+      let newItem = document.querySelector(".indivisial-area:last-child");
+      if (lastItem) observer.unobserve(lastItem);
+      if (hasNextPage) {
+        if (newItem) observer.observe(newItem);
+      }
     } else {
-      console.error("Failed to retrieve post data.");
+      hasNextPage = false;
     }
+    isWaitingForData = false;
   } catch (error) {
     console.error("Error fetching post data:", error);
+    isWaitingForData = false;
   }
 }
 
@@ -177,3 +197,14 @@ async function fetchGetMemberDetail() {
     console.error("Error fetching post data:", error);
   }
 }
+const observer = new IntersectionObserver(
+  (entries) => {
+    const firstEntry = entries[0];
+
+    if (firstEntry.isIntersecting && hasNextPage && !isWaitingForData) {
+      //調用fetch函式的時候使用非同步加載
+      fetchGetPost();
+    }
+  },
+  { threshold: 0.5 }
+);
