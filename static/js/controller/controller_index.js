@@ -153,8 +153,6 @@ async function fetchGetPost() {
     if (result && result.data.length > 0) {
       currentPage++;
       hasNextPage = result.next_page != null;
-      console.log("hasNextPage :", hasNextPage);
-      console.log("currentPage :", currentPage);
 
       const postsContainer = document.querySelector(".postsContainer");
       result.data.forEach((post) => {

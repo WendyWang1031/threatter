@@ -1,5 +1,5 @@
 import { displayMemberDetail } from "../view/view_member.js";
-import { displayPostElement } from "../view/view_posts.js";
+
 import { uploadMediaFile } from "./controller_upload.js";
 
 export async function fetchMemberDetail() {
@@ -15,32 +15,6 @@ export async function fetchMemberDetail() {
 
     if (result) {
       displayMemberDetail(result);
-    } else {
-      console.error("Failed to retrieve post data.");
-    }
-  } catch (error) {
-    console.error("Error fetching post data:", error);
-  }
-}
-
-export async function fetchGetPost() {
-  const account_id = localStorage.getItem("account_id");
-  const memberPostsUrl = `/api/member/${encodeURIComponent(account_id)}/posts`;
-  if (!account_id) {
-    console.log("User not logged in, using default avatar.");
-    return;
-  }
-  try {
-    const response = await fetch(memberPostsUrl);
-
-    const result = await response.json();
-
-    if (result) {
-      const postsContainer = document.querySelector(".postsContainer");
-      result.data.forEach((post) => {
-        const postElement = displayPostElement(post);
-        postsContainer.appendChild(postElement);
-      });
     } else {
       console.error("Failed to retrieve post data.");
     }
