@@ -11,24 +11,64 @@ export function displayCreatePostAccount() {
 }
 
 export function previewCreatePost(event) {
-  const file = event.target.files[0];
-  const preview = document.getElementById("preview");
-  if (file) {
+  const imageUploadInput = document.getElementById("image-upload");
+  const videoUploadInput = document.getElementById("video-upload");
+  const audioUploadInput = document.getElementById("audio-upload");
+
+  const mediaPreviewContainer = document.getElementById("media-preview");
+
+  // 文件選擇處理
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    mediaPreviewContainer.innerHTML = "";
+
+    const fileType = file.type.split("/")[0];
     const reader = new FileReader();
 
     reader.onload = function (e) {
-      const url = e.target.result;
-      if (file.type.startsWith("image/")) {
-        preview.innerHTML = `<img src="${url}" alt="Image preview">`;
-      } else if (file.type.startsWith("video/")) {
-        preview.innerHTML = `<video src="${url}" controls></video>`;
-      } else if (file.type.startsWith("audio/")) {
-        preview.innerHTML = `<audio src="${url}" controls></audio>`;
+      let mediaElement;
+
+      // 不同媒體類型
+      switch (fileType) {
+        case "image":
+          mediaElement = document.createElement("img");
+          mediaElement.src = e.target.result;
+          break;
+        case "video":
+          mediaElement = document.createElement("video");
+          mediaElement.src = e.target.result;
+          mediaElement.controls = true;
+          break;
+        case "audio":
+          mediaElement = document.createElement("audio");
+          mediaElement.src = e.target.result;
+          mediaElement.controls = true;
+          break;
+        default:
+          mediaElement = document.createTextNode("Unsupported media type.");
       }
+
+      // 樣式
+      if (mediaElement) {
+        mediaElement.style.maxWidth = "100%";
+        mediaElement.style.maxHeight = "200px";
+        mediaElement.style.borderRadius = "10px";
+        mediaElement.style.marginTop = "10px";
+      }
+
+      mediaPreviewContainer.appendChild(mediaElement);
     };
 
-    reader.readAsDataURL(file);
+    if (fileType === "image" || fileType === "video" || fileType === "audio") {
+      reader.readAsDataURL(file);
+    }
   }
+
+  imageUploadInput.addEventListener("change", handleFileSelect);
+  videoUploadInput.addEventListener("change", handleFileSelect);
+  audioUploadInput.addEventListener("change", handleFileSelect);
 }
 
 export function displayCreatePost() {
@@ -59,7 +99,7 @@ export function displayMemberDetail(data) {
   const accountIdSpan = document.querySelector(".account_id");
   accountIdSpan.textContent = data.account_id;
   if (data.avatar) {
-    const avatar = document.querySelector(".profile-pic");
+    const avatar = document.querySelector(".profile-pic-create-post");
     const img = document.createElement("img");
     img.src = data.avatar;
     img.classList.add("profile-pic");

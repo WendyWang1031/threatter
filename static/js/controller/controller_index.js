@@ -1,6 +1,6 @@
 import {
-  previewCreatePost,
   displayCreatePostAccount,
+  previewCreatePost,
   displayCreatePost,
   displayMemberDetail,
 } from "../view/view_index.js";
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   await fetchGetMemberDetail();
   // 更新貼文內容
   fetchGetPost();
+  previewCreatePost();
 
   // 提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");
@@ -35,7 +36,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 function validateForm() {
-  const form = document.querySelector(".post-form");
   const content = document.querySelector(".post-input").value;
   console.log("content:", content);
 
