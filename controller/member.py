@@ -41,10 +41,10 @@ async def update_member_data(
         
         member_id = current_user["account_id"]
         fields_updated = False
-
+       
         # 檢查是否有效的欄位更新
         if (member_data.name and member_data.name.strip()) or \
-            (member_data.visibility and member_data.name.visibility()) or \
+            (member_data.visibility and member_data.name.strip()) or \
             (member_data.self_intro and member_data.self_intro.strip()) or \
             (member_data.avatar and member_data.avatar.strip()):
                 fields_updated = True
