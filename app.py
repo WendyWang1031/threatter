@@ -505,3 +505,7 @@ async def fetch_put_user_signin(user_login_request : UserPutReq) -> JSONResponse
 @app.get("/", include_in_schema=False)
 async def index(request: Request):
     return FileResponse("./static/index.html", media_type="text/html")
+
+@app.get("/member/{account_id}", include_in_schema=False)
+async def member(request: Request):
+    return FileResponse("./static/member.html", media_type="text/html")
