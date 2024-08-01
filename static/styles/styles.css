@@ -223,6 +223,12 @@ section.create-poster-card .create-poster-container .post-form .form-header .acc
   color: #424242;
   font-weight: bold;
 }
+section.create-poster-card .create-poster-container .post-form .media-preview {
+  border: none;
+  margin-left: 50px;
+  outline: none;
+  resize: none;
+}
 section.create-poster-card .create-poster-container .post-form .post-input {
   padding: 10px;
   border: none;

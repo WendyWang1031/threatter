@@ -255,6 +255,12 @@ section.create-poster-card {
           font-weight: bold;
         }
       }
+      .media-preview {
+        border: none;
+        margin-left: 50px;
+        outline: none;
+        resize: none;
+      }
       .post-input {
         padding: 10px;
         border: none;
