@@ -85,7 +85,6 @@ section.postsContainer .indivisial-area .post .post-header .profile-pic {
      object-fit: cover;
   font-size: 40px;
   color: #d7d7d7;
-  border-radius: 50%;
   margin-right: 10px;
 }
 section.postsContainer .indivisial-area .post .post-header a:link {
@@ -600,4 +599,212 @@ section.main-sider-area div.main-sider .sidebar .icon:active {
 }
 .signup-mask form.signup .signup-content .main .go-to-signin:hover {
   background-color: #dae0e5;
+}
+
+section.member-self-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+section.member-self-area .profile-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 0 20px;
+  background-color: #fff;
+  border: 1px solid #e1e4e8;
+  width: 600px;
+}
+section.member-self-area .profile-header .profile-info {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+section.member-self-area .profile-header .profile-info .profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+section.member-self-area .profile-header .profile-info .profile-avatar .profile-pic {
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  font-size: 80px;
+  color: #d7d7d7;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+section.member-self-area .profile-header .profile-info .profile-avatar img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+section.member-self-area .profile-header .profile-info .profile-details {
+  flex-grow: 1;
+}
+section.member-self-area .profile-header .profile-info .profile-details .name {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+section.member-self-area .profile-header .profile-info .profile-details .account-id {
+  font-size: 16px;
+  color: #888;
+}
+section.member-self-area .profile-header .profile-info .profile-details .fans {
+  margin: 10px 0;
+}
+section.member-self-area .profile-header .profile-info .profile-details .fans p {
+  margin: 0;
+}
+section.member-self-area .profile-header .edit-profile-button {
+  margin: 10px;
+}
+section.member-self-area .profile-header .edit-profile-button button {
+  width: 100%;
+  padding: 5px 10px;
+  font-weight: 500;
+  border: 0.5px solid #dbdbdb;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+  transition: color 0.2s;
+  transition: transform 0.2s ease;
+}
+section.member-self-area .profile-header .edit-profile-button button:hover {
+  background: #f2f2f2;
+}
+section.member-self-area .profile-header .edit-profile-button button:active {
+  transform: scale(1.1);
+}
+section.member-self-area .profile-header .profile-nav {
+  display: flex;
+  justify-content: center;
+}
+section.member-self-area .profile-header .profile-nav .nav-button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s;
+  transition: transform 0.2s ease;
+}
+section.member-self-area .profile-header .profile-nav .nav-button.active {
+  border-bottom-color: #333;
+  font-weight: bold;
+}
+section.member-self-area .profile-header .profile-nav .nav-button:hover {
+  color: #333;
+}
+section.member-self-area .profile-header .profile-nav .nav-button:active {
+  transform: scale(1.1);
+}
+
+.edit-profile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.edit-profile-modal .edit-profile-content {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  padding: 20px;
+  text-align: center;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .name-avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group {
+  margin-bottom: 10px;
+  text-align: left;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group input[type=text],
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group textarea {
+  resize: none;
+  height: 60px;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.name-avatar {
+  display: flex;
+  justify-content: space-between;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.name-avatar .name {
+  flex: 1;
+  margin-right: 20px;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.name-avatar .edit-profile-avatar {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.name-avatar .edit-profile-avatar .profile-pic,
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.name-avatar .edit-profile-avatar .avatar-img {
+  font-size: 50px;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+  object-fit: cover;
+  color: #d7d7d7;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.privacy-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.privacy-toggle label {
+  margin: 0;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.privacy-toggle input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .save-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #949494;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .save-button:hover {
+  background-color: #c1c1c1;
 }/*# sourceMappingURL=styles.css.map */
