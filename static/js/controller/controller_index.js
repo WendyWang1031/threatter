@@ -1,16 +1,13 @@
 import {
-  displayPostElement,
   previewCreatePost,
   displayCreatePostAccount,
   displayCreatePost,
 } from "../view/view_index.js";
-import {
-  getPresignedUrl,
-  uploadFileToS3,
-  uploadMediaFile,
-} from "./controller_upload.js";
+import { uploadMediaFile } from "./controller_upload.js";
 
-import { closeCreatePost } from "./controller_createPost.js";
+import { displayPostElement } from "../view/view_posts.js";
+
+import { closeCreatePost } from "../view/view_closePost.js";
 
 const postURL = "/api/post";
 const postHomeURL = "/api/post/home";
