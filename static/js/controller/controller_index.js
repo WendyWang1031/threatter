@@ -2,7 +2,9 @@ import {
   previewCreatePost,
   displayCreatePostAccount,
   displayCreatePost,
+  displayMemberDetail,
 } from "../view/view_index.js";
+import { PermissionAllIcon } from "../view/view_icon.js";
 import { uploadMediaFile } from "./controller_upload.js";
 
 import { displayPostElement } from "../view/view_posts.js";
@@ -14,8 +16,9 @@ const postHomeURL = "/api/post/home";
 
 document.addEventListener("DOMContentLoaded", async function () {
   displayCreatePost();
+  PermissionAllIcon();
   closeCreatePost();
-  await displaymemberDetail();
+  await fetchGetMemberDetail();
   // 更新貼文內容
   fetchGetPost();
 
@@ -29,7 +32,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 function validateForm() {
   const form = document.querySelector(".post-form");
-  const content = form.querySelector("textarea").value;
+  const content = document.querySelector(".post-input").value;
+  console.log("content:", content);
 
   // 初始媒體類型的值
   let imageFile = null;
@@ -153,7 +157,7 @@ async function fetchGetPost() {
   }
 }
 
-async function displaymemberDetail() {
+async function fetchGetMemberDetail() {
   const account_id = localStorage.getItem("account_id");
   const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
   if (!account_id) {
@@ -165,14 +169,7 @@ async function displaymemberDetail() {
     const result = await response.json();
 
     if (result) {
-      const accountIdSpan = document.querySelector(".account_id");
-      accountIdSpan.textContent = result.account_id;
-
-      const avatar = document.querySelector(".profile-pic");
-      const img = document.createElement("img");
-      img.src = result.avatar;
-      img.classList.add("profile-pic");
-      avatar.replaceWith(img);
+      displayMemberDetail(result);
     } else {
       console.error("Failed to retrieve post data.");
     }

@@ -4,8 +4,10 @@ import {
   validateForm,
 } from "./controller/controller_member.js";
 import { closeEditMember } from "./view/view_member.js";
+import { PermissionAllIcon } from "./view/view_icon.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
+  PermissionAllIcon();
   closeEditMember();
   fetchMemberDetail();
   await fetchGetPost();

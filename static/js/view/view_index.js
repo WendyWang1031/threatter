@@ -37,11 +37,6 @@ export function displayCreatePost() {
   const userPostContainer = document.querySelector(".user-post-container");
   const createPosterCard = document.querySelector(".create-poster-card");
   const plusBtn = document.querySelector(".create-post-btn");
-  const notify = document.querySelector(".heart");
-  const memeber = document.querySelector(".profile");
-  const profileIcon = document.querySelector(".icon.profile");
-
-  const signin_mask = document.querySelector(".signin-mask");
 
   if (!token) {
     userPostContainer.addEventListener("click", function () {
@@ -50,23 +45,27 @@ export function displayCreatePost() {
     plusBtn.addEventListener("click", function () {
       signin_mask.style.display = "flex";
     });
-    notify.addEventListener("click", function () {
-      signin_mask.style.display = "flex";
-    });
-    memeber.addEventListener("click", function () {
-      signin_mask.style.display = "flex";
-    });
   } else {
-    const account_id = localStorage.getItem("account_id");
     userPostContainer.addEventListener("click", function () {
       createPosterCard.style.display = "flex";
     });
     plusBtn.addEventListener("click", function () {
       createPosterCard.style.display = "flex";
     });
-    profileIcon.addEventListener("click", function () {
-      const memberUrl = `/member/${encodeURIComponent(account_id)}`;
-      window.location.href = memberUrl;
-    });
+  }
+}
+
+export function displayMemberDetail(data) {
+  const accountIdSpan = document.querySelector(".account_id");
+  accountIdSpan.textContent = data.account_id;
+  if (data.avatar) {
+    const avatar = document.querySelector(".profile-pic");
+    const img = document.createElement("img");
+    img.src = data.avatar;
+    img.classList.add("profile-pic");
+    avatar.replaceWith(img);
+  } else {
+    const icon = document.createElement("i");
+    icon.classList.add("fa-regular", "fa-circle-user", "profile-pic");
   }
 }

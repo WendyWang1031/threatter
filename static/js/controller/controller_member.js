@@ -120,7 +120,7 @@ async function fetchUpdateMember(memberData) {
 
       throw new Error(`HTTP status ${response.status}`);
     } else {
-      //   window.location = "/";
+      window.location.reload();
     }
   } catch (error) {
     console.error("Error updating member data", error);

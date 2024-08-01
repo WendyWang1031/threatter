@@ -9,11 +9,17 @@ export function displayMemberDetail(data) {
   const fans_counts = document.querySelector(".user-fans");
   fans_counts.textContent = data.fans_counts + " 位粉絲";
 
-  const avatar = document.querySelector(".profile-pic");
-  const img = document.createElement("img");
-  img.src = data.avatar;
-  img.classList.add("profile-pic");
-  avatar.replaceWith(img);
+  // 頭像判斷
+  const avatarUrl = data.avatar;
+  if (avatarUrl) {
+    const img = document.createElement("img");
+    img.src = avatarUrl;
+    img.alt = "User Avatar";
+    img.classList.add("profile-pic");
+  } else {
+    const icon = document.createElement("i");
+    icon.classList.add("fa-regular", "fa-circle-user", "profile-pic");
+  }
 
   // 編輯會員介面的顯示
   const editName = document.querySelector("#username");
