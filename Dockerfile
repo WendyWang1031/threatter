@@ -19,5 +19,6 @@ RUN apt-get update \
 COPY . /threatter
 
 # 容器啟動時執行的命令
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
 
