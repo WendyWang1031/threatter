@@ -713,6 +713,29 @@ section.member-self-area .profile-header .profile-info .profile-details .user-fa
 section.member-self-area .profile-header .profile-info .profile-details .user-fans p {
   margin: 0;
 }
+section.member-self-area .profile-header .follow-profile-button {
+  margin: 10px;
+}
+section.member-self-area .profile-header .follow-profile-button button {
+  width: 100%;
+  padding: 5px 10px;
+  font-weight: 500;
+  border: 0.5px solid #2d2d2d;
+  border-radius: 5px;
+  color: #ffffff;
+  background: #2d2d2d;
+  cursor: pointer;
+  transition: color 0.2s;
+  transition: transform 0.2s ease;
+}
+section.member-self-area .profile-header .follow-profile-button button:hover {
+  background: #f2f2f2;
+  color: #2d2d2d;
+  border: 0.5px solid #f2f2f2;
+}
+section.member-self-area .profile-header .follow-profile-button button:active {
+  transform: scale(1.1);
+}
 section.member-self-area .profile-header .edit-profile-button {
   margin: 10px;
 }
