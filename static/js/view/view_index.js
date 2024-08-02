@@ -77,6 +77,7 @@ export function displayCreatePost() {
   const userPostContainer = document.querySelector(".user-post-container");
   const createPosterCard = document.querySelector(".create-poster-card");
   const plusBtn = document.querySelector(".create-post-btn");
+  const signin_mask = document.querySelector(".signin-mask");
 
   if (!token) {
     userPostContainer.addEventListener("click", function () {
