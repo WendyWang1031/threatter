@@ -21,7 +21,10 @@ export function displayPostElement(post) {
   }
 
   // 文字內容
-  const textContent = post.content.text || "";
+  const textContent =
+    post.content && post.content.text
+      ? post.content.text.replace(/\n/g, "<br>")
+      : "";
 
   // 媒體內容
   let mediaHtml = "";
