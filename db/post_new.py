@@ -266,7 +266,7 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
             )
             posts.append(post)
 
-            print("posts:",posts)
+            # print("posts:",posts)
 
         connection.commit()
         
