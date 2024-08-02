@@ -98,13 +98,24 @@ export function displayCreatePost() {
 
 export function displayMemberDetail(data) {
   const accountIdSpan = document.querySelector(".account_id");
+
   accountIdSpan.textContent = data.account_id;
   if (data.avatar) {
-    const avatar = document.querySelector(".profile-pic-create-post");
-    const img = document.createElement("img");
-    img.src = data.avatar;
-    img.classList.add("profile-pic");
-    avatar.replaceWith(img);
+    const avatarCreatePost = document.querySelector(".profile-pic-create-post");
+    if (avatarCreatePost) {
+      const imgCreatePost = document.createElement("img");
+      imgCreatePost.src = data.avatar;
+      imgCreatePost.classList.add("profile-pic");
+      avatarCreatePost.replaceWith(imgCreatePost);
+    }
+
+    const avatarUserInfoPost = document.querySelector(".user-info-profile-pic");
+    if (avatarUserInfoPost) {
+      const imgUserInfoPost = document.createElement("img");
+      imgUserInfoPost.src = data.avatar;
+      imgUserInfoPost.classList.add("profile-pic");
+      avatarUserInfoPost.replaceWith(imgUserInfoPost);
+    }
   } else {
     const icon = document.createElement("i");
     icon.classList.add("fa-regular", "fa-circle-user", "profile-pic");
