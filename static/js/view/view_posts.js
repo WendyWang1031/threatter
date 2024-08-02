@@ -58,7 +58,7 @@ export function displayPostElement(post) {
               <div class="menu-button">
               <i class="fa fa-ellipsis-h"></i>
               <ul class="dropdown-menu">
-                <li class="menu-item" id="delete-post">刪除</li>
+                <li class="menu-item delete-post" id="delete-post">刪除</li>
                 <li class="menu-item copy-link" id="copy-link">複製連結</li>
               </ul>
               </div>
@@ -101,6 +101,23 @@ export function displayMenuBtn() {
       if (dropdownMenu) {
         dropdownMenu.style.display =
           dropdownMenu.style.display === "block" ? "none" : "block";
+
+        const postElement = event.target.closest(".post");
+        const deleteButton = dropdownMenu.querySelector(".delete-post");
+        const token = localStorage.getItem("userToken");
+        const currentAccountId = localStorage.getItem("account_id");
+
+        if (postElement && deleteButton) {
+          const accountIdElement = postElement.querySelector(".account_id");
+          if (accountIdElement) {
+            const accountId = accountIdElement.textContent.trim();
+            if (!token || accountId !== currentAccountId) {
+              deleteButton.style.display = "none";
+            } else {
+              deleteButton.style.display = "block";
+            }
+          }
+        }
       }
     }
   });
@@ -135,11 +152,6 @@ export function displayMenuBtn() {
         const postIdElement = postElement.querySelector(".post_id");
         const accountIdElement = postElement.querySelector(".account_id");
 
-        if (!postIdElement || !accountIdElement) {
-          console.error("未能找到 post_id 或 account_id 元素");
-          return;
-        }
-
         const postId = postIdElement.textContent.trim();
         const accountId = accountIdElement.textContent.trim();
 
@@ -154,4 +166,18 @@ export function displayMenuBtn() {
           });
       }
     });
+}
+
+export function displayMenuOptions() {
+  document.querySelectorAll(".post").forEach((postElement) => {
+    const accountId = postElement
+      .querySelector(".account_id")
+      .textContent.trim();
+    const deleteButton = postElement.querySelector("#delete-post");
+
+    // 如果沒有 Token 或是該貼文非當前用戶的id
+    if (!token || accountId !== currentAccountId) {
+      deleteButton.style.display = "none";
+    }
+  });
 }
