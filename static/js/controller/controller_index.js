@@ -7,7 +7,7 @@ import {
 import { PermissionAllIcon } from "../view/view_icon.js";
 import { uploadMediaFile } from "./controller_upload.js";
 
-import { displayPostElement } from "../view/view_posts.js";
+import { displayPostElement, displayMenuBtn } from "../view/view_posts.js";
 
 import { closeCreatePost } from "../view/view_closePost.js";
 
@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // 更新貼文內容
   fetchGetPost();
   previewCreatePost();
+  displayMenuBtn();
 
   // 提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");

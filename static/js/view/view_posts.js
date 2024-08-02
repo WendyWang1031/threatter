@@ -59,7 +59,7 @@ export function displayPostElement(post) {
               <i class="fa fa-ellipsis-h"></i>
               <ul class="dropdown-menu">
                 <li class="menu-item" id="delete-post">刪除</li>
-                <li class="menu-item" id="copy-link">複製連結</li>
+                <li class="menu-item copy-link" id="copy-link">複製連結</li>
               </ul>
               </div>
             </div>
@@ -82,4 +82,76 @@ export function displayPostElement(post) {
 
   indivisial_postElement.appendChild(postElement);
   return indivisial_postElement;
+}
+
+export function displayMenuBtn() {
+  document.body.addEventListener("click", (event) => {
+    if (event.target.closest(".menu-button")) {
+      event.stopPropagation(); // 阻止泡沫事件
+
+      // 關閉菜單
+      document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+        menu.style.display = "none";
+      });
+
+      // 切換菜單
+      const dropdownMenu = event.target
+        .closest(".menu-button")
+        .querySelector(".dropdown-menu");
+      if (dropdownMenu) {
+        dropdownMenu.style.display =
+          dropdownMenu.style.display === "block" ? "none" : "block";
+      }
+    }
+  });
+  // 點擊其他地方隱藏菜單
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+      menu.style.display = "none";
+    });
+  });
+
+  // 刪除
+  document.body.addEventListener("click", (event) => {
+    if (event.target.id === "delete-post") {
+      const post = event.target.closest(".post");
+      if (post) {
+        post.remove();
+      }
+    }
+  });
+
+  // 複製連接
+  document
+    .querySelector(".postsContainer")
+    .addEventListener("click", function (event) {
+      const target = event.target;
+
+      // 檢查是否點擊了複製連結按鈕
+      if (target.matches(".copy-link")) {
+        // 抓取 post 元素
+        const postElement = target.closest(".post");
+
+        const postIdElement = postElement.querySelector(".post_id");
+        const accountIdElement = postElement.querySelector(".account_id");
+
+        if (!postIdElement || !accountIdElement) {
+          console.error("未能找到 post_id 或 account_id 元素");
+          return;
+        }
+
+        const postId = postIdElement.textContent.trim();
+        const accountId = accountIdElement.textContent.trim();
+
+        const postLink = `/member/${accountId}/post/${postId}`;
+        navigator.clipboard
+          .writeText(postLink)
+          .then(() => {
+            alert("連結已複製");
+          })
+          .catch((err) => {
+            console.error("複製連接時出錯 ", err);
+          });
+      }
+    });
 }
