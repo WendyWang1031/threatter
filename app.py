@@ -2,7 +2,8 @@ from fastapi import *
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer
-from fastapi.responses import FileResponse 
+from fastapi.responses import FileResponse ,RedirectResponse
+
 
 from controller.post import * 
 from controller.post_new import * 
@@ -509,3 +510,8 @@ async def index(request: Request):
 @app.get("/member/{account_id}", include_in_schema=False)
 async def member(request: Request):
     return FileResponse("./static/member.html", media_type="text/html")
+
+@app.get("/member")
+async def redirect_to_home(request: Request):
+    return RedirectResponse(url="/")
+ 
