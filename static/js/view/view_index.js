@@ -74,7 +74,7 @@ export function previewCreatePost(event) {
 export function displayCreatePost() {
   const token = localStorage.getItem("userToken");
 
-  const userPostContainer = document.querySelector(".user-post-container");
+  const userPostContainer = document.querySelector(".user-post-container-fake");
   const createPosterCard = document.querySelector(".create-poster-card");
   const plusBtn = document.querySelector(".create-post-btn");
   const signin_mask = document.querySelector(".signin-mask");

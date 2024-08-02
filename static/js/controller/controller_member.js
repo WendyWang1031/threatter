@@ -137,13 +137,14 @@ export function validateForm() {
 }
 
 async function submitPost(content, imageFile, userName) {
+  document.getElementById("loading").classList.remove("hidden");
+
   let memberData = {
     name: userName || "",
     visibility: "public",
     self_intro: content || "",
     avatar: "",
   };
-  console.log("memberData:", memberData);
 
   // 圖片
   if (imageFile) {
@@ -158,6 +159,8 @@ async function submitPost(content, imageFile, userName) {
   } catch (error) {
     console.error("Error submitting member:", error);
     alert("Failed to submit member: " + error.message);
+  } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }
 

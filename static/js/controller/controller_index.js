@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 function validateForm() {
   const content = document.querySelector(".post-input").value;
-  console.log("content:", content);
 
   // 初始媒體類型的值
   let imageFile = null;
@@ -82,7 +81,6 @@ async function submitPost(content, imageFile, videoFile, audioFile) {
     },
     visibility: "public",
   };
-  console.log("postData:", postData);
 
   // 圖片
   if (imageFile) {
@@ -117,6 +115,7 @@ async function submitPost(content, imageFile, videoFile, audioFile) {
 }
 
 async function fetchUpdatePost(postData) {
+  document.getElementById("loading").classList.remove("hidden");
   const token = localStorage.getItem("userToken");
 
   try {
@@ -129,6 +128,8 @@ async function fetchUpdatePost(postData) {
       body: JSON.stringify(postData),
     });
 
+    console.log("body:", JSON.stringify(postData));
+
     if (!response.ok) {
       console.log("Failed to post details:", response.status);
 
@@ -139,6 +140,7 @@ async function fetchUpdatePost(postData) {
   } catch (error) {
     console.error("Error updating post data", error);
   } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }
 
