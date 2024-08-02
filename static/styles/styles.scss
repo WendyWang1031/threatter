@@ -96,29 +96,74 @@ section.postsContainer {
       .post-header {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         margin-bottom: 10px;
+        .user-info-post {
+          display: flex;
+          align-items: center;
+          .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            font-size: 40px;
+            color: #d7d7d7;
 
-        .profile-pic {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          object-fit: cover;
-          font-size: 40px;
-          color: #d7d7d7;
+            margin-right: 10px;
+          }
+          a:link {
+            text-decoration: none;
+          }
+          a:hover {
+            color: rgb(110, 110, 110);
+          }
 
-          margin-right: 10px;
+          .account_id {
+            font-size: 16px;
+            color: $font-color;
+            font-weight: bold;
+          }
         }
-        a:link {
-          text-decoration: none;
-        }
-        a:hover {
-          color: rgb(110, 110, 110);
-        }
+        .menu-button {
+          position: relative;
+          cursor: pointer;
 
-        .account_id {
-          font-size: 16px;
-          color: $font-color;
-          font-weight: bold;
+          i {
+            font-size: 20px;
+            color: #9b9b9b;
+          }
+          &:hover {
+            background-color: #d2d2d2;
+          }
+
+          .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            z-index: 1000;
+            width: 150px;
+
+            .menu-item {
+              padding: 10px;
+              cursor: pointer;
+              text-align: left;
+              &:hover {
+                background-color: #f0f0f0;
+              }
+
+              &#delete-post {
+                color: red;
+              }
+            }
+          }
         }
       }
 

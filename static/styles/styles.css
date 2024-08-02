@@ -75,9 +75,14 @@ section.postsContainer .indivisial-area .post {
 section.postsContainer .indivisial-area .post .post-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
 }
-section.postsContainer .indivisial-area .post .post-header .profile-pic {
+section.postsContainer .indivisial-area .post .post-header .user-info-post {
+  display: flex;
+  align-items: center;
+}
+section.postsContainer .indivisial-area .post .post-header .user-info-post .profile-pic {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -87,16 +92,53 @@ section.postsContainer .indivisial-area .post .post-header .profile-pic {
   color: #d7d7d7;
   margin-right: 10px;
 }
-section.postsContainer .indivisial-area .post .post-header a:link {
+section.postsContainer .indivisial-area .post .post-header .user-info-post a:link {
   text-decoration: none;
 }
-section.postsContainer .indivisial-area .post .post-header a:hover {
+section.postsContainer .indivisial-area .post .post-header .user-info-post a:hover {
   color: rgb(110, 110, 110);
 }
-section.postsContainer .indivisial-area .post .post-header .account_id {
+section.postsContainer .indivisial-area .post .post-header .user-info-post .account_id {
   font-size: 16px;
   color: #424242;
   font-weight: bold;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button {
+  position: relative;
+  cursor: pointer;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button i {
+  font-size: 20px;
+  color: #9b9b9b;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button:hover {
+  background-color: #d2d2d2;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  width: 150px;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item {
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item:hover {
+  background-color: #f0f0f0;
+}
+section.postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item#delete-post {
+  color: red;
 }
 section.postsContainer .indivisial-area .post .post-content {
   font-size: 14px;
