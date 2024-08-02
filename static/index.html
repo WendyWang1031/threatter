@@ -24,6 +24,10 @@
       </div>
     </header>
 
+    <div id="loading" class="loading-overlay hidden">
+      <div class="loader"></div>
+    </div>
+
     <section class="main-sider-area">
       <div class="main-sider">
         <!-- <div class="icon logo"><i class="fa-solid fa-at"></i></div> -->
@@ -43,10 +47,10 @@
       </div>
     </section>
 
-    <section class="user-post-container">
-      <div class="user-post">
-        <form class="post-form">
-          <div class="user-info">
+    <section class="user-post-container-fake">
+      <div class="user-post-fake">
+        <form class="post-form-fake">
+          <div class="user-info-fake">
             <i
               class="fa-regular fa-circle-user profile-pic user-info-profile-pic"
             ></i>
@@ -57,10 +61,10 @@
             id="text"
             name="text"
             placeholder="建立串文....."
-            class="input-text"
+            class="input-text-fake"
           />
 
-          <button class="send-button">發佈</button>
+          <button class="send-button-fake">發佈</button>
         </form>
       </div>
     </section>
@@ -75,6 +79,9 @@
           </div>
           <div class="media-preview" id="media-preview"></div>
           <textarea
+            rows="6"
+            cols="40"
+            wrap="hard"
             type="text"
             placeholder="建立串文"
             class="post-input"
