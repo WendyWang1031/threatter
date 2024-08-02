@@ -51,10 +51,20 @@ export function displayPostElement(post) {
 
   postElement.innerHTML = `
             <div class="post-header">
-            ${avatarHtml}
-            <a href="" class="account_id">${account_id}</a>    
+              <div class="user-info-post">
+              ${avatarHtml}
+              <a href="" class="account_id">${account_id}</a>    
+              </div>
+              <div class="menu-button">
+              <i class="fa fa-ellipsis-h"></i>
+              <ul class="dropdown-menu">
+                <li class="menu-item" id="delete-post">刪除</li>
+                <li class="menu-item" id="copy-link">複製連結</li>
+              </ul>
+              </div>
             </div>
             <div class="post-content">
+              <div class="post_id" style="display: none">${post.post_id}</div>
               <div class="text">${textContent}</div>
               <div class="media">${mediaHtml}</div>
             </div>
