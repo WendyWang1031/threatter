@@ -5,13 +5,14 @@ import {
 } from "./controller/controller_member.js";
 import { closeEditMember } from "./view/view_member.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
-import { displayPostElement } from "./view/view_posts.js";
+import { displayPostElement, displayMenuBtn } from "./view/view_posts.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
   closeEditMember();
   fetchMemberDetail();
   fetchGetPost();
+  displayMenuBtn();
 
   uploadAvatar();
 

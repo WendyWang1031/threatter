@@ -129,11 +129,32 @@ export function displayMenuBtn() {
   });
 
   // 刪除
-  document.body.addEventListener("click", (event) => {
-    if (event.target.id === "delete-post") {
-      const post = event.target.closest(".post");
-      if (post) {
-        post.remove();
+  document.body.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("delete-post")) {
+      const postElement = event.target.closest(".post");
+      const postIdElement = postElement.querySelector(".post_id");
+      const token = localStorage.getItem("userToken");
+
+      if (postElement && postIdElement) {
+        const postId = postIdElement.textContent.trim();
+
+        try {
+          // fetch delete
+          const response = await fetch(`/api/post/${postId}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            alert("刪除失敗，請排查問題。");
+          }
+        } catch (error) {
+          console.error("刪除失敗:", error);
+        }
       }
     }
   });
@@ -166,18 +187,4 @@ export function displayMenuBtn() {
           });
       }
     });
-}
-
-export function displayMenuOptions() {
-  document.querySelectorAll(".post").forEach((postElement) => {
-    const accountId = postElement
-      .querySelector(".account_id")
-      .textContent.trim();
-    const deleteButton = postElement.querySelector("#delete-post");
-
-    // 如果沒有 Token 或是該貼文非當前用戶的id
-    if (!token || accountId !== currentAccountId) {
-      deleteButton.style.display = "none";
-    }
-  });
 }
