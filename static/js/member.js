@@ -37,24 +37,33 @@ const observer = new IntersectionObserver(
 );
 
 async function fetchGetPost() {
-  const account_id = localStorage.getItem("account_id");
-  const memberPostsUrl = `/api/member/${encodeURIComponent(account_id)}/posts`;
+  const currentUrl = window.location.pathname;
+  const urlAccountId = currentUrl.split("/").pop();
+
+  // 抓取當前用戶
+  const localAccountId = localStorage.getItem("account_id");
+
+  // 判斷是否當前用戶
+  const isCurrentUser = urlAccountId === localAccountId;
+  const account_id = isCurrentUser ? localAccountId : urlAccountId;
+
   if (!account_id) {
     console.log("User not logged in, using default avatar.");
     return;
   }
+
+  const memberPostsUrl = `/api/member/${encodeURIComponent(account_id)}/posts`;
+
   try {
     //開始新的資料加載前設定
     isWaitingForData = true;
-    const response = await fetch(`${memberPostsUrl}?page=${currentPage}`);
+    const response = await fetch(memberPostsUrl);
     const result = await response.json();
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
     if (result && result.data.length > 0) {
       currentPage++;
       hasNextPage = result.next_page != null;
-      console.log("currentPage:", currentPage);
-      console.log("hasNextPage:", hasNextPage);
 
       const postsContainer = document.querySelector(".postsContainer");
       result.data.forEach((post) => {

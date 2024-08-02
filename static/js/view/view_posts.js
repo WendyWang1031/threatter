@@ -53,7 +53,9 @@ export function displayPostElement(post) {
             <div class="post-header">
               <div class="user-info-post">
               ${avatarHtml}
-              <a href="" class="account_id">${account_id}</a>    
+              <a href="/member/${encodeURIComponent(
+                account_id
+              )}" class="account_id">${account_id}</a>    
               </div>
               <div class="menu-button">
               <i class="fa fa-ellipsis-h"></i>

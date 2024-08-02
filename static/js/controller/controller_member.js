@@ -64,18 +64,44 @@ export function uploadAvatar() {
 }
 
 export async function fetchMemberDetail() {
-  const account_id = localStorage.getItem("account_id");
-  const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
+  const currentUrl = window.location.pathname;
+  const urlAccountId = currentUrl.split("/").pop();
+
+  // 抓取當前用戶
+  const localAccountId = localStorage.getItem("account_id");
+
+  // 判斷是否當前用戶
+  const isCurrentUser = urlAccountId === localAccountId;
+  const account_id = isCurrentUser ? localAccountId : urlAccountId;
+
   if (!account_id) {
     console.log("User not logged in, using default avatar.");
     return;
   }
+
+  const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
+
   try {
     const response = await fetch(memberUrl);
     const result = await response.json();
 
     if (result) {
       displayMemberDetail(result);
+      // 顯示或隱藏按鈕
+      const editProfileButton = document.querySelector(".edit-profile-button");
+      const followProfileButton = document.querySelector(
+        ".follow-profile-button"
+      );
+
+      if (isCurrentUser) {
+        // 顯示編輯會員按鈕
+        editProfileButton.style.display = "block";
+        followProfileButton.style.display = "none";
+      } else {
+        // 顯示追蹤按鈕
+        editProfileButton.style.display = "none";
+        followProfileButton.style.display = "block";
+      }
     } else {
       console.error("Failed to retrieve post data.");
     }
