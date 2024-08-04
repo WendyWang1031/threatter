@@ -914,4 +914,309 @@ section.member-self-area .profile-header .profile-nav .nav-button:active {
 }
 .hidden {
   display: none;
+}
+
+section.single-postsContainer .indivisial-area {
+  display: flex;
+  justify-content: center;
+}
+section.single-postsContainer .indivisial-area .post {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "content" "stats";
+  background-color: #fff;
+  border: 1px solid #e1e4e8;
+  border-radius: 10px 10px 0 0;
+  width: 600px;
+  padding: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+section.single-postsContainer .indivisial-area .post .post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+section.single-postsContainer .indivisial-area .post .post-header .user-info-post {
+  display: flex;
+  align-items: center;
+}
+section.single-postsContainer .indivisial-area .post .post-header .user-info-post .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  font-size: 40px;
+  color: #d7d7d7;
+  margin-right: 10px;
+}
+section.single-postsContainer .indivisial-area .post .post-header .user-info-post a:link {
+  text-decoration: none;
+}
+section.single-postsContainer .indivisial-area .post .post-header .user-info-post a:hover {
+  color: rgb(110, 110, 110);
+}
+section.single-postsContainer .indivisial-area .post .post-header .user-info-post .account_id {
+  font-size: 16px;
+  color: #424242;
+  font-weight: bold;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button {
+  position: relative;
+  cursor: pointer;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button i {
+  font-size: 20px;
+  color: #9b9b9b;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button:hover {
+  background-color: #d2d2d2;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  width: 150px;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item {
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item:hover {
+  background-color: #f0f0f0;
+}
+section.single-postsContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item#delete-post {
+  color: red;
+}
+section.single-postsContainer .indivisial-area .post .post-content {
+  font-size: 14px;
+  color: #424242;
+  margin-bottom: 10px;
+  padding-left: 50px;
+}
+section.single-postsContainer .indivisial-area .post .post-content .text {
+  margin-bottom: 10px;
+}
+section.single-postsContainer .indivisial-area .post .post-content .media img,
+section.single-postsContainer .indivisial-area .post .post-content .media video {
+  max-width: 100%;
+  max-height: 500px;
+  height: auto;
+  width: auto;
+  border-radius: 10px;
+}
+section.single-postsContainer .indivisial-area .post .post-stats {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 50px;
+  color: #666;
+  gap: 20px;
+}
+section.single-postsContainer .indivisial-area .post .post-stats .stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+section.single-postsContainer .indivisial-area .post .post-stats .stat i {
+  font-size: 20px;
+}
+section.single-postsContainer .indivisial-area .post .post-stats .stat span {
+  margin-right: 5px;
+  font-size: 14px;
+}
+section.single-postsContainer .indivisial-area .message {
+  border-radius: 0;
+}
+
+section.reply-header .reply-title {
+  display: flex;
+  justify-content: center;
+}
+section.reply-header .reply-title .reply {
+  width: 600px;
+  background-color: #fff;
+  border: 1px solid #e1e4e8;
+  padding: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+section.single-ReplyContainer .indivisial-area {
+  display: flex;
+  justify-content: center;
+}
+section.single-ReplyContainer .indivisial-area .post {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "content" "stats";
+  background-color: #fff;
+  border: 1px solid #e1e4e8;
+  border-radius: 0;
+  width: 600px;
+  padding: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+section.single-ReplyContainer .indivisial-area .post .post-header,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-post,
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-reply,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-post,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-reply {
+  display: flex;
+  align-items: center;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-post .profile-pic,
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-reply .profile-pic,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-post .profile-pic,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-reply .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  font-size: 40px;
+  color: #d7d7d7;
+  margin-right: 10px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-post a:link,
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-reply a:link,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-post a:link,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-reply a:link {
+  text-decoration: none;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-post a:hover,
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-reply a:hover,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-post a:hover,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-reply a:hover {
+  color: rgb(110, 110, 110);
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-post .account_id,
+section.single-ReplyContainer .indivisial-area .post .post-header .user-info-reply .account_id,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-post .account_id,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .user-info-reply .account_id {
+  font-size: 16px;
+  color: #424242;
+  font-weight: bold;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button {
+  position: relative;
+  cursor: pointer;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button i,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button i {
+  font-size: 20px;
+  color: #9b9b9b;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button:hover,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button:hover {
+  background-color: #d2d2d2;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button .dropdown-menu,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  width: 150px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button .dropdown-menu .menu-item {
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item:hover,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button .dropdown-menu .menu-item:hover {
+  background-color: #f0f0f0;
+}
+section.single-ReplyContainer .indivisial-area .post .post-header .menu-button .dropdown-menu .menu-item#delete-post,
+section.single-ReplyContainer .indivisial-area .post .reply-area-header .menu-button .dropdown-menu .menu-item#delete-post {
+  color: red;
+}
+section.single-ReplyContainer .indivisial-area .post .post-content,
+section.single-ReplyContainer .indivisial-area .post .reply-content {
+  font-size: 14px;
+  color: #424242;
+  margin-bottom: 5px;
+  padding-left: 50px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-content .text,
+section.single-ReplyContainer .indivisial-area .post .reply-content .text {
+  margin-bottom: 10px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-content .media img,
+section.single-ReplyContainer .indivisial-area .post .post-content .media video,
+section.single-ReplyContainer .indivisial-area .post .reply-content .media img,
+section.single-ReplyContainer .indivisial-area .post .reply-content .media video {
+  max-width: 100%;
+  max-height: 500px;
+  height: auto;
+  width: auto;
+  border-radius: 10px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-stats,
+section.single-ReplyContainer .indivisial-area .post .reply-stats {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 50px;
+  margin-bottom: 10px;
+  color: #666;
+  gap: 20px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-stats .stat,
+section.single-ReplyContainer .indivisial-area .post .reply-stats .stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-stats .stat i,
+section.single-ReplyContainer .indivisial-area .post .reply-stats .stat i {
+  font-size: 20px;
+}
+section.single-ReplyContainer .indivisial-area .post .post-stats .stat span,
+section.single-ReplyContainer .indivisial-area .post .reply-stats .stat span {
+  margin-right: 5px;
+  font-size: 14px;
+}
+section.single-ReplyContainer .indivisial-area .reply-area {
+  border-left: 2px solid #e1e1e1;
+  margin-left: 20px;
+  padding-left: 20px;
+}
+section.single-ReplyContainer .indivisial-area .reply-area .reply-arear-header .user-info-reply .reply-account_id {
+  color: #cbcbcb;
+}
+section.single-ReplyContainer .indivisial-area .reply-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  font-size: 40px;
+  color: #d7d7d7;
+  margin-right: 10px;
 }/*# sourceMappingURL=styles.css.map */
