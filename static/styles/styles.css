@@ -582,7 +582,7 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
 }
 .signin-mask form.signin .sign-content .decorator-bar {
   height: 10px;
-  background: linear-gradient(270deg, #808080 0%, #c2c2c2 100%);
+  background: linear-gradient(270deg, #a8a8a8 0%, #c2c2c2 100%);
   border-radius: 6px 6px 0px 0px;
   margin-bottom: 20px;
 }
@@ -618,7 +618,7 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
   flex-grow: 1;
   font-family: Noto Sans TC;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 300;
   line-height: 24px;
   text-align: center;
 }
@@ -693,7 +693,7 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
 }
 .signup-mask form.signup .signup-content .decorator-bar {
   height: 10px;
-  background: linear-gradient(270deg, #808080 0%, #c2c2c2 100%);
+  background: linear-gradient(270deg, #a8a8a8 0%, #c2c2c2 100%);
   border-radius: 6px 6px 0 0;
   margin-bottom: 20px;
 }
@@ -728,7 +728,7 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
   text-align: center;
   flex-grow: 1;
   font-family: Noto Sans TC;
-  font-weight: 700;
+  font-weight: 300;
   line-height: 24px;
 }
 .signup-mask form.signup .signup-content .main {
