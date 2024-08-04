@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   fetchGetPost();
   previewCreatePost();
   displayMenuBtn();
+  selectSinglePost(event);
 
   // 提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");
@@ -209,3 +210,32 @@ const observer = new IntersectionObserver(
   },
   { threshold: 0.5 }
 );
+
+function selectSinglePost() {
+  document
+    .querySelector(".postsContainer")
+    .addEventListener("click", (event) => {
+      // 確認點擊的元素或其父元素是否是 .post
+      const postElement = event.target.closest(".post");
+      if (postElement) {
+        console.log("Post clicked via delegation:", postElement);
+        event.preventDefault(); // 阻止默認行為
+
+        // 獲取 account_id 和 post_id
+        const accountIdElement = postElement.querySelector(".account_id");
+        const postIdElement = postElement.querySelector(".post_id");
+
+        if (accountIdElement && postIdElement) {
+          const accountId = accountIdElement.textContent.trim();
+          const postId = postIdElement.textContent.trim();
+          const targetUrl = `/member/${encodeURIComponent(
+            accountId
+          )}/post/${encodeURIComponent(postId)}`;
+          console.log("Navigating to:", targetUrl);
+          window.location.href = targetUrl;
+        } else {
+          console.error("accountId or postId is missing");
+        }
+      }
+    });
+}
