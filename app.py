@@ -511,6 +511,10 @@ async def index(request: Request):
 async def member(request: Request):
     return FileResponse("./static/member.html", media_type="text/html")
 
+@app.get("/member/{account_id}/post/{post_id}", include_in_schema=False)
+async def member(request: Request):
+    return FileResponse("./static/single_page.html", media_type="text/html")
+
 @app.get("/member")
 async def redirect_to_home(request: Request):
     return RedirectResponse(url="/")
