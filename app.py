@@ -7,8 +7,10 @@ from fastapi.responses import FileResponse ,RedirectResponse
 
 from controller.post import * 
 from controller.post_new import * 
+from controller.generate_presigned import * 
 from controller.user import *
 from controller.member import *
+from controller.comment import *
 from model.model import *
 from model.model_user import *
 from service.security import security_get_current_user
@@ -279,16 +281,15 @@ async def fetch_get_member_post(
             }
          })
 async def fetch_get_single_post(
-    user: Optional[dict] = Depends(security_get_current_user),
+    current_user: Optional[dict] = Depends(security_get_current_user),
     account_id: str = Path(..., description="該會員的帳號") , 
     post_id: str = Path(..., description="該貼文的id")
     ) -> JSONResponse :
-    return await get_post_single_page(user, account_id, post_id)
+    return await get_post_single_page(current_user, account_id, post_id)
 
 @app.get("/api/member/{account_id}/post/{post_id}/detail",
         tags= ["Post"],
-        response_model = CommentDetailListRes , 
-        dependencies=[Depends(get_optional_token)],
+        response_model = CommentDetailListRes ,
         summary = "顯示單頁貼文留言與留言回覆",
         responses = {
             200:{
@@ -301,10 +302,13 @@ async def fetch_get_single_post(
             }
          })
 async def fetch_get_comments_and_replies(
+    current_user: Optional[dict] = Depends(security_get_current_user),
     account_id: str = Path(..., description="該會員的帳號"),
-    post_id: str = Path(..., description="該貼文的id")
+    post_id: str = Path(..., description="該貼文的id"),
+    page: int = Query(0, description="頁碼")
 ) -> JSONResponse :
-    pass
+    return await get_comments_and_replies(current_user , account_id , post_id , page)
+
 
 @app.post("/api/member/{account_id}/post/{post_id}/like",
         tags= ["Post"],
@@ -330,12 +334,11 @@ async def fetch_post_post_like(
 
 @app.post("/api/member/{account_id}/post/{post_id}/reply",
         tags= ["Post"],
-        response_model = Comment , 
-        dependencies=[Depends(get_token)],
+        response_model = SuccessfulRes , 
         summary = "在某則貼文底下留言",
         responses = {
             200:{
-                "model" : Comment,
+                "model" : SuccessfulRes,
                 "description" : "成功在某則貼文底下留言"
             },
             500:{
@@ -343,11 +346,14 @@ async def fetch_post_post_like(
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_post_comment(content_req:CommentReq,
+async def fetch_post_comment(content_req: CommentReq ,
                             account_id: str = Path(..., description="該會員的帳號"),
-                            post_id: str = Path(..., description="該貼文的id")
+                            post_id: str = Path(..., description="該貼文的id"),
+                            current_user: Optional[dict] = Depends(security_get_current_user),
+                            
                              ) -> JSONResponse :
-    pass
+    return await create_comments_and_replies(content_req , post_id , current_user)
+
 
 
 
