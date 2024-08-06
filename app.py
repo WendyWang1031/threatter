@@ -11,6 +11,8 @@ from controller.generate_presigned import *
 from controller.user import *
 from controller.member import *
 from controller.comment import *
+from controller.like import *
+
 from model.model import *
 from model.model_user import *
 from service.security import security_get_current_user
@@ -313,7 +315,6 @@ async def fetch_get_comments_and_replies(
 @app.post("/api/member/{account_id}/post/{post_id}/like",
         tags= ["Post"],
         response_model = LikeRes ,
-        dependencies=[Depends(get_token)], 
         summary = "對貼文按讚",
         responses = {
             200:{
@@ -326,11 +327,12 @@ async def fetch_get_comments_and_replies(
             }
          })
 async def fetch_post_post_like(
-    post_like:LikeReq,
-    account_id: str = Path(..., description="該會員的帳號"),
-    post_id: str = Path(..., description="該貼文的id")
+    post_like : LikeReq ,
+    account_id : str = Path(..., description="該會員的帳號"),
+    post_id : str = Path(..., description="該貼文的id"),
+    current_user : dict = Depends(security_get_current_user),
     ) -> JSONResponse :
-    pass
+    return await post_post_like(post_like , post_id , current_user)
 
 @app.post("/api/member/{account_id}/post/{post_id}/reply",
         tags= ["Post"],
