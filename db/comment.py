@@ -190,7 +190,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         offset = page * limit
 
         # 預設狀況下，用戶只能看到公開的內容
-        visibility_clause = "visibility = 'Public'"
+        visibility_clause = "content.visibility = 'Public'"
         
         if member_id : 
             # 檢查已登入用戶
@@ -203,25 +203,32 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             if relation : 
                 relation_state = relation['relation_state']
                 if member_id == account_id or relation_state == 'Following':
-                    visibility_clause = "visibility = 'Public' OR visibility = 'Private'"
+                    visibility_clause = "(content.visibility = 'Public' OR content.visibility = 'Private')"
+                else:
+                    visibility_clause = "content.visibility = 'Public'"
         
-        sql = """select content.* ,
-            member.name , member.account_id , member.avatar,  
+        sql = f"""
+        select content.* ,
+            member.name , 
+            member.account_id , 
+            member.avatar,  
             likes.like_state
         FROM content
         
         Left Join member on content.member_id = member.account_id
         Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
         
-        WHERE content.content_type = "Comment" AND content.content_type = "Reply" AND
-        
-        content.member_id = %s AND (content.visibility = 'Public' OR content.visibility = 'Private')
-        AND content.content_id = %s 
-        ORDER BY created_at DESC LIMIT %s OFFSET %s
+        WHERE (content.content_type = "Comment" OR content.content_type = "Reply")
+          AND content.parent_id = %s 
+          AND {visibility_clause}
+        ORDER BY created_at DESC 
+        LIMIT %s OFFSET %s
         """
-        cursor.execute( sql , (member_id , account_id , post_id , limit+1 , offset) )
+        
+        cursor.execute( sql , (member_id , post_id , limit+1 , offset) )
         
         comment_data = cursor.fetchall()
+        # print("comment_data:",comment_data)
 
         if not comment_data:
             return None
@@ -231,7 +238,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         if has_more_data :
             comment_data.pop()
 
-        comments = []
+        comment_detail_list = []
         for data in comment_data:
         
             media = Media(
@@ -264,14 +271,73 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
                     forward_counts = int(data.get('forward_counts') or 0),
                 )
             )
-            comments.append(comment)
+            
 
-            # print("posts:",posts)
+            
+            replies_sql = """
+                SELECT content.*,
+                    member.name,
+                    member.account_id,
+                    member.avatar
+                FROM content
+                LEFT JOIN member ON content.member_id = member.account_id
+                WHERE content.parent_id = %s AND content.content_type = 'Reply'
+            """
+            cursor.execute(replies_sql, (data['content_id'],))
+            reply_data = cursor.fetchall()
+            # print("reply_data:",reply_data)
+            
+            replies = []
+            
+            if reply_data : 
+                for reply in reply_data:
+                    reply_media = Media(
+                        images=reply.get('image'),
+                        videos=reply.get('video'),
+                        audios=reply.get('audio')
+                    )
 
+                    reply_created_at = reply['created_at']
+                    if isinstance(reply_created_at, str):
+                        reply_created_at = datetime.strptime(reply_created_at, '%Y-%m-%d %H:%M:%S')
+
+                    reply_comment = Comment(
+                        comment_id=reply['content_id'],
+                        user=MemberBase(
+                            name=reply['name'],
+                            account_id=reply['account_id'],
+                            avatar=reply['avatar']
+                        ),
+                        content=PostContent(
+                            text=reply['text'],
+                            media=reply_media,
+                        ),
+                        created_at=reply_created_at,
+                        like_state=bool(reply.get('like_state', False)),
+                        counts=PostCounts(
+                            like_counts=int(reply.get('like_counts') or 0),
+                            reply_counts=int(reply.get('reply_counts') or 0),
+                            forward_counts=int(reply.get('forward_counts') or 0),
+                        )
+                    )
+                    print("reply_comment:",reply_comment)
+
+                    replies.append(reply_comment)
+            else:
+                replies = None
+        
+            comment_detail = CommentDetail(
+            comment = comment,
+            replies = replies 
+            )
+            
+            comment_detail_list.append(comment_detail)
+            
         connection.commit()
         
         next_page = page + 1 if has_more_data else None
-        return CommentDetailListRes(next_page = next_page , data = comments )
+        
+        return CommentDetailListRes(next_page = next_page , data = comment_detail_list )
         
     except Exception as e:
         print(f"Error getting post data details: {e}")

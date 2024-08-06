@@ -145,7 +145,7 @@ class Comment(BaseModel):
 
 class CommentDetail(BaseModel):
     comment: Comment
-    replies: List[Comment]
+    replies: Optional[List[Comment]] = None
 
 class CommentDetailListRes(BaseModel):
     next_page: Optional[int] = Field(None, description="下一頁的頁面，如果沒有更多頁為None")
