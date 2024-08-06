@@ -94,36 +94,7 @@ async def create_replies(content_data : CommentReq ,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             content=error_response.dict())
         return response
-    
-
-async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse :
-    try:
-        member_id = current_user["account_id"] if current_user else None
-        post_data = db_get_home_post_data(member_id , page)
-        
-        if post_data :
-            
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=json.loads(post_data.json())
-            )
-            return response
-            
-        else:
-            error_response = ErrorResponse(error=True, message="No post Data details found for user")
-            response = JSONResponse (
-                status_code=status.HTTP_404_NOT_FOUND, 
-                content=error_response.dict())
-            return response
-
-        
-    except Exception as e :
-        error_response = ErrorResponse(error=True, message=str(e))
-        response = JSONResponse (
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            content=error_response.dict())
-        return response
-    
+       
 async def delete_comment_and_reply(comment_id : str ,
                                 current_user : dict = Depends(security_get_current_user)
                                    ) -> JSONResponse :
