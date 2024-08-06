@@ -288,7 +288,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
 
 
         # 預設狀況下，用戶只能看到公開的內容
-        visibility_clause = "visibility = 'Public'"
+        visibility_clause = "content.visibility = 'Public'"
         
         if member_id : 
             # 檢查已登入用戶
@@ -301,21 +301,38 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
             if relation : 
                 relation_state = relation['relation_state']
                 if member_id == account_id or relation_state == 'Following':
-                    visibility_clause = "visibility = 'Public' OR visibility = 'Private'"
-        
-        sql = """select content.* ,
+                    visibility_clause = "(content.visibility = 'Public' OR content.visibility = 'Private')"
+                else:
+                    visibility_clause = "content.visibility = 'Public'"
+
+        sql = f"""select content.* ,
             member.name , member.account_id , member.avatar,  
             likes.like_state
         FROM content
         
         Left Join member on content.member_id = member.account_id
         Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-        WHERE content.member_id = %s AND (content.visibility = 'Public' OR content.visibility = 'Private') 
+        WHERE content.member_id = %s AND {visibility_clause}
         AND content.content_id = %s
         """
         cursor.execute( sql , (member_id , account_id , post_id) )
-        
         post_data = cursor.fetchall()
+        # print("post_data:",post_data)
+
+        count_sql ="""
+            SELECT COUNT(*) as total_likes FROM likes
+            where content_id = %s AND like_state = TRUE
+        """
+        cursor.execute(count_sql , (post_id ,))
+        total_likes_row = cursor.fetchone()
+        
+
+        if total_likes_row:
+            total_likes = total_likes_row["total_likes"]
+        else:
+            total_likes = 0
+         
+        # print("total_likes:",total_likes)
 
         if not post_data:
             return None
@@ -349,7 +366,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
                 visibility = data['visibility'],
                 like_state = bool(data.get('like_state' , False)),
                 counts = PostCounts(
-                    like_counts = int(data.get('like_counts') or 0),
+                    like_counts = int(total_likes or 0),
                     reply_counts = int(data.get('reply_counts') or 0),
                     forward_counts = int(data.get('forward_counts') or 0),
                 )
