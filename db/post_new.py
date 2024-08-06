@@ -319,20 +319,48 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
         post_data = cursor.fetchall()
         # print("post_data:",post_data)
 
-        count_sql ="""
+        # 讚數
+        like_count_sql ="""
             SELECT COUNT(*) as total_likes FROM likes
             where content_id = %s AND like_state = TRUE
         """
-        cursor.execute(count_sql , (post_id ,))
+        cursor.execute(like_count_sql , (post_id ,))
         total_likes_row = cursor.fetchone()
         
-
         if total_likes_row:
             total_likes = total_likes_row["total_likes"]
         else:
             total_likes = 0
          
         # print("total_likes:",total_likes)
+
+        # 留言數
+        comment_count_sql ="""
+            SELECT COUNT(*) as total_replies FROM content
+            where parent_id = %s AND content_type = 'Comment'
+        """
+        cursor.execute(comment_count_sql , (post_id ,))
+        total_replies_row = cursor.fetchone()
+        
+        if total_replies_row:
+            total_replies = total_replies_row["total_replies"]
+        else:
+            total_replies = 0
+
+        # 轉發數
+        forward_count_sql ="""
+            SELECT COUNT(*) as total_forwards FROM content
+            where parent_id = %s AND content_type = 'Post'
+        """
+        cursor.execute(forward_count_sql , (post_id ,))
+        total_forwards_row = cursor.fetchone()
+        
+        if total_forwards_row:
+            total_forwards = total_forwards_row["total_forwards"]
+        else:
+            total_forwards = 0
+         
+        
 
         if not post_data:
             return None
@@ -367,8 +395,8 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
                 like_state = bool(data.get('like_state' , False)),
                 counts = PostCounts(
                     like_counts = int(total_likes or 0),
-                    reply_counts = int(data.get('reply_counts') or 0),
-                    forward_counts = int(data.get('forward_counts') or 0),
+                    reply_counts = int(total_replies or 0),
+                    forward_counts = int(total_forwards or 0),
                 )
             )
             
