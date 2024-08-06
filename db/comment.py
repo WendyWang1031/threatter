@@ -56,7 +56,7 @@ def db_create_comment_data(comment_data : CommentReq , post_id : str , member_id
         return True
     
     except Exception as e:
-        print(f"Error inserting post Data: {e}")
+        print(f"Error inserting comment Data: {e}")
         connection.rollback() 
         return False
     finally:
@@ -102,7 +102,7 @@ def db_create_reply_data(comment_data : CommentReq , comment_id : str , member_i
         return True
     
     except Exception as e:
-        print(f"Error inserting post Data: {e}")
+        print(f"Error inserting reply Data: {e}")
         connection.rollback() 
         return False
     finally:
@@ -124,7 +124,7 @@ def db_delete_comment_and_reply(comment_id : str , member_id : str) -> bool :
         
     
     except Exception as e:
-        print(f"Error deleting user's post: {e}")
+        print(f"Error deleting user's comment or reply: {e}")
         connection.rollback()
         return False
 
@@ -292,7 +292,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         return CommentDetailListRes(next_page = next_page , data = comment_detail_list )
         
     except Exception as e:
-        print(f"Error getting post data details: {e}")
+        print(f"Error getting comment or reply data details: {e}")
         connection.rollback()
         return None
     finally:

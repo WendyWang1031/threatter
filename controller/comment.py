@@ -36,7 +36,7 @@ async def create_comments(content_data : CommentReq ,
             )
             return response
         else:
-            error_response = ErrorResponse(error=True, message="Failed to create post data")
+            error_response = ErrorResponse(error=True, message="Failed to create comment data")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
@@ -81,7 +81,7 @@ async def create_replies(content_data : CommentReq ,
             )
             return response
         else:
-            error_response = ErrorResponse(error=True, message="Failed to create post data")
+            error_response = ErrorResponse(error=True, message="Failed to create reply data")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
@@ -163,30 +163,4 @@ async def get_comments_and_replies(current_user: Optional[dict], account_id: str
         return response
   
 
-async def get_post_single_page(current_user: Optional[dict], account_id: str , post_id : str) -> JSONResponse :
-    try:
-        member_id = current_user["account_id"] if current_user else None
-        post_data = db_get_single_post_data(member_id , account_id , post_id)
-        
-        if post_data :
-            
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=json.loads(post_data.json())
-            )
-            return response
-            
-        else:
-            error_response = ErrorResponse(error=True, message="No member's post data details found for user")
-            response = JSONResponse (
-                status_code=status.HTTP_404_NOT_FOUND, 
-                content=error_response.dict())
-            return response
 
-        
-    except Exception as e :
-        error_response = ErrorResponse(error=True, message=str(e))
-        response = JSONResponse (
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            content=error_response.dict())
-        return response
