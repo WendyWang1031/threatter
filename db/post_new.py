@@ -69,59 +69,61 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
         if has_more_data :
             post_data.pop()
 
+        
+        post_ids = tuple(post['content_id'] for post in post_data)
+        # print("post_ids:",post_ids)
+        like_count_sql = """
+            SELECT content_id, COUNT(*) as total_likes 
+            FROM likes
+            WHERE content_id IN %s AND like_state = TRUE
+            GROUP BY content_id
+        """
+        cursor.execute(like_count_sql, (post_ids,))
+        likes_data = cursor.fetchall()
+        # print("likes_data:",likes_data)
+
+        comment_count_sql = """
+            SELECT parent_id, COUNT(*) as total_replies 
+            FROM content
+            WHERE parent_id IN %s AND content_type = 'Comment'
+            GROUP BY parent_id
+        """
+        cursor.execute(comment_count_sql, (post_ids,))
+        comments_data = cursor.fetchall()
+        # print("comments_data:",comments_data)
+
+        forward_count_sql = """
+            SELECT parent_id, COUNT(*) as total_forwards 
+            FROM content
+            WHERE parent_id IN %s AND content_type = 'Post'
+            GROUP BY parent_id
+        """
+        cursor.execute(forward_count_sql, (post_ids,))
+        forwards_data = cursor.fetchall()
+        # print("forwards_data:",forwards_data)
+
+        # 創建字典
+        likes_dict = {like['content_id']: like['total_likes'] for like in likes_data}
+        comments_dict = {comment['parent_id']: comment['total_replies'] for comment in comments_data}
+        forwards_dict = {forward['parent_id']: forward['total_forwards'] for forward in forwards_data}
+
+
+
         posts = []
         for data in post_data:
 
             parent_post = None
-            if data['content_type'] == 'Post': 
-                
-                if data.get('parent_id'):
-                    parent_post = ParentPostId(
-                        id=data['parent_id'], 
-                        account_id=data.get('account_id'),  
-                        post_id=data.get('post_id')  
-                    )
+            if data.get('parent_id'):
+                parent_post = ParentPostId(
+                    id=data['parent_id'],
+                    account_id=data.get('account_id'),  
+                    post_id=data.get('post_id')         
+                )
 
-            like_count_sql ="""
-                SELECT COUNT(*) as total_likes FROM likes
-                where content_id = %s AND like_state = TRUE
-            """
-            cursor.execute(like_count_sql , (data['content_id'] ,))
-            total_likes_row = cursor.fetchone()
-            
-            if total_likes_row:
-                total_likes = total_likes_row["total_likes"]
-            else:
-                total_likes = 0
-            
-            # print("total_likes:",total_likes)
+            total_likes = likes_dict.get(data['content_id'], 0)
+            total_replies = comments_dict.get(data['content_id'], 0)
+            total_forwards = forwards_dict.get(data['content_id'], 0)
 
-            # 留言數
-            comment_count_sql ="""
-                SELECT COUNT(*) as total_replies FROM content
-                where parent_id = %s AND content_type = 'Comment'
-            """
-            cursor.execute(comment_count_sql , (data['content_id'] ,))
-            total_replies_row = cursor.fetchone()
-            
-            if total_replies_row:
-                total_replies = total_replies_row["total_replies"]
-            else:
-                total_replies = 0
-
-            # 轉發數
-            forward_count_sql ="""
-                SELECT COUNT(*) as total_forwards FROM content
-                where parent_id = %s AND content_type = 'Post'
-            """
-            cursor.execute(forward_count_sql , (data['content_id'] ,))
-            total_forwards_row = cursor.fetchone()
-            
-            if total_forwards_row:
-                total_forwards = total_forwards_row["total_forwards"]
-            else:
-                total_forwards = 0
-        
             media = Media(
             images=data.get('image'),
             videos=data.get('video'),
@@ -285,49 +287,51 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
         if has_more_data :
             post_data.pop()
 
+        post_ids = tuple(post['content_id'] for post in post_data)
+        # print("post_ids:",post_ids)
+        like_count_sql = """
+            SELECT content_id, COUNT(*) as total_likes 
+            FROM likes
+            WHERE content_id IN %s AND like_state = TRUE
+            GROUP BY content_id
+        """
+        cursor.execute(like_count_sql, (post_ids,))
+        likes_data = cursor.fetchall()
+        # print("likes_data:",likes_data)
+
+        comment_count_sql = """
+            SELECT parent_id, COUNT(*) as total_replies 
+            FROM content
+            WHERE parent_id IN %s AND content_type = 'Comment'
+            GROUP BY parent_id
+        """
+        cursor.execute(comment_count_sql, (post_ids,))
+        comments_data = cursor.fetchall()
+        # print("comments_data:",comments_data)
+
+        forward_count_sql = """
+            SELECT parent_id, COUNT(*) as total_forwards 
+            FROM content
+            WHERE parent_id IN %s AND content_type = 'Post'
+            GROUP BY parent_id
+        """
+        cursor.execute(forward_count_sql, (post_ids,))
+        forwards_data = cursor.fetchall()
+        # print("forwards_data:",forwards_data)
+
+        # 創建字典
+        likes_dict = {like['content_id']: like['total_likes'] for like in likes_data}
+        comments_dict = {comment['parent_id']: comment['total_replies'] for comment in comments_data}
+        forwards_dict = {forward['parent_id']: forward['total_forwards'] for forward in forwards_data}
+
+
+
         posts = []
         for data in post_data:
 
-            like_count_sql ="""
-                SELECT COUNT(*) as total_likes FROM likes
-                where content_id = %s AND like_state = TRUE
-            """
-            cursor.execute(like_count_sql , (data['content_id'] ,))
-            total_likes_row = cursor.fetchone()
-            
-            if total_likes_row:
-                total_likes = total_likes_row["total_likes"]
-            else:
-                total_likes = 0
-            
-            # print("total_likes:",total_likes)
-
-            # 留言數
-            comment_count_sql ="""
-                SELECT COUNT(*) as total_replies FROM content
-                where parent_id = %s AND content_type = 'Comment'
-            """
-            cursor.execute(comment_count_sql , (data['content_id'] ,))
-            total_replies_row = cursor.fetchone()
-            
-            if total_replies_row:
-                total_replies = total_replies_row["total_replies"]
-            else:
-                total_replies = 0
-
-            # 轉發數
-            forward_count_sql ="""
-                SELECT COUNT(*) as total_forwards FROM content
-                where parent_id = %s AND content_type = 'Post'
-            """
-            cursor.execute(forward_count_sql , (data['content_id'] ,))
-            total_forwards_row = cursor.fetchone()
-            
-            if total_forwards_row:
-                total_forwards = total_forwards_row["total_forwards"]
-            else:
-                total_forwards = 0
-         
+            total_likes = likes_dict.get(data['content_id'], 0)
+            total_replies = comments_dict.get(data['content_id'], 0)
+            total_forwards = forwards_dict.get(data['content_id'], 0)
         
             media = Media(
             images=data.get('image'),
