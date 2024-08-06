@@ -26,33 +26,40 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
         offset = page * limit
         
         if member_id is None : 
-            sql = """select content.* , 
+            sql = """
+            select content.* , 
             member.name , member.account_id , member.avatar, 
             likes.like_state
             FROM content
             
             Left Join member on content.member_id = member.account_id
             Left Join likes on content.content_id = likes.content_id
-            WHERE content.visibility = 'Public'
+            
+            WHERE content.content_type = 'Post' AND
+            content.visibility = 'Public'
+            AND content.content_type = 'Post'
             ORDER BY created_at DESC LIMIT %s OFFSET %s
             """
             cursor.execute( sql , (limit+1 , offset) )
         else:
-            sql = """select content.* ,
+            sql = """
+            select content.* ,
             member.name , member.account_id , member.avatar,  
             likes.like_state
             FROM content
             
             Left Join member on content.member_id = member.account_id
             Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-            WHERE content.visibility = 'Public' OR 
+            
+            WHERE content.content_type = 'Post' AND
+            content.visibility = 'Public' OR 
             (content.visibility = 'Private' AND content.member_id = %s)
             ORDER BY created_at DESC LIMIT %s OFFSET %s
             """
             cursor.execute( sql , (member_id , member_id , limit+1 , offset) )
-        
-        
+
         post_data = cursor.fetchall()
+        # print("post_data:",post_data)
 
         if not post_data:
             return None
@@ -64,6 +71,56 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
 
         posts = []
         for data in post_data:
+
+            parent_post = None
+            if data['content_type'] == 'Post': 
+                
+                if data.get('parent_id'):
+                    parent_post = ParentPostId(
+                        id=data['parent_id'], 
+                        account_id=data.get('account_id'),  
+                        post_id=data.get('post_id')  
+                    )
+
+            like_count_sql ="""
+                SELECT COUNT(*) as total_likes FROM likes
+                where content_id = %s AND like_state = TRUE
+            """
+            cursor.execute(like_count_sql , (data['content_id'] ,))
+            total_likes_row = cursor.fetchone()
+            
+            if total_likes_row:
+                total_likes = total_likes_row["total_likes"]
+            else:
+                total_likes = 0
+            
+            # print("total_likes:",total_likes)
+
+            # 留言數
+            comment_count_sql ="""
+                SELECT COUNT(*) as total_replies FROM content
+                where parent_id = %s AND content_type = 'Comment'
+            """
+            cursor.execute(comment_count_sql , (data['content_id'] ,))
+            total_replies_row = cursor.fetchone()
+            
+            if total_replies_row:
+                total_replies = total_replies_row["total_replies"]
+            else:
+                total_replies = 0
+
+            # 轉發數
+            forward_count_sql ="""
+                SELECT COUNT(*) as total_forwards FROM content
+                where parent_id = %s AND content_type = 'Post'
+            """
+            cursor.execute(forward_count_sql , (data['content_id'] ,))
+            total_forwards_row = cursor.fetchone()
+            
+            if total_forwards_row:
+                total_forwards = total_forwards_row["total_forwards"]
+            else:
+                total_forwards = 0
         
             media = Media(
             images=data.get('image'),
@@ -78,7 +135,7 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
 
             post = Post(
                 post_id = data['content_id'] ,
-                parent=ParentPostId(id=data['parent_id']) if data.get('parent_id') else None ,
+                parent = parent_post ,
                 created_at = created_at ,
                 user = MemberBase(
                     name = data['name'],
@@ -92,9 +149,9 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
                 visibility = data['visibility'],
                 like_state = bool(data.get('like_state' , False)),
                 counts = PostCounts(
-                    like_counts = int(data.get('like_counts') or 0),
-                    reply_counts = int(data.get('reply_counts') or 0),
-                    forward_counts = int(data.get('forward_counts') or 0),
+                    like_counts = int(total_likes or 0),
+                    reply_counts = int(total_replies or 0),
+                    forward_counts = int(total_forwards or 0),
                 )
             )
             posts.append(post)
@@ -190,7 +247,7 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
         offset = page * limit
 
         # 預設狀況下，用戶只能看到公開的內容
-        visibility_clause = "visibility = 'Public'"
+        visibility_clause = "content.visibility = 'Public'"
         
         if member_id : 
             # 檢查已登入用戶
@@ -203,22 +260,23 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
             if relation : 
                 relation_state = relation['relation_state']
                 if member_id == account_id or relation_state == 'Following':
-                    visibility_clause = "visibility = 'Public' OR visibility = 'Private'"
-        
-        sql = """select content.* ,
+                    visibility_clause = "(content.visibility = 'Public' OR content.visibility = 'Private')"
+                else:
+                    visibility_clause = "content.visibility = 'Public'"
+        sql = f"""select content.* ,
             member.name , member.account_id , member.avatar,  
             likes.like_state
         FROM content
         
         Left Join member on content.member_id = member.account_id
         Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-        WHERE content.member_id = %s AND (content.visibility = 'Public' OR content.visibility = 'Private')
+        WHERE content.member_id = %s AND {visibility_clause}
         ORDER BY created_at DESC LIMIT %s OFFSET %s
         """
-        cursor.execute( sql , (member_id , account_id , limit+1 , offset) )
-        
+        cursor.execute( sql , (member_id , account_id , limit+1 , offset))
         post_data = cursor.fetchall()
 
+    
         if not post_data:
             return None
         
@@ -229,6 +287,47 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
 
         posts = []
         for data in post_data:
+
+            like_count_sql ="""
+                SELECT COUNT(*) as total_likes FROM likes
+                where content_id = %s AND like_state = TRUE
+            """
+            cursor.execute(like_count_sql , (data['content_id'] ,))
+            total_likes_row = cursor.fetchone()
+            
+            if total_likes_row:
+                total_likes = total_likes_row["total_likes"]
+            else:
+                total_likes = 0
+            
+            # print("total_likes:",total_likes)
+
+            # 留言數
+            comment_count_sql ="""
+                SELECT COUNT(*) as total_replies FROM content
+                where parent_id = %s AND content_type = 'Comment'
+            """
+            cursor.execute(comment_count_sql , (data['content_id'] ,))
+            total_replies_row = cursor.fetchone()
+            
+            if total_replies_row:
+                total_replies = total_replies_row["total_replies"]
+            else:
+                total_replies = 0
+
+            # 轉發數
+            forward_count_sql ="""
+                SELECT COUNT(*) as total_forwards FROM content
+                where parent_id = %s AND content_type = 'Post'
+            """
+            cursor.execute(forward_count_sql , (data['content_id'] ,))
+            total_forwards_row = cursor.fetchone()
+            
+            if total_forwards_row:
+                total_forwards = total_forwards_row["total_forwards"]
+            else:
+                total_forwards = 0
+         
         
             media = Media(
             images=data.get('image'),
@@ -257,9 +356,9 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
                 visibility = data['visibility'],
                 like_state = bool(data.get('like_state' , False)),
                 counts = PostCounts(
-                    like_counts = int(data.get('like_counts') or 0),
-                    reply_counts = int(data.get('reply_counts') or 0),
-                    forward_counts = int(data.get('forward_counts') or 0),
+                    like_counts = int(total_likes or 0),
+                    reply_counts = int(total_replies or 0),
+                    forward_counts = int(total_forwards or 0),
                 )
             )
             posts.append(post)
