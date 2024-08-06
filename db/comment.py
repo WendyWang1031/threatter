@@ -205,12 +205,12 @@ def db_create_reply_data(comment_data : CommentReq , comment_id : str , member_i
         connection.close()
 
 
-def db_delete_comment(post_id : str , member_id : str ) -> bool :
+def db_delete_comment_and_reply(comment_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         sql = "delete from content where content_id = %s and member_id = %s "
-        cursor.execute(sql , ( post_id , member_id ))
+        cursor.execute(sql , ( comment_id , member_id ))
         connection.commit()  
 
         if cursor.rowcount > 0:

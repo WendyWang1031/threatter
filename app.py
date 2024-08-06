@@ -406,7 +406,6 @@ async def fetch_post_comment_relpy(
 @app.delete("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
         tags= ["Comment"],
         response_model = Comment , 
-        dependencies=[Depends(get_token)],
         summary = "刪除某則留言",
         responses = {
             200:{
@@ -418,11 +417,12 @@ async def fetch_post_comment_relpy(
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_delete_comment(account_id: str = Path(..., description="該會員的帳號"),
+async def fetch_delete_comment(current_user : dict = Depends(security_get_current_user),
+                                account_id: str = Path(..., description="該會員的帳號"),
                                 post_id: str = Path(..., description="該貼文的id"),
                                 comment_id: str = Path(..., description="該留言的id")
                                 )-> JSONResponse :
-    pass
+    return await delete_comment_and_reply(comment_id , current_user)
 
 
 # 搜尋

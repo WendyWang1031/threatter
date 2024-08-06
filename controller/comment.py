@@ -124,11 +124,13 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
             content=error_response.dict())
         return response
     
-async def delete_post(post_id : str ,current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+async def delete_comment_and_reply(comment_id : str ,
+                                current_user : dict = Depends(security_get_current_user)
+                                   ) -> JSONResponse :
     try:
         if current_user :
             member_id = current_user["account_id"]
-            delete_post_result = db_delete_post(post_id , member_id)
+            delete_post_result = db_delete_comment_and_reply(comment_id , member_id)
             
             if delete_post_result:
                 success_response = SuccessfulRes(success=True)
