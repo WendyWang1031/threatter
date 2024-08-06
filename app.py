@@ -352,7 +352,7 @@ async def fetch_post_comment(content_req: CommentReq ,
                             current_user: Optional[dict] = Depends(security_get_current_user),
                             
                              ) -> JSONResponse :
-    return await create_comments_and_replies(content_req , post_id , current_user)
+    return await create_comments(content_req , post_id , current_user)
 
 
 
@@ -384,7 +384,6 @@ async def fetch_post_comments_like(
 @app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
         tags= ["Comment"],
         response_model = Comment , 
-        dependencies=[Depends(get_token)],
         summary = "在貼文底下某則留言回覆留言",
         responses = {
             200:{
@@ -399,10 +398,10 @@ async def fetch_post_comments_like(
 async def fetch_post_comment_relpy(
     content_req:CommentReq,
     account_id: str = Path(..., description="該會員的帳號"),
-    post_id: str = Path(..., description="該貼文的id"),
-    comment_id: str = Path(..., description="該留言的id")
+    comment_id: str = Path(..., description="該留言的id"),
+    current_user: Optional[dict] = Depends(security_get_current_user),
     ) -> JSONResponse :
-    pass
+    return await create_replies(content_req , comment_id , current_user)
 
 @app.delete("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
         tags= ["Comment"],

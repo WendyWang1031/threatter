@@ -158,6 +158,53 @@ def db_create_comment_data(comment_data : CommentReq , post_id : str , member_id
         cursor.close()
         connection.close()
 
+def db_create_reply_data(comment_data : CommentReq , comment_id : str , member_id : str) -> bool :
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    try:
+        connection.begin()
+
+        def validate(value: Optional[str]) -> Optional[str] :
+            if value is None:
+                return None
+            return value.strip() or None
+        
+        content = validate(comment_data.content.text)
+        image_url = video_url = audio_url = None
+
+        if isinstance(comment_data.content.media, Media):
+            image_url = validate(comment_data.content.media.images)
+            # print("Validated image URL:", image_url)
+            video_url = validate(comment_data.content.media.videos)
+            audio_url = validate(comment_data.content.media.audios)
+        
+
+        content_id = generate_short_uuid('Reply')
+        
+
+        sql = """
+            INSERT INTO content 
+            (member_id, parent_id, content_id, content_type, 
+            visibility, text, image, video, audio)
+            VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(sql , (member_id , comment_id, content_id, 'Reply', 
+                              comment_data.visibility, content, image_url, video_url, audio_url) )
+        
+        connection.commit()
+        
+        return True
+    
+    except Exception as e:
+        print(f"Error inserting post Data: {e}")
+        connection.rollback() 
+        return False
+    finally:
+        cursor.close()
+        connection.close()
+
+
 def db_delete_comment(post_id : str , member_id : str ) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -320,7 +367,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
                             forward_counts=int(reply.get('forward_counts') or 0),
                         )
                     )
-                    print("reply_comment:",reply_comment)
+                    # print("reply_comment:",reply_comment)
 
                     replies.append(reply_comment)
             else:
