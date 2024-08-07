@@ -147,12 +147,11 @@ async def fetch_get_member(account_id: str = Path(..., description="該會員的
 async def fetch_post_follow(follow : FollowReq,
                             current_user : dict = Depends(security_get_current_user)
                             ) -> JSONResponse :
-    return await follow_target(follow , current_user)
+    return await post_follow_target(follow , current_user)
 
 @app.get("/api/member/{account_id}/follow/target",
         tags= ["Follow"],
         response_model = FollowMemberListRes , 
-        dependencies=[Depends(get_optional_token)], 
         summary = "顯示追蹤中對象",
         responses = {
             200:{
@@ -165,10 +164,13 @@ async def fetch_post_follow(follow : FollowReq,
             }
          })
 async def fetch_get_follow_target(
+    current_user :  Optional[dict] = Depends(security_get_current_user),
     account_id: str = Path(..., description="該會員的帳號"),
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
     ) -> JSONResponse :
-    pass
+    print("account_id1:",account_id)
+    print("current_user:",current_user)
+    return await get_follow_target(current_user , account_id , page)
 
 @app.get("/api/member/{account_id}/follow/fans",
         tags= ["Follow"],
