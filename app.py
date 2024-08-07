@@ -13,6 +13,7 @@ from controller.member import *
 from controller.comment import *
 from controller.like import *
 from controller.follow import *
+from controller.search import *
 
 from model.model import *
 from model.model_user import *
@@ -447,7 +448,7 @@ async def fetch_delete_comment(current_user : dict = Depends(security_get_curren
 async def fetch_search(
     search: str = Query(..., description="輸入想要搜尋的帳號"), 
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
-    pass
+    return await get_search(search , page)
 
 # 用戶
 @app.post("/api/user" , 
