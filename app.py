@@ -12,6 +12,7 @@ from controller.user import *
 from controller.member import *
 from controller.comment import *
 from controller.like import *
+from controller.follow import *
 
 from model.model import *
 from model.model_user import *
@@ -133,7 +134,6 @@ async def fetch_get_member(account_id: str = Path(..., description="該會員的
         tags= ["Follow"],
         response_model = FollowMember , 
         summary = "追蹤對方",
-        dependencies=[Depends(get_token)],
         responses = {
             200:{
                 "model" : FollowMember,
@@ -144,8 +144,10 @@ async def fetch_get_member(account_id: str = Path(..., description="該會員的
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_post_follow(follow : FollowReq) -> JSONResponse :
-    pass
+async def fetch_post_follow(follow : FollowReq,
+                            current_user : dict = Depends(security_get_current_user)
+                            ) -> JSONResponse :
+    return await follow_target(follow , current_user)
 
 @app.get("/api/member/{account_id}/follow/target",
         tags= ["Follow"],
