@@ -73,3 +73,34 @@ async def get_follow_target(current_user: Optional[dict] ,
             content=error_response.dict())
         return response
   
+
+async def get_follow_fans(current_user: Optional[dict] ,  
+                            account_id : str ,
+                            page : int ,
+                        ) -> JSONResponse :
+    try:
+    
+        member_id = current_user["account_id"] if current_user else None
+          
+        result = db_get_follow_fans(member_id , account_id , page)
+        
+        if result:
+            response = JSONResponse(
+            status_code = status.HTTP_200_OK,
+            content=result.dict()
+            )
+            return response
+        else:
+            error_response = ErrorResponse(error=True, message="Failed to create post data")
+            response = JSONResponse (
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                content=error_response.dict())
+            return response
+
+    
+    except Exception as e :
+        error_response = ErrorResponse(error=True, message=str(e))
+        response = JSONResponse (
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            content=error_response.dict())
+        return response

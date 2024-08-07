@@ -14,8 +14,10 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
 
         if follow.follow == True :
             relation_state = "Following"
+            target_relation_state = "BeingFollow"
         else:
             relation_state = "None"
+            target_relation_state = "None"
 
         check_sql = """
             SELECT * FROM member_relation
@@ -50,6 +52,32 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
         """
         cursor.execute(user_sql , (follow.account_id,))
         member = cursor.fetchone()
+
+
+        target_check_sql = """
+            SELECT * FROM member_relation
+            WHERE member_id = %s AND target_id = %s   
+        """
+        cursor.execute(target_check_sql, (follow.account_id, member_id))
+        existing_target_relation = cursor.fetchone()
+
+        if existing_target_relation :
+            update_target_sql = """
+                update member_relation 
+                SET relation_state = %s
+                where member_id = %s AND target_id = %s
+            """
+            cursor.execute(update_target_sql , (target_relation_state , follow.account_id , member_id ,))
+            
+
+        else:
+            insert_target_sql = """
+                INSERT INTO member_relation 
+                (member_id, target_id, relation_state)
+                VALUES (%s, %s, %s)
+            """
+            cursor.execute(insert_target_sql , (follow.account_id , member_id , target_relation_state ,))
+            
 
         
         follow_member = FollowMember(
@@ -132,6 +160,74 @@ def db_get_follow_target(member_id: Optional[str] , account_id : str , page : in
         )
         
         return following_target_data
+        
+    except Exception as e:
+        print(f"Error getting follow tagret data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def db_get_follow_fans(member_id: Optional[str] , account_id : str , page : int) -> FollowMemberListRes | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+        
+        limit = 15 
+        offset = page * limit
+
+        select_sql = """
+        select member.name , member.account_id ,  member.avatar ,
+        member_relation.relation_state
+        FROM member_relation
+        
+        JOIN member ON member_relation.member_id = member.account_id
+        
+        WHERE member_relation.target_id = %s 
+        AND member_relation.relation_state = 'Following'
+        LIMIT %s OFFSET %s
+    """
+        cursor.execute(select_sql, (account_id , limit , offset))
+        beingFollow_data = cursor.fetchall()
+
+        conut_sql = """
+        SELECT COUNT(*) as total_fans
+        FROM member_relation
+        WHERE member_id = %s AND relation_state = 'Following'
+    """
+        cursor.execute(conut_sql, (account_id ,))
+        total_fans = cursor.fetchone()['total_fans']
+
+        has_more_data = len(beingFollow_data) > limit
+        
+        if has_more_data:
+            beingFollow_data.pop()
+
+        fans_list = []
+        for data in beingFollow_data:
+            fans_member = FollowMember(
+                user = MemberBase(
+                    name = data['name'],
+                    account_id = data['account_id'],
+                    avatar = data['avatar']
+                ),
+                follow_state = data["relation_state"]
+            )
+            fans_list.append(fans_member)
+            
+        connection.commit()
+        next_page = page + 1 if has_more_data else None
+
+        fans_data = FollowMemberListRes(
+            next_page = next_page , 
+            fans_counts = total_fans ,
+            data = fans_list
+        )
+        
+        return fans_data
         
     except Exception as e:
         print(f"Error getting follow tagret data details: {e}")

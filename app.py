@@ -173,7 +173,6 @@ async def fetch_get_follow_target(
 @app.get("/api/member/{account_id}/follow/fans",
         tags= ["Follow"],
         response_model = FollowMemberListRes ,
-        dependencies=[Depends(get_optional_token)], 
         summary = "顯示追蹤本人的粉絲",
         responses = {
             200:{
@@ -186,10 +185,11 @@ async def fetch_get_follow_target(
             }
          })
 async def fetch_get_follow_fans(
+    current_user :  Optional[dict] = Depends(security_get_current_user),
     account_id: str = Path(..., description="該會員的帳號"),
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
     ) -> JSONResponse :
-    pass
+    return await get_follow_fans(current_user , account_id , page)
 
 # 貼文
 
