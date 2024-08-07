@@ -168,8 +168,6 @@ async def fetch_get_follow_target(
     account_id: str = Path(..., description="該會員的帳號"),
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
     ) -> JSONResponse :
-    print("account_id1:",account_id)
-    print("current_user:",current_user)
     return await get_follow_target(current_user , account_id , page)
 
 @app.get("/api/member/{account_id}/follow/fans",
