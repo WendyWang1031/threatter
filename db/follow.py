@@ -192,14 +192,16 @@ def db_get_follow_fans(member_id: Optional[str] , account_id : str , page : int)
     """
         cursor.execute(select_sql, (account_id , limit , offset))
         beingFollow_data = cursor.fetchall()
+        # print("beingFollow_data:",beingFollow_data)
 
         conut_sql = """
         SELECT COUNT(*) as total_fans
         FROM member_relation
-        WHERE member_id = %s AND relation_state = 'Following'
+        WHERE target_id = %s AND relation_state = 'Following'
     """
         cursor.execute(conut_sql, (account_id ,))
         total_fans = cursor.fetchone()['total_fans']
+        # print("total_fans:",total_fans)
 
         has_more_data = len(beingFollow_data) > limit
         
