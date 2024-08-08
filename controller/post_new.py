@@ -117,16 +117,26 @@ async def delete_post(post_id : str ,current_user : dict = Depends(security_get_
 async def get_post_member_page(current_user: Optional[dict], account_id: str , page: int) -> JSONResponse :
     try:
         member_id = current_user["account_id"] if current_user else None
-        post_data = db_get_member_post_data(member_id , account_id , page)
+        result , post_data = db_get_member_post_data(member_id , account_id , page)
         
-        if post_data :
-            
+        if result == "No Permission" :
+            error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
+            response = JSONResponse (
+                status_code=status.HTTP_403_FORBIDDEN, 
+                content=error_response.dict())
+            return response
+        elif result == "No Posts" :
+            error_response = ErrorResponse(error=True, message="該用戶沒有貼文資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        elif result == "Success" :
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=json.loads(post_data.json())
             )
             return response
-            
         else:
             error_response = ErrorResponse(error=True, message="No member's post data details found for user")
             response = JSONResponse (
