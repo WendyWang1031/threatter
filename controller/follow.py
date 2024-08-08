@@ -125,14 +125,20 @@ async def get_follow_fans(current_user: Optional[dict] ,
           
         result = db_get_follow_fans(member_id , account_id , page)
         
-        if result:
+        if result is None:
+            error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
+            response = JSONResponse (
+                status_code=status.HTTP_403_FORBIDDEN, 
+                content=error_response.dict())
+            return response
+        elif result:
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=result.dict()
             )
             return response
         else:
-            error_response = ErrorResponse(error=True, message="Failed to create post data")
+            error_response = ErrorResponse(error=True, message="Failed to get fans members list")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
