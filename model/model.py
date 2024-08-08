@@ -67,6 +67,9 @@ class FollowReq(BaseModel):
     follow: bool
     account_id: str
 
+class FollowAns(BaseModel):
+    accept: bool
+
 class FollowMember(BaseModel):
     user: MemberBase
     follow_state: str = Field(default="None", example="following, pending, beingFollow ,None") # following, pending, beingFollow

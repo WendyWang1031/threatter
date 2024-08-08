@@ -150,6 +150,26 @@ async def fetch_post_follow(follow : FollowReq,
                             ) -> JSONResponse :
     return await post_follow_target(follow , current_user)
 
+@app.post("/api/follow/member/{account_id}/follow",
+        tags= ["Follow"],
+        response_model = FollowMember , 
+        summary = "私人用戶回應追蹤",
+        responses = {
+            200:{
+                "model" : FollowMember,
+                "description" : "私人用戶回應追蹤對方"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_post_private_follow(followAns : FollowAns,
+                                    account_id: str = Path(..., description="該會員的帳號"),
+                                    current_user : dict = Depends(security_get_current_user)
+                            ) -> JSONResponse :
+    return await post_private_follow(followAns , account_id , current_user)
+
 @app.get("/api/member/{account_id}/follow/target",
         tags= ["Follow"],
         response_model = FollowMemberListRes , 

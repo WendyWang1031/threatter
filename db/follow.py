@@ -12,18 +12,28 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
     try:
         connection.begin()
 
+        visibility_sql = """
+            SELECT visibility FROM member WHERE account_id = %s
+        """
+        cursor.execute(visibility_sql, (follow.account_id,))
+        target_visibility = cursor.fetchone()["visibility"]
+
         if follow.follow == True :
-            relation_state = "Following"
-            target_relation_state = "BeingFollow"
+            if target_visibility == "Private":
+                relation_state = "Pending"
+                target_relation_state = "Pending"
+            else:
+                relation_state = "Following"
+                target_relation_state = "BeingFollow"
         else:
             relation_state = "None"
             target_relation_state = "None"
 
-        check_sql = """
+        check_relation_sql = """
             SELECT * FROM member_relation
             WHERE member_id = %s AND target_id = %s
         """
-        cursor.execute(check_sql, (member_id, follow.account_id))
+        cursor.execute(check_relation_sql, (member_id, follow.account_id))
         existing_relation = cursor.fetchone()
 
         if existing_relation:
@@ -43,15 +53,8 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
             """
             cursor.execute(insert_sql , (member_id , follow.account_id, relation_state ,))
             
-
-        user_sql = """
-            SELECT member.name , member.account_id , member.avatar
-            FROM member
-            WHERE account_id = %s
-
-        """
-        cursor.execute(user_sql , (follow.account_id,))
-        member = cursor.fetchone()
+    
+        ## ”目標為本人“與對方的關係
 
 
         target_check_sql = """
@@ -79,6 +82,14 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
             cursor.execute(insert_target_sql , (follow.account_id , member_id , target_relation_state ,))
             
 
+        user_sql = """
+            SELECT member.name , member.account_id , member.avatar
+            FROM member
+            WHERE account_id = %s
+
+        """
+        cursor.execute(user_sql , (follow.account_id,))
+        member = cursor.fetchone()
         
         follow_member = FollowMember(
             user = MemberBase(
@@ -101,6 +112,96 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
     finally:
         cursor.close()
         connection.close()
+
+def db_private_follow(followAns : FollowAns , account_id: str , member_id : str) -> FollowMember :
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    try:
+        connection.begin()
+
+        if followAns.accept is True :
+            relation_state = "Following"
+        else:
+            relation_state = "None"
+            
+
+        check_sql = """
+            SELECT * FROM member_relation
+            WHERE member_id = %s AND target_id = %s
+            AND relation_state = "Pending"
+        """
+        cursor.execute(check_sql, (account_id, member_id))
+        existing_pending_relation = cursor.fetchone()
+
+        if existing_pending_relation:
+            update_sql = """
+                update member_relation 
+                SET relation_state = %s
+                where member_id = %s AND target_id = %s
+            """
+            cursor.execute(update_sql , (relation_state , account_id , member_id ,))
+            
+
+            if relation_state == "Following":
+                check_being_follow_sql ="""
+                    SELECT relation_state FROM member_relation
+                    where member_id = %s AND target_id = %s            
+                """ 
+                cursor.execute(check_being_follow_sql , (member_id , account_id ,))
+                existing_relation = cursor.fetchone()
+
+                if existing_relation:
+                    if existing_relation['relation_state'] != 'BeingFollow':
+                        update_being_follow_sql ="""
+                        UPDATE member_relation
+                        SET relation_state = "BeingFollow"
+                        WHERE member_id = %s AND target_id = %s            
+                """
+                    cursor.execute(update_being_follow_sql , (member_id , account_id ,)) 
+                else:
+                    insert_being_follow_sql = """
+                        INSERT into member_relation
+                        (member_id , target_id , relation_state)
+                        VALUES (%s , %s , 'BeingFollow')
+                """
+                    cursor.execute(insert_being_follow_sql , (member_id , account_id ,)) 
+        else:
+            print(f"No pending follow request found for {account_id} to {member_id}")
+            
+
+        user_sql = """
+            SELECT member.name , member.account_id , member.avatar
+            FROM member
+            WHERE account_id = %s
+
+        """
+        cursor.execute(user_sql , (account_id,))
+        member = cursor.fetchone()
+
+        
+        follow_member = FollowMember(
+            user = MemberBase(
+                    name = member['name'],
+                    account_id = member['account_id'],
+                    avatar = member['avatar']
+                ),
+            follow_state = relation_state
+        )
+
+
+        connection.commit()
+        
+        return follow_member
+    
+    except Exception as e:
+        print(f"Error update private follow: {e}")
+        connection.rollback() 
+        return False
+    finally:
+        cursor.close()
+        connection.close()
+
 
 def db_get_follow_target(member_id: Optional[str] , account_id : str , page : int) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
