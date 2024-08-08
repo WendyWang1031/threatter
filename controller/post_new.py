@@ -138,9 +138,9 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
             )
             return response
         else:
-            error_response = ErrorResponse(error=True, message="No member's post data details found for user")
+            error_response = ErrorResponse(error=True, message="無法獲得貼文資料")
             response = JSONResponse (
-                status_code=status.HTTP_404_NOT_FOUND, 
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                 content=error_response.dict())
             return response
 
