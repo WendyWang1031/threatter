@@ -258,25 +258,26 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
             return "No Permission", None
         
 
-        check_relation_sql = """
-        SELECT relation_state 
-        FROM member_relation
-        WHERE member_id = %s AND target_id = %s
-        """
-        cursor.execute(check_relation_sql, (member_id, account_id))
-        check_relation = cursor.fetchone()
-        
+        if member_id != account_id :
+            check_relation_sql = """
+            SELECT relation_state 
+            FROM member_relation
+            WHERE member_id = %s AND target_id = %s
+            """
+            cursor.execute(check_relation_sql, (member_id, account_id))
+            check_relation = cursor.fetchone()
+            
 
-        if check_relation is None:
-                check_relation_state = "None"
-        else:
-                check_relation_state = check_relation["relation_state"]
+            if check_relation is None:
+                    check_relation_state = "None"
+            else:
+                    check_relation_state = check_relation["relation_state"]
 
-        if check_relation_state in ["None", "Pending"] and target_visibility == "Private":
-                return "No Permission", None
+            if check_relation_state in ["None", "Pending"] and target_visibility == "Private":
+                    return "No Permission", None
+            
         
-        
-        ## 顯示以下追蹤對象
+        ## 顯示以下貼文內容
 
         limit = 15 
         offset = page * limit
@@ -406,37 +407,53 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
-
-
-        # 預設狀況下，用戶只能看到公開的內容
-        visibility_clause = "content.visibility = 'Public'"
         
-        if member_id : 
-            # 檢查已登入用戶
-            relation_sql = """select relation_state
-            FROM member_relation
-            where member_id = %s AND target_id = %s
-            """
-            cursor.execute( relation_sql , (member_id , account_id) )
-            relation = cursor.fetchone()
-            if relation : 
-                relation_state = relation['relation_state']
-                if member_id == account_id or relation_state == 'Following':
-                    visibility_clause = "(content.visibility = 'Public' OR content.visibility = 'Private')"
-                else:
-                    visibility_clause = "content.visibility = 'Public'"
+        ## 確認未登入、私人對象用戶與本人的關係
 
-        sql = f"""select content.* ,
+        visibility_sql = """
+            SELECT visibility FROM member WHERE account_id = %s
+        """
+        cursor.execute(visibility_sql, (account_id,))
+        target_visibility = cursor.fetchone()["visibility"]
+        
+
+        if member_id is None and target_visibility == "Private":
+            return "No Permission", None
+        
+
+        if member_id != account_id :
+            check_relation_sql = """
+            SELECT relation_state 
+            FROM member_relation
+            WHERE member_id = %s AND target_id = %s
+            """
+            cursor.execute(check_relation_sql, (member_id, account_id))
+            check_relation = cursor.fetchone()
+            
+
+            if check_relation is None:
+                    check_relation_state = "None"
+            else:
+                    check_relation_state = check_relation["relation_state"]
+
+            if check_relation_state in ["None", "Pending"] and target_visibility == "Private":
+                    return "No Permission", None
+        
+        
+        ## 顯示以下貼文內容
+
+
+        sql = """select content.* ,
             member.name , member.account_id , member.avatar,  
             likes.like_state
         FROM content
         
         Left Join member on content.member_id = member.account_id
         Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-        WHERE content.member_id = %s AND {visibility_clause}
+        WHERE content.member_id = %s 
         AND content.content_id = %s
         """
-        cursor.execute( sql , (member_id , account_id , post_id) )
+        cursor.execute( sql , (account_id , account_id , post_id) )
         post_data = cursor.fetchall()
         # print("post_data:",post_data)
 
@@ -484,7 +501,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
         
 
         if not post_data:
-            return None
+            return "No Posts", None
         
         for data in post_data:
         
@@ -523,7 +540,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
             
         connection.commit()
         
-        return post
+        return "Success" , post
         
     except Exception as e:
         print(f"Error getting post data details: {e}")
