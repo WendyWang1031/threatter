@@ -3,6 +3,7 @@ from fastapi import *
 from fastapi.responses import JSONResponse
 from model.model import *
 from db.comment import *
+from db.post_new import *
 from service.security import security_get_current_user
 
 
@@ -163,4 +164,40 @@ async def get_comments_and_replies(current_user: Optional[dict], account_id: str
         return response
   
 
+async def get_post_single_page(current_user: Optional[dict], account_id: str , post_id : str) -> JSONResponse :
+    try:
+        member_id = current_user["account_id"] if current_user else None
+        result , post_data = db_get_single_post_data(member_id , account_id , post_id)
+        
+        if result == "No Permission" :
+            error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
+            response = JSONResponse (
+                status_code=status.HTTP_403_FORBIDDEN, 
+                content=error_response.dict())
+            return response
+        elif result == "No Posts" :
+            error_response = ErrorResponse(error=True, message="該用戶沒有貼文資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        elif result == "Success" :
+            response = JSONResponse(
+            status_code = status.HTTP_200_OK,
+            content=json.loads(post_data.json())
+            )
+            return response
+        else:
+            error_response = ErrorResponse(error=True, message="無法獲得貼文資料")
+            response = JSONResponse (
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                content=error_response.dict())
+            return response
 
+        
+    except Exception as e :
+        error_response = ErrorResponse(error=True, message=str(e))
+        response = JSONResponse (
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            content=error_response.dict())
+        return response

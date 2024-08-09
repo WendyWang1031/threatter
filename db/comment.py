@@ -137,6 +137,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
+        
 
         limit = 15 
         offset = page * limit
@@ -184,7 +185,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
 
         comment_ids = tuple(comment['content_id'] for comment in comment_data)
         
-        # print("comment_ids:",comment_ids)
+        print("comment_ids:",comment_ids)
         like_count_sql = """
             SELECT content_id, COUNT(*) as total_likes 
             FROM likes
