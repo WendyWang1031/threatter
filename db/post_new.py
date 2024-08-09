@@ -1,6 +1,7 @@
 import pymysql.cursors
 from typing import Optional
 from model.model import *
+from db.check_relation import *
 from db.connection_pool import get_db_connection_pool
 import uuid
 
@@ -42,6 +43,7 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             ORDER BY created_at DESC LIMIT %s OFFSET %s
             """
             cursor.execute( sql , (limit+1 , offset) )
+            post_data = cursor.fetchall()
         else:
             sql = """
             select content.* ,
@@ -49,18 +51,27 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             likes.like_state
             FROM content
             
-            Left Join member on content.member_id = member.account_id
-            Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-            
-            WHERE content.content_type = 'Post' AND
-            content.visibility = 'Public' OR 
-            (content.visibility = 'Private' AND content.member_id = %s)
+            LEFT JOIN member on content.member_id = member.account_id
+            LEFT JOIN likes on content.content_id = likes.content_id AND likes.member_id = %s
+            LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
+
+            WHERE content.content_type = 'Post' 
             ORDER BY created_at DESC LIMIT %s OFFSET %s
             """
             cursor.execute( sql , (member_id , member_id , limit+1 , offset) )
-
-        post_data = cursor.fetchall()
-        # print("post_data:",post_data)
+            post_data = cursor.fetchall()
+            # print("post_data:",post_data)
+        
+        # 過濾後的資料
+            filtered_post_data = []
+            for post in post_data:
+                target_visibility = post["visibility"]
+                relation_state = post.get("relation_state")
+                
+                if has_permission_to_view(member_id, target_visibility, relation_state):
+                    filtered_post_data.append(post)
+            
+            post_data = filtered_post_data
 
         if not post_data:
             return None

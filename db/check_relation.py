@@ -39,9 +39,24 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
             return True
 
         except Exception as e:
-            print(f"Error getting follow tagret data details: {e}")
+            print(f"Error getting follow and target relationship details: {e}")
             connection.rollback()
             return None
         finally:
             cursor.close()
             connection.close()
+
+def has_permission_to_view(member_id: Optional[str], post_visibility: str, relation_state: Optional[str]) -> bool:
+    # 如果貼文內容是公開，任何人都能觀看
+    if post_visibility == "Public":
+        return True
+    
+    # 如果未登入，且貼文內容是私人，就不能觀看
+    if member_id is None and post_visibility == "Private":
+        return False
+    
+    # 貼文內容是私人，關係是沒關係、確認中，就不能觀看
+    if post_visibility == "Private" and relation_state in ["None", "Pending"]:
+        return False
+    
+    return True
