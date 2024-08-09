@@ -84,21 +84,24 @@ async def get_follow_target(current_user: Optional[dict] ,
     try:
     
         member_id = current_user["account_id"] if current_user else None
-          
-        result = db_get_follow_target(member_id , account_id , page)
+        relation = db_check_member_target_relation(member_id , account_id)  
         
-        if result is None:
+        
+        if relation is None:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
                 status_code=status.HTTP_403_FORBIDDEN, 
                 content=error_response.dict())
             return response
-        elif result:
+        
+        elif relation is True:
+            result = db_get_follow_target(account_id , page)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=result.dict()
             )
             return response
+        
         else:
             error_response = ErrorResponse(error=True, message="Failed to get target members list")
             response = JSONResponse (
@@ -122,16 +125,17 @@ async def get_follow_fans(current_user: Optional[dict] ,
     try:
     
         member_id = current_user["account_id"] if current_user else None
+        relation = db_check_member_target_relation(member_id , account_id) 
           
-        result = db_get_follow_fans(member_id , account_id , page)
-        
-        if result is None:
+        if relation is None:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
                 status_code=status.HTTP_403_FORBIDDEN, 
                 content=error_response.dict())
             return response
-        elif result:
+        
+        elif relation is True:
+            result = db_get_follow_fans(member_id , account_id , page)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=result.dict()
