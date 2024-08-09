@@ -4,6 +4,7 @@ from fastapi import *
 from fastapi.responses import JSONResponse
 from model.model import *
 from db.post_new import *
+from db.check_relation import *
 from service.security import security_get_current_user
 
 
@@ -156,30 +157,35 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
 async def get_post_single_page(current_user: Optional[dict], account_id: str , post_id : str) -> JSONResponse :
     try:
         member_id = current_user["account_id"] if current_user else None
-        result , post_data = db_get_single_post_data(member_id , account_id , post_id)
-        
-        if result == "No Permission" :
+
+        relation = db_check_member_target_relation(member_id , account_id) 
+        print("relation:",relation)  
+        if relation is None:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
                 status_code=status.HTTP_403_FORBIDDEN, 
                 content=error_response.dict())
             return response
-        elif result == "No Posts" :
-            error_response = ErrorResponse(error=True, message="該用戶沒有貼文資料")
-            response = JSONResponse (
-                status_code=status.HTTP_404_NOT_FOUND, 
-                content=error_response.dict())
-            return response
-        elif result == "Success" :
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=json.loads(post_data.json())
-            )
-            return response
+        
+        elif relation is True:
+            post_data = db_get_single_post_data(account_id , post_id)
+            if post_data: 
+                response = JSONResponse(
+                    status_code = status.HTTP_200_OK,
+                    content = json.loads(post_data.json())
+                )
+                return response
+            else:
+                error_response = ErrorResponse(error=True, message="No post data found")
+                response = JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND, 
+                    content=error_response.dict()
+                )
+                return response
         else:
-            error_response = ErrorResponse(error=True, message="無法獲得貼文資料")
+            error_response = ErrorResponse(error=True, message="Failed to get fans members list")
             response = JSONResponse (
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
             return response
 

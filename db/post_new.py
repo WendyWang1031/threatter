@@ -6,6 +6,7 @@ import uuid
 
 
 
+
 def generate_short_uuid(content_type: str) -> str:
     prefix = {
         'Post': 'P-',
@@ -402,43 +403,12 @@ def db_get_member_post_data(member_id: Optional[str] , account_id : str , page :
         connection.close()
 
 
-def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_id : int) -> Optional[Post] | None:
+def db_get_single_post_data(account_id : str , post_id : int) -> Optional[Post] | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
-        
-        ## 確認未登入、私人對象用戶與本人的關係
-
-        visibility_sql = """
-            SELECT visibility FROM member WHERE account_id = %s
-        """
-        cursor.execute(visibility_sql, (account_id,))
-        target_visibility = cursor.fetchone()["visibility"]
-        
-
-        if member_id is None and target_visibility == "Private":
-            return "No Permission", None
-        
-
-        if member_id != account_id :
-            check_relation_sql = """
-            SELECT relation_state 
-            FROM member_relation
-            WHERE member_id = %s AND target_id = %s
-            """
-            cursor.execute(check_relation_sql, (member_id, account_id))
-            check_relation = cursor.fetchone()
-            
-
-            if check_relation is None:
-                    check_relation_state = "None"
-            else:
-                    check_relation_state = check_relation["relation_state"]
-
-            if check_relation_state in ["None", "Pending"] and target_visibility == "Private":
-                    return "No Permission", None
-        
+    
         
         ## 顯示以下貼文內容
 
@@ -455,7 +425,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
         """
         cursor.execute( sql , (account_id , account_id , post_id) )
         post_data = cursor.fetchall()
-        # print("post_data:",post_data)
+        print("post_data:",post_data)
 
         # 讚數
         like_count_sql ="""
@@ -501,7 +471,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
         
 
         if not post_data:
-            return "No Posts", None
+            return None
         
         for data in post_data:
         
@@ -540,7 +510,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
             
         connection.commit()
         
-        return "Success" , post
+        return post
         
     except Exception as e:
         print(f"Error getting post data details: {e}")
