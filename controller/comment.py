@@ -138,10 +138,17 @@ async def delete_comment_and_reply(comment_id : str ,
 async def get_comments_and_replies(current_user: Optional[dict], account_id: str , post_id : str , page: int) -> JSONResponse :
     try:
         member_id = current_user["account_id"] if current_user else None
-        comments_data = db_get_comments_and_replies_data(member_id , account_id , post_id , page)
+        result , comments_data = db_get_comments_and_replies_data(member_id , account_id , post_id , page)
         
-        if comments_data :
+        if result == "No Comment Data" :
             
+            error_response = ErrorResponse(error=True, message="沒有留言資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        
+        elif result == "Success" :
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=json.loads(comments_data.json())

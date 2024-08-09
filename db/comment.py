@@ -181,7 +181,10 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         cursor.execute( sql , (member_id , post_id , limit+1 , offset) )
         
         comment_data = cursor.fetchall()
-        # print("comment_data:",comment_data)
+        print("comment_data:",comment_data)
+
+        if not comment_data:
+            return "No Comment Data" ,  None
 
         comment_ids = tuple(comment['content_id'] for comment in comment_data)
         
@@ -222,6 +225,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         forwards_dict = {forward['parent_id']: forward['total_forwards'] for forward in forwards_data}
 
         reply_ids = tuple(reply['content_id'] for comment in comment_data for reply in comment_data)
+        
         cursor.execute(like_count_sql, (reply_ids,))
         likes_data = cursor.fetchall()
 
@@ -232,8 +236,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         likes_data = cursor.fetchall()
 
 
-        if not comment_data:
-            return None
+        
         
         has_more_data = len(comment_data) > limit
         
@@ -293,8 +296,6 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             reply_data = cursor.fetchall()
             # print("reply_data:",reply_data)
 
-            
-            
             replies = []
             
             if reply_data : 
@@ -332,7 +333,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
 
                     replies.append(reply_comment)
             else:
-                replies = None
+                replies = []
         
             comment_detail = CommentDetail(
             comment = comment,
@@ -345,7 +346,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         
         next_page = page + 1 if has_more_data else None
         
-        return CommentDetailListRes(next_page = next_page , data = comment_detail_list )
+        return "Success" , CommentDetailListRes(next_page = next_page , data = comment_detail_list )
         
         # sql = f"""
         # SELECT
