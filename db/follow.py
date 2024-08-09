@@ -23,7 +23,7 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
         if follow.follow == True :
             if target_visibility == "Private":
                 relation_state = "Pending"
-                target_relation_state = "Pending"
+                target_relation_state = "PendingBeingFollow"
             else:
                 relation_state = "Following"
                 target_relation_state = "BeingFollow"
@@ -215,6 +215,54 @@ def exp_search(keyword :str, page : int) -> list[str]:
 
 def exp_getFollowMemberList(account_id :str, target_id_list: list[str]) -> List[FollowMember]:
      pass
+
+def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+        
+        limit = 15 
+        offset = page * limit
+
+        
+        select_sql = """
+            SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+            FROM member_relation
+            JOIN member ON member_relation.member_id = member.account_id
+            WHERE member_relation.target_id = %s 
+            AND member_relation.relation_state = 'Pending'
+            LIMIT %s OFFSET %s
+        """
+        count_sql = """
+            SELECT COUNT(*) as total
+            FROM member_relation
+            WHERE target_id = %s 
+            AND relation_state = 'Pending'
+        """
+        cursor.execute(select_sql, (member_id , limit+1, offset))
+        follow_data = cursor.fetchall()
+        # print("follow_data:",follow_data)
+
+        cursor.execute(count_sql, (member_id,))
+        total_count = cursor.fetchone()['total']
+
+        has_more_data = len(follow_data) > limit
+        
+        if has_more_data:
+            follow_data.pop()
+
+        connection.commit()
+
+        return db_get_members_list_data(follow_data, total_count, page , has_more_data)
+    
+    except Exception as e:
+        print(f"Error getting follow data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
 
 
 

@@ -170,6 +170,27 @@ async def fetch_post_private_follow(followAns : FollowAns,
                             ) -> JSONResponse :
     return await post_private_follow(followAns , account_id , current_user)
 
+@app.get("/api/follow/member/follow",
+        tags= ["Follow"],
+        response_model = FollowMemberListRes , 
+        summary = "私人用戶：顯示要求追蹤的對象",
+        responses = {
+            200:{
+                "model" : FollowMemberListRes,
+                "description" : "成功顯示要求追蹤的對象"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_pending_target(
+    current_user :  dict = Depends(security_get_current_user),
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
+    ) -> JSONResponse :
+    return await get_pending_target(current_user , page)
+
+
 @app.get("/api/member/{account_id}/follow/target",
         tags= ["Follow"],
         response_model = FollowMemberListRes , 
