@@ -88,27 +88,20 @@ async def get_follow_target(current_user: Optional[dict] ,
         relation = db_check_member_target_relation(member_id , account_id)  
         
         
-        if relation is None:
+        if relation is False:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
                 status_code=status.HTTP_403_FORBIDDEN, 
                 content=error_response.dict())
             return response
         
-        elif relation is True:
-            result = db_get_follow_target(account_id , page)
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=result.dict()
-            )
-            return response
         
-        else:
-            error_response = ErrorResponse(error=True, message="Failed to get target members list")
-            response = JSONResponse (
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                content=error_response.dict())
-            return response
+        result = db_get_follow_target(account_id , page)
+        response = JSONResponse(
+        status_code = status.HTTP_200_OK,
+        content=result.dict()
+        )
+        return response
 
     
     except Exception as e :
@@ -128,26 +121,21 @@ async def get_follow_fans(current_user: Optional[dict] ,
         member_id = current_user["account_id"] if current_user else None
         relation = db_check_member_target_relation(member_id , account_id) 
           
-        if relation is None:
+        if relation is False:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
                 status_code=status.HTTP_403_FORBIDDEN, 
                 content=error_response.dict())
             return response
         
-        elif relation is True:
-            result = db_get_follow_fans(account_id , page)
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=result.dict()
-            )
-            return response
-        else:
-            error_response = ErrorResponse(error=True, message="Failed to get fans members list")
-            response = JSONResponse (
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                content=error_response.dict())
-            return response
+        
+        result = db_get_follow_fans(account_id , page)
+        response = JSONResponse(
+        status_code = status.HTTP_200_OK,
+        content=result.dict()
+        )
+        return response
+
 
     
     except Exception as e :

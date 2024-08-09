@@ -16,7 +16,7 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
             target_visibility = cursor.fetchone()["visibility"]
 
             if member_id is None and target_visibility == "Private":
-                return None
+                return False
             
 
             check_relation_sql = """
@@ -34,14 +34,14 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
                     check_relation_state = check_relation["relation_state"]
 
             if check_relation_state in ["None", "Pending"] and target_visibility == "Private":
-                    return None
+                    return False
             
             return True
 
         except Exception as e:
             print(f"Error getting follow and target relationship details: {e}")
             connection.rollback()
-            return None
+            return False
         finally:
             cursor.close()
             connection.close()

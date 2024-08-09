@@ -219,14 +219,6 @@ def exp_getFollowMemberList(account_id :str, target_id_list: list[str]) -> List[
 
 
 def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes | None:
-    return db_get_members_list_data(account_id, page, 'following')
-
-
-def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | None:
-    return db_get_members_list_data(account_id, page, 'fans')
-
-
-def db_get_members_list_data(account_id: str, page: int, relation_type: str) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -235,38 +227,21 @@ def db_get_members_list_data(account_id: str, page: int, relation_type: str) -> 
         limit = 15 
         offset = page * limit
 
-        if relation_type == 'following':
-            select_sql = """
-                SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
-                FROM member_relation
-                JOIN member ON member_relation.target_id = member.account_id
-                WHERE member_relation.member_id = %s 
-                AND member_relation.relation_state = 'Following'
-                LIMIT %s OFFSET %s
-            """
-            count_sql = """
-                SELECT COUNT(*) as total
-                FROM member_relation
-                WHERE member_id = %s AND relation_state = 'Following'
-            """
-        elif relation_type == 'fans':
-            select_sql = """
-                SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
-                FROM member_relation
-                JOIN member ON member_relation.member_id = member.account_id
-                WHERE member_relation.target_id = %s 
-                AND member_relation.relation_state = 'Following'
-                LIMIT %s OFFSET %s
-            """
-            count_sql = """
-                SELECT COUNT(*) as total
-                FROM member_relation
-                WHERE target_id = %s AND relation_state = 'Following'
-            """
-        else:
-            raise ValueError("Invalid relation type")
-
-        cursor.execute(select_sql, (account_id, limit, offset))
+        
+        select_sql = """
+            SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+            FROM member_relation
+            JOIN member ON member_relation.target_id = member.account_id
+            WHERE member_relation.member_id = %s 
+            AND member_relation.relation_state = 'Following'
+            LIMIT %s OFFSET %s
+        """
+        count_sql = """
+            SELECT COUNT(*) as total
+            FROM member_relation
+            WHERE member_id = %s AND relation_state = 'Following'
+        """
+        cursor.execute(select_sql, (account_id, limit+1, offset))
         follow_data = cursor.fetchall()
 
         cursor.execute(count_sql, (account_id,))
@@ -277,8 +252,80 @@ def db_get_members_list_data(account_id: str, page: int, relation_type: str) -> 
         if has_more_data:
             follow_data.pop()
 
+        connection.commit()
+
+        return db_get_members_list_data(follow_data, total_count, page , has_more_data)
+    
+    except Exception as e:
+        print(f"Error getting follow data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
+    
+    
+
+
+def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+        
+        limit = 15 
+        offset = page * limit
+
+        
+        select_sql = """
+                SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+                FROM member_relation
+                JOIN member ON member_relation.member_id = member.account_id
+                WHERE member_relation.target_id = %s 
+                AND member_relation.relation_state = 'Following'
+                LIMIT %s OFFSET %s
+            """
+        count_sql = """
+            SELECT COUNT(*) as total
+            FROM member_relation
+            WHERE target_id = %s AND relation_state = 'Following'
+        """
+        cursor.execute(select_sql, (account_id, limit+1, offset))
+        follow_data = cursor.fetchall()
+
+        cursor.execute(count_sql, (account_id,))
+        total_count = cursor.fetchone()['total']
+
+        has_more_data = len(follow_data) > limit
+        
+        if has_more_data:
+            follow_data.pop()
+
+        connection.commit()
+
+        return db_get_members_list_data(follow_data, total_count, page , has_more_data)
+    
+    except Exception as e:
+        print(f"Error getting follow data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
+
+
+def db_get_members_list_data(member_data , total_count , page : int , has_more_data: bool) -> FollowMemberListRes | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+        
+        
+
         follow_list = []
-        for data in follow_data:
+        for data in member_data:
             follow_member = FollowMember(
                 user = MemberBase(
                     name = data['name'],
@@ -289,7 +336,7 @@ def db_get_members_list_data(account_id: str, page: int, relation_type: str) -> 
             )
             follow_list.append(follow_member)
             
-        connection.commit()
+        
         next_page = page + 1 if has_more_data else None
 
         follow_result = FollowMemberListRes(
@@ -301,7 +348,7 @@ def db_get_members_list_data(account_id: str, page: int, relation_type: str) -> 
         return follow_result
         
     except Exception as e:
-        print(f"Error getting follow data details: {e}")
+        print(f"Error getting members data details: {e}")
         connection.rollback()
         return None
     finally:
