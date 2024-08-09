@@ -119,7 +119,6 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
     try:
         member_id = current_user["account_id"] if current_user else None
         
-        
         relation = db_check_member_target_relation(member_id , account_id) 
 
         if relation is None:

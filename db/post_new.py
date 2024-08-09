@@ -48,7 +48,8 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             sql = """
             select content.* ,
             member.name , member.account_id , member.avatar,  
-            likes.like_state
+            likes.like_state,
+            member.visibility, member_relation.relation_state
             FROM content
             
             LEFT JOIN member on content.member_id = member.account_id
@@ -65,12 +66,14 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
         # 過濾後的資料
             filtered_post_data = []
             for post in post_data:
-                target_visibility = post["visibility"]
+                post_visibility = post["visibility"]
                 relation_state = post.get("relation_state")
+                account_id = post.get("member_id")
                 
-                if has_permission_to_view(member_id, target_visibility, relation_state):
+                if has_permission_to_view(account_id, post_visibility, relation_state):
                     filtered_post_data.append(post)
             
+            # print("filtered_post_data:",filtered_post_data)
             post_data = filtered_post_data
 
         if not post_data:
