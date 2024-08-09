@@ -258,45 +258,66 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
 
 
 def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes | None:
+    return db_get_members_list_data(account_id, page, 'following')
+
+
+def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | None:
+    return db_get_members_list_data(account_id, page, 'fans')
+
+
+def db_get_members_list_data(account_id: str, page: int, relation_type: str) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
-
-        ## 顯示以下追蹤對象
-
+        
         limit = 15 
         offset = page * limit
 
-        select_sql = """
-        select member.name , member.account_id ,  member.avatar ,
-        member_relation.relation_state
-        FROM member_relation
-        
-        JOIN member ON member_relation.target_id = member.account_id
-        
-        WHERE member_relation.member_id = %s 
-        AND member_relation.relation_state = 'Following'
-        LIMIT %s OFFSET %s
-    """
-        cursor.execute(select_sql, (account_id , limit , offset))
-        following_data = cursor.fetchall()
+        if relation_type == 'following':
+            select_sql = """
+                SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+                FROM member_relation
+                JOIN member ON member_relation.target_id = member.account_id
+                WHERE member_relation.member_id = %s 
+                AND member_relation.relation_state = 'Following'
+                LIMIT %s OFFSET %s
+            """
+            count_sql = """
+                SELECT COUNT(*) as total
+                FROM member_relation
+                WHERE member_id = %s AND relation_state = 'Following'
+            """
+        elif relation_type == 'fans':
+            select_sql = """
+                SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+                FROM member_relation
+                JOIN member ON member_relation.member_id = member.account_id
+                WHERE member_relation.target_id = %s 
+                AND member_relation.relation_state = 'Following'
+                LIMIT %s OFFSET %s
+            """
+            count_sql = """
+                SELECT COUNT(*) as total
+                FROM member_relation
+                WHERE target_id = %s AND relation_state = 'Following'
+            """
+        else:
+            raise ValueError("Invalid relation type")
 
-        conut_sql = """
-        SELECT COUNT(*) as total_following
-        FROM member_relation
-        WHERE member_id = %s AND relation_state = 'Following'
-    """
-        cursor.execute(conut_sql, (account_id ,))
-        total_following = cursor.fetchone()['total_following']
+        cursor.execute(select_sql, (account_id, limit, offset))
+        follow_data = cursor.fetchall()
 
-        has_more_data = len(following_data) > limit
+        cursor.execute(count_sql, (account_id,))
+        total_count = cursor.fetchone()['total']
+
+        has_more_data = len(follow_data) > limit
         
         if has_more_data:
-            following_data.pop()
+            follow_data.pop()
 
-        following_list = []
-        for data in following_data:
+        follow_list = []
+        for data in follow_data:
             follow_member = FollowMember(
                 user = MemberBase(
                     name = data['name'],
@@ -305,96 +326,23 @@ def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes |
                 ),
                 follow_state = data["relation_state"]
             )
-            following_list.append(follow_member)
+            follow_list.append(follow_member)
             
         connection.commit()
         next_page = page + 1 if has_more_data else None
 
-        following_target_data = FollowMemberListRes(
-            next_page = next_page , 
-            fans_counts = total_following ,
-            data = following_list
+        follow_result = FollowMemberListRes(
+            next_page = next_page, 
+            fans_counts = total_count,
+            data = follow_list
         )
         
-        return following_target_data
+        return follow_result
         
     except Exception as e:
-        print(f"Error getting follow tagret data details: {e}")
+        print(f"Error getting follow data details: {e}")
         connection.rollback()
         return None
     finally:
         cursor.close()
         connection.close()
-
-
-def db_get_follow_fans(member_id: Optional[str] , account_id : str , page : int) -> FollowMemberListRes | None:
-    connection = get_db_connection_pool()
-    cursor = connection.cursor(pymysql.cursors.DictCursor)
-    try:
-        connection.begin()
-        
-        ## 顯示以下追蹤對象
-        
-        limit = 15 
-        offset = page * limit
-
-        select_sql = """
-        select member.name , member.account_id ,  member.avatar ,
-        member_relation.relation_state
-        FROM member_relation
-        
-        JOIN member ON member_relation.member_id = member.account_id
-        
-        WHERE member_relation.target_id = %s 
-        AND member_relation.relation_state = 'Following'
-        LIMIT %s OFFSET %s
-    """
-        cursor.execute(select_sql, (account_id , limit , offset))
-        beingFollow_data = cursor.fetchall()
-        # print("beingFollow_data:",beingFollow_data)
-
-        conut_sql = """
-        SELECT COUNT(*) as total_fans
-        FROM member_relation
-        WHERE target_id = %s AND relation_state = 'Following'
-    """
-        cursor.execute(conut_sql, (account_id ,))
-        total_fans = cursor.fetchone()['total_fans']
-        # print("total_fans:",total_fans)
-
-        has_more_data = len(beingFollow_data) > limit
-        
-        if has_more_data:
-            beingFollow_data.pop()
-
-        fans_list = []
-        for data in beingFollow_data:
-            fans_member = FollowMember(
-                user = MemberBase(
-                    name = data['name'],
-                    account_id = data['account_id'],
-                    avatar = data['avatar']
-                ),
-                follow_state = data["relation_state"]
-            )
-            fans_list.append(fans_member)
-            
-        connection.commit()
-        next_page = page + 1 if has_more_data else None
-
-        fans_data = FollowMemberListRes(
-            next_page = next_page , 
-            fans_counts = total_fans ,
-            data = fans_list
-        )
-        
-        return fans_data
-        
-    except Exception as e:
-        print(f"Error getting follow tagret data details: {e}")
-        connection.rollback()
-        return None
-    finally:
-        cursor.close()
-        connection.close()
-

@@ -135,7 +135,7 @@ async def get_follow_fans(current_user: Optional[dict] ,
             return response
         
         elif relation is True:
-            result = db_get_follow_fans(member_id , account_id , page)
+            result = db_get_follow_fans(account_id , page)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content=result.dict()
