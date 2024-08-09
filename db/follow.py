@@ -102,7 +102,6 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
             follow_state = relation_state
         )
 
-
         connection.commit()
         
         return follow_member
@@ -224,8 +223,7 @@ def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes |
         
         limit = 15 
         offset = page * limit
-
-        
+     
         select_sql = """
             SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
             FROM member_relation
@@ -369,8 +367,6 @@ def db_get_members_list_data(member_data , total_count , page : int , has_more_d
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
-        
-        
 
         follow_list = []
         for data in member_data:
