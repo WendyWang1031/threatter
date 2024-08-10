@@ -318,7 +318,7 @@ async def fetch_post_post_like(
     post_id : str = Path(..., description="該貼文的id"),
     current_user : dict = Depends(security_get_current_user),
     ) -> JSONResponse :
-    return await post_post_like(post_like , post_id , current_user)
+    return await post_post_like(post_like , account_id , post_id , current_user)
 
 @app.post("/api/member/{account_id}/post/{post_id}/reply",
         tags= ["Post"],
