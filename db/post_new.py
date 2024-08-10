@@ -2,21 +2,10 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 from db.check_relation import *
+from service.common import *
 from db.connection_pool import get_db_connection_pool
-import uuid
 
 
-
-
-def generate_short_uuid(content_type: str) -> str:
-    prefix = {
-        'Post': 'P-',
-        'Comment': 'C-',
-        'Reply': 'R-'
-    }.get(content_type, 'O-')
-    
-    short_uuid = str(uuid.uuid4())[:8]  
-    return f"{prefix}{short_uuid}"
 
 def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[PostListRes] | None:
     connection = get_db_connection_pool()
@@ -148,17 +137,11 @@ def db_create_post_data(post_data : PostCreateReq , member_id : str ) -> bool :
     try:
         connection.begin()
 
-        def validate(value: Optional[str]) -> Optional[str] :
-            if value is None:
-                return None
-            return value.strip() or None
-        
         content = validate(post_data.content.text)
         image_url = video_url = audio_url = None
 
         if isinstance(post_data.content.media, Media):
             image_url = validate(post_data.content.media.images)
-            print("Validated image URL:", image_url)
             video_url = validate(post_data.content.media.videos)
             audio_url = validate(post_data.content.media.audios)
         

@@ -2,19 +2,7 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 from db.connection_pool import get_db_connection_pool
-import uuid
-
-
-
-def generate_short_uuid(content_type: str) -> str:
-    prefix = {
-        'Post': 'P-',
-        'Comment': 'C-',
-        'Reply': 'R-'
-    }.get(content_type, 'O-')
-    
-    short_uuid = str(uuid.uuid4())[:8]  
-    return f"{prefix}{short_uuid}"
+from service.common import *
 
 
 def db_create_comment_data(comment_data : CommentReq , post_id : str , member_id : str) -> bool :
@@ -24,17 +12,11 @@ def db_create_comment_data(comment_data : CommentReq , post_id : str , member_id
     try:
         connection.begin()
 
-        def validate(value: Optional[str]) -> Optional[str] :
-            if value is None:
-                return None
-            return value.strip() or None
-        
         content = validate(comment_data.content.text)
         image_url = video_url = audio_url = None
 
         if isinstance(comment_data.content.media, Media):
             image_url = validate(comment_data.content.media.images)
-            # print("Validated image URL:", image_url)
             video_url = validate(comment_data.content.media.videos)
             audio_url = validate(comment_data.content.media.audios)
         
@@ -181,7 +163,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         cursor.execute( sql , (member_id , post_id , limit+1 , offset) )
         
         comment_data = cursor.fetchall()
-        print("comment_data:",comment_data)
+        # print("comment_data:",comment_data)
 
         if not comment_data:
             return "No Comment Data" ,  None
