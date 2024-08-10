@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from model.model import *
 from db.comment import *
 from db.post_new import *
+from db.update_counts import *
 from service.security import security_get_current_user
 
 
@@ -29,7 +30,9 @@ async def create_comments(content_data : CommentReq ,
         member_id = current_user["account_id"]    
         result = db_create_comment_data(content_data , post_id , member_id)
         
-        if result is True:
+        count_res = db_update_relpy_counts(post_id)
+
+        if result is True and count_res is True:
             success_response = SuccessfulRes(success=True)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
