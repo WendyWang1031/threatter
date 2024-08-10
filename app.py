@@ -27,63 +27,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 security = HTTPBearer(auto_error=False)  
 
-def get_token(authorization: str = Header(...)):
-    if authorization is None:
-        raise HTTPException(status_code=401, detail="Authorization header missing")
-    return authorization
-
-def get_optional_token(authorization: str = Header(None)):
-    if authorization is None:
-        raise HTTPException(status_code=401, detail="Authorization header missing")
-    return authorization
-
-# 測試版－作業－貼文
-@app.post("/api/post/generate-presigned-url_test",
-        tags= ["Post-Test"], 
-        summary = "S3 產生欲簽名 URL",
-         )
-async def fetch_post_generate_presigned_url_test(presignedUrl_request: PresignedUrlRequest) -> JSONResponse :
-    print("presignedUrl_request:", presignedUrl_request)
-    return await generate_presigned_url(presignedUrl_request.file_name , presignedUrl_request.file_type)
-
-@app.post("/api/post_test",
-        tags= ["Post-Test"],
-        response_model = PostGetResponse , 
-        summary = "新增貼文資料",
-        responses = {
-            200:{
-                "model" : PostGetResponse,
-                "description" : "修改成功"
-            },
-            400:{
-                "model" : ErrorResponse,
-                "description" : "修改失敗，輸入不正確或其他原因"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         }
-         )
-async def fetch_post_post_test(post_data : PostData) -> JSONResponse :
-    return await create_post_data(post_data)
-
-@app.get("/api/post_test",
-        tags= ["Post-Test"],
-        response_model = PostGetResponse , 
-        summary = "根據id取得貼文資訊",
-        responses = {
-            200:{
-                "model" : PostGetResponse,
-                "description" : "成功取得貼文資料"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_get_post_test() -> JSONResponse :
-    return await get_post_data()
 
 # 共用
 @app.post("/api/post/generate-presigned-url",
