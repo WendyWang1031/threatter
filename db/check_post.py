@@ -36,19 +36,35 @@ def db_check_comment_exist_or_not(post_id : str , content_id : str):
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         try:
 
-            check_exist_post_sql = """
-            SELECT 1
-            FROM content
-            WHERE parent_id = %s AND content_id = %s
-            """
-            cursor.execute(check_exist_post_sql, (post_id , content_id))
-            check_comment_or_reply_exist = cursor.fetchone()
-            # print("check_comment_or_reply_exist:",check_comment_or_reply_exist)
+            if content_id.startswith("C"):
+                check_exist_comment_sql = """
+                SELECT 1
+                FROM content 
+                WHERE parent_id = %s AND content_id = %s
+                """
+                cursor.execute(check_exist_comment_sql, (post_id , content_id))
+                check_comment_exist = cursor.fetchone()
 
-            if check_comment_or_reply_exist :
-                 return True
+                if check_comment_exist :
+                    return True
+                else:
+                    return False
+
             else:
-                 return False
+                check_exist_reply_sql = """
+                SELECT 1
+                FROM content AS reply
+                JOIN content AS comment ON reply.parent_id = comment.content_id
+                WHERE comment.parent_id = %s AND reply.content_id = %s
+                """
+                cursor.execute(check_exist_reply_sql, (post_id , content_id))
+                check_reply_exist = cursor.fetchone()
+                # print("check_comment_or_reply_exist:",check_comment_or_reply_exist)
+
+                if check_reply_exist :
+                    return True
+                else:
+                    return False
     
         except Exception as e:
             print(f"Error getting comment or reply existension details: {e}")
