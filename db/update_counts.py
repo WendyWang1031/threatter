@@ -36,7 +36,7 @@ def db_get_like_counts(total_likes , content_id) -> FollowMember :
         cursor.close()
         connection.close()
 
-def db_update_relpy_counts(post_id) -> FollowMember :
+def db_update_relpy_counts(content_id) -> FollowMember :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -48,7 +48,7 @@ def db_update_relpy_counts(post_id) -> FollowMember :
             FROM content
             WHERE parent_id = %s 
         """
-        cursor.execute(count_reply_sql, (post_id,))
+        cursor.execute(count_reply_sql, (content_id,))
         reply_count_row = cursor.fetchone()
         # print("reply_count_row:",reply_count_row)
 
@@ -64,7 +64,7 @@ def db_update_relpy_counts(post_id) -> FollowMember :
             SET reply_counts = %s 
             WHERE content_id = %s
         """
-        cursor.execute(update_content_sql, (total_replies, post_id))
+        cursor.execute(update_content_sql, (total_replies, content_id))
 
         connection.commit()
 

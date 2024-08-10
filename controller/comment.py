@@ -77,7 +77,9 @@ async def create_replies(content_data : CommentReq ,
         member_id = current_user["account_id"]    
         result = db_create_reply_data(content_data , comment_id , member_id)
         
-        if result is True:
+        count_res = db_update_relpy_counts(comment_id)
+
+        if result is True and count_res is True:
             success_response = SuccessfulRes(success=True)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
