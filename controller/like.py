@@ -5,6 +5,7 @@ from model.model import *
 from db.like import *
 from db.check_relation import *
 from db.check_post import *
+from db.update_counts import *
 from service.security import security_get_current_user
 
 
