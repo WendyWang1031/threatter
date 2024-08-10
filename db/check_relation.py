@@ -17,7 +17,7 @@ def db_check_target_exist_or_not(account_id : str ):
             check_exist = cursor.fetchone()
             # print("check_exist:",check_exist)
 
-            if check_exist is True:
+            if check_exist :
                  return True
             else:
                  return False
@@ -45,6 +45,8 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
             if member_id is None and target_visibility == "Private":
                 return False
             
+            if member_id == account_id:
+                 return True
 
             check_relation_sql = """
             SELECT relation_state 
