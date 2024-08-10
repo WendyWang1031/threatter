@@ -40,19 +40,23 @@ async def post_post_like(post_like : LikeReq ,
             return response
 
 
-        result = db_like_post(post_like , post_id , member_id)
-        if result:
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=result.dict()
-            )
-            return response
-        else:
+        total_counts = db_like_post(post_like , post_id , member_id)
+        
+        if total_counts is False:
             error_response = ErrorResponse(error=True, message="Failed to update like data")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
             return response
+        
+        else:
+            result = db_get_like_counts(total_counts , post_id)
+            response = JSONResponse(
+                status_code = status.HTTP_200_OK,
+                content=result.dict()
+                )
+            return response
+
 
     
     except Exception as e :
@@ -63,7 +67,9 @@ async def post_post_like(post_like : LikeReq ,
         return response
     
 
-async def post_comment_or_reply_like(comment_like : LikeReq ,  
+async def post_comment_or_reply_like(comment_like : LikeReq ,
+                                    account_id : str, 
+                                    post_id : str ,  
                                     comment_id : str ,
                                     current_user : dict = Depends(security_get_current_user),
                         ) -> JSONResponse :
@@ -75,7 +81,25 @@ async def post_comment_or_reply_like(comment_like : LikeReq ,
                     content=error_response.dict())
             return response
 
-        member_id = current_user["account_id"]    
+        member_id = current_user["account_id"] 
+
+        target_exist_result = db_check_target_exist_or_not(account_id)
+        if target_exist_result is False:
+            error_response = ErrorResponse(error=True, message="資料庫並不存在該用戶資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        
+        post_exist_result = db_check_post_exist_or_not(account_id , post_id)
+        if post_exist_result is False:
+            error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        
+
         result = db_like_comment_or_reply(comment_like , comment_id , member_id)
         
         if result:

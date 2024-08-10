@@ -29,21 +29,7 @@ def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool 
         cursor.execute(count_sql , (post_id ,))
         total_likes = cursor.fetchone()["total_likes"]
         
-        # 更新讚數到 content 表
-        update_content_sql = """
-            UPDATE content 
-            SET like_counts = %s 
-            WHERE content_id = %s
-        """
-        cursor.execute(update_content_sql, (total_likes, post_id))
-
-        connection.commit()
-
-        like_res = LikeRes(
-            total_likes= total_likes
-        )
-        
-        return like_res
+        return total_likes
     
     except Exception as e:
         print(f"Error update post like: {e}")
@@ -114,3 +100,34 @@ def db_like_comment_or_reply(comment_like : LikeReq , comment_id : str , member_
         cursor.close()
         connection.close()
 
+def db_get_like_counts(total_likes , content_id) -> FollowMember :
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    try:
+        connection.begin()
+
+        # 更新讚數到 content 表
+        update_content_sql = """
+            UPDATE content 
+            SET like_counts = %s 
+            WHERE content_id = %s
+        """
+        cursor.execute(update_content_sql, (total_likes, content_id))
+
+        connection.commit()
+
+        like_res = LikeRes(
+            total_likes= total_likes
+        )
+        
+        return like_res
+
+    
+    except Exception as e:
+        print(f"Error getting like counts details: {e}")
+        connection.rollback() 
+        return False
+    finally:
+        cursor.close()
+        connection.close()
