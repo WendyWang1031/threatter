@@ -31,6 +31,40 @@ def db_check_target_exist_or_not(account_id : str ):
             connection.close()
 
 
+def db_check_each_other_relation(member_id: str , account_id : str ):
+        connection = get_db_connection_pool()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        try:
+
+            check_relation_sql = """
+            SELECT relation_state 
+            FROM member_relation
+            WHERE member_id = %s AND target_id = %s
+            """
+            cursor.execute(check_relation_sql, (member_id, account_id))
+            check_relation = cursor.fetchone()
+            print("check_relation:",check_relation)
+
+            if check_relation is None or check_relation['relation_state'] == 'None':
+                return None
+            elif check_relation['relation_state'] == 'Pending':
+                return 'Pending'
+            elif check_relation['relation_state'] == 'Following':
+                return 'Following'
+            elif check_relation['relation_state'] == 'PendingBeingFollow':
+                return 'PendingBeingFollow'
+            elif check_relation['relation_state'] == 'BeingFollow':
+                return 'BeingFollow'
+            
+
+        except Exception as e:
+            print(f"Error getting each other relationship details: {e}")
+            connection.rollback()
+            return False
+        finally:
+            cursor.close()
+            connection.close()
+
 def db_check_member_target_relation(member_id: Optional[str] , account_id : str ):
         connection = get_db_connection_pool()
         cursor = connection.cursor(pymysql.cursors.DictCursor)

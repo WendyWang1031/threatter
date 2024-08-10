@@ -22,7 +22,15 @@ async def post_follow_target(follow : FollowReq ,
 
         # db get relation state
         # check relation state (None, Following)
+        relation = db_check_each_other_relation(member_id , follow.account_id)
+        print("relation:",relation)
 
+        if follow.follow is True and relation == "Following" :
+            error_response = ErrorResponse(error=True, message="該用戶已追蹤對方")
+            response = JSONResponse (
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                content=error_response.dict())
+            return response
         # db change relation state
         result = db_follow_target(follow , member_id)
         # check success or fail
@@ -36,7 +44,7 @@ async def post_follow_target(follow : FollowReq ,
             )
             return response
         else:
-            error_response = ErrorResponse(error=True, message="Failed to create post data")
+            error_response = ErrorResponse(error=True, message="Failed to create follow data")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
