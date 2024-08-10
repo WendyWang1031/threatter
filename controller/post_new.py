@@ -6,6 +6,7 @@ from model.model import *
 from db.post_new import *
 from db.check_relation import *
 from db.check_post import *
+from db.update_counts import *
 from service.security import security_get_current_user
 
 
@@ -27,8 +28,10 @@ async def create_post_data(post_data : PostCreateReq , current_user : dict = Dep
 
         member_id = current_user["account_id"]    
         result = db_create_post_data(post_data , member_id)
-        
-        if result is True:
+    
+        count_res = db_update_forward_counts(post_data.post_parent_id)
+
+        if result is True and count_res is True:
             success_response = SuccessfulRes(success=True)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,

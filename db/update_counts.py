@@ -79,12 +79,26 @@ def db_update_relpy_counts(content_id) -> FollowMember :
         cursor.close()
         connection.close()
 
-def db_update_forward_counts(total_forward , content_id) -> FollowMember :
+def db_update_forward_counts(content_id) -> FollowMember :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
         connection.begin()
+
+        count_forwards_sql = """
+            SELECT COUNT(*) as total_forwards
+            FROM content
+            WHERE parent_id = %s AND content_type = 'Post'
+        """
+        cursor.execute(count_forwards_sql, (content_id,))
+        forwards_count_row = cursor.fetchone()
+        # print("forwards_count_row:",forwards_count_row)
+
+        if forwards_count_row:
+            total_forwards = forwards_count_row['total_forwards']
+        else:
+            total_forwards = 0
 
         # 更新轉發數到 content 表
         update_content_sql = """
@@ -92,7 +106,7 @@ def db_update_forward_counts(total_forward , content_id) -> FollowMember :
             SET forward_counts = %s 
             WHERE content_id = %s
         """
-        cursor.execute(update_content_sql, (total_forward, content_id))
+        cursor.execute(update_content_sql, (total_forwards , content_id))
 
         connection.commit()
         
