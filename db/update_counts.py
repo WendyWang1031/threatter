@@ -114,7 +114,7 @@ def db_update_forward_counts(content_id) -> FollowMember :
 
     
     except Exception as e:
-        print(f"Error getting reply counts details: {e}")
+        print(f"Error getting forwards counts details: {e}")
         connection.rollback() 
         return False
     finally:
