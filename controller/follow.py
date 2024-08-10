@@ -51,7 +51,6 @@ async def post_follow_target(follow : FollowReq ,
         return response
     
 async def post_private_follow(followAns : FollowAns ,
-                            account_id: str,
                             current_user : dict = Depends(security_get_current_user),
                         ) -> JSONResponse :
     try:
@@ -68,7 +67,7 @@ async def post_private_follow(followAns : FollowAns ,
         # check relation state (Pending)
 
         # db change relation state
-        result = db_private_follow(followAns , account_id , member_id)
+        result = db_private_follow(followAns , followAns.account_id , member_id)
         # check success or fail
 
         # db get FollowMember
@@ -143,6 +142,7 @@ async def get_follow_target(current_user: Optional[dict] ,
         member_id = current_user["account_id"] if current_user else None
 
         target_exist_result = db_check_target_exist_or_not(account_id)
+        # print("target_exist_result:",target_exist_result)
         if target_exist_result is False:
             error_response = ErrorResponse(error=True, message="資料庫並不存在該用戶資料")
             response = JSONResponse (

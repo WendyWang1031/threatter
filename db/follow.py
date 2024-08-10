@@ -5,7 +5,7 @@ from model.model import *
 from db.connection_pool import get_db_connection_pool
 from db.check_relation import *
 
-
+RELATION_STATUS_PENDING = "Pending"
 
 def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
     connection = get_db_connection_pool()
@@ -22,7 +22,7 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
 
         if follow.follow == True :
             if target_visibility == "Private":
-                relation_state = "Pending"
+                relation_state = RELATION_STATUS_PENDING
                 target_relation_state = "PendingBeingFollow"
             else:
                 relation_state = "Following"

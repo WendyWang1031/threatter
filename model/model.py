@@ -69,6 +69,7 @@ class FollowReq(BaseModel):
 
 class FollowAns(BaseModel):
     accept: bool
+    account_id: str
 
 class FollowMember(BaseModel):
     user: MemberBase

@@ -93,7 +93,7 @@ async def fetch_post_follow(follow : FollowReq,
                             ) -> JSONResponse :
     return await post_follow_target(follow , current_user)
 
-@app.post("/api/follow/member/{account_id}/follow",
+@app.post("/api/follow/member/follow",
         tags= ["Follow"],
         response_model = FollowMember , 
         summary = "私人用戶回應追蹤",
@@ -108,10 +108,9 @@ async def fetch_post_follow(follow : FollowReq,
             }
          })
 async def fetch_post_private_follow(followAns : FollowAns,
-                                    account_id: str = Path(..., description="該會員的帳號"),
                                     current_user : dict = Depends(security_get_current_user)
                             ) -> JSONResponse :
-    return await post_private_follow(followAns , account_id , current_user)
+    return await post_private_follow(followAns , current_user)
 
 @app.get("/api/follow/member/follow",
         tags= ["Follow"],
