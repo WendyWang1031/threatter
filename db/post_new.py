@@ -2,6 +2,7 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 from db.check_relation import *
+from db.re_post_data import *
 from service.common import *
 from db.connection_pool import get_db_connection_pool
 
@@ -12,115 +13,42 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
-
-        limit = 15 
+        limit = 15
         offset = page * limit
-        
-        if member_id is None : 
+
+        if member_id is None:
             sql = """
-            select content.* , 
-            member.name , member.account_id , member.avatar, 
-            likes.like_state
-            FROM content
-            
-            Left Join member on content.member_id = member.account_id
-            Left Join likes on content.content_id = likes.content_id
-            
-            WHERE content.content_type = 'Post' AND
-            content.visibility = 'Public'
-            ORDER BY created_at DESC LIMIT %s OFFSET %s
+                SELECT content.*, 
+                    member.name, member.account_id, member.avatar, 
+                    likes.like_state
+                FROM content
+                LEFT JOIN member ON content.member_id = member.account_id
+                LEFT JOIN likes ON content.content_id = likes.content_id
+                WHERE content.content_type = 'Post' 
+                AND content.visibility = 'Public'
+                ORDER BY created_at DESC 
+                LIMIT %s OFFSET %s
             """
-            cursor.execute( sql , (limit+1 , offset) )
-            post_data = cursor.fetchall()
+            params = (limit+1, offset)
         else:
             sql = """
-            select content.* ,
-            member.name , member.account_id , member.avatar,  
-            likes.like_state,
-            member.visibility, member_relation.relation_state
-            FROM content
-            
-            LEFT JOIN member on content.member_id = member.account_id
-            LEFT JOIN likes on content.content_id = likes.content_id AND likes.member_id = %s
-            LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
-
-            WHERE content.content_type = 'Post' 
-            ORDER BY created_at DESC LIMIT %s OFFSET %s
+                SELECT content.*, 
+                    member.name, member.account_id, member.avatar,  
+                    likes.like_state,
+                    member.visibility, member_relation.relation_state
+                FROM content
+                LEFT JOIN member ON content.member_id = member.account_id
+                LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
+                LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
+                WHERE content.content_type = 'Post'
+                ORDER BY created_at DESC 
+                LIMIT %s OFFSET %s
             """
-            cursor.execute( sql , (member_id , member_id , limit+1 , offset) )
-            post_data = cursor.fetchall()
-            # print("post_data:",post_data)
+            params = (member_id, member_id, limit+1, offset)
+
+        return db_get_post_data(sql, params, multiple=True)
+
         
-        # 過濾後的資料
-            filtered_post_data = []
-            for post in post_data:
-                post_visibility = post["visibility"]
-                relation_state = post.get("relation_state")
-                account_id = post.get("member_id")
-                
-                if has_permission_to_view(account_id, post_visibility, relation_state):
-                    filtered_post_data.append(post)
-            
-            # print("filtered_post_data:",filtered_post_data)
-            post_data = filtered_post_data
-
-        if not post_data:
-            return None
-        
-        has_more_data = len(post_data) > limit
-        
-        if has_more_data :
-            post_data.pop()
-
-
-        posts = []
-        for data in post_data:
-
-            parent_post = None
-            if data.get('parent_id'):
-                parent_post = ParentPostId(
-                    account_id = data.get('account_id'),  
-                    post_id = data['parent_id']       
-                )
-
-            media = Media(
-            images=data.get('image'),
-            videos=data.get('video'),
-            audios=data.get('audio')
-            )
-
-            created_at = data['created_at']
-            if isinstance(created_at, str):
-                created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-
-
-            post = Post(
-                post_id = data['content_id'] ,
-                parent = parent_post ,
-                created_at = created_at ,
-                user = MemberBase(
-                    name = data['name'],
-                    account_id = data['account_id'],
-                    avatar = data['avatar']
-                ),
-                content = PostContent(
-                    text = data['text'],
-                    media = media,
-                ),
-                visibility = data['visibility'],
-                like_state = bool(data.get('like_state' , False)),
-                counts = PostCounts(
-                    like_counts = int(data.get('like_counts' , 0)),
-                    reply_counts = int(data.get('reply_counts' , 0)),
-                    forward_counts = int(data.get('forward_counts' , 0)),
-                )
-            )
-            posts.append(post)
-
-        connection.commit()
-        
-        next_page = page + 1 if has_more_data else None
-        return PostListRes(next_page = next_page , data = posts )
         
     except Exception as e:
         print(f"Error getting home post data details: {e}")
@@ -214,70 +142,10 @@ def db_get_member_post_data(account_id : str , page : int) -> Optional[PostListR
         WHERE content.member_id = %s AND content.content_type = 'Post'
         ORDER BY created_at DESC LIMIT %s OFFSET %s
         """
-        cursor.execute( sql , (account_id , account_id , limit+1 , offset))
-        post_data = cursor.fetchall()
-        # print("post_data:",post_data)
+        params = (account_id, account_id, limit+1, offset)
+        return db_get_post_data(sql, params, multiple=True)
 
     
-        if not post_data:
-            return None
-        
-        has_more_data = len(post_data) > limit
-        
-        if has_more_data :
-            post_data.pop()
-
-
-        posts = []
-        for data in post_data:
-
-            media = Media(
-            images=data.get('image'),
-            videos=data.get('video'),
-            audios=data.get('audio')
-            )
-
-            created_at = data['created_at']
-            if isinstance(created_at, str):
-                created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-
-
-            parent_post = None
-            if data.get('parent_id'):
-                parent_post = ParentPostId(
-                    account_id = data.get('account_id'),  
-                    post_id = data['parent_id']       
-                )
-
-            post = Post(
-                post_id = data['content_id'] ,
-                parent = parent_post ,
-                created_at = created_at ,
-                user = MemberBase(
-                    name = data['name'],
-                    account_id = data['account_id'],
-                    avatar = data['avatar']
-                ),
-                content = PostContent(
-                    text = data['text'],
-                    media = media,
-                ),
-                visibility = data['visibility'],
-                like_state = bool(data.get('like_state' , False)),
-                counts = PostCounts(
-                    like_counts = int(data.get('like_counts' , 0)),
-                    reply_counts = int(data.get('reply_counts' , 0)),
-                    forward_counts = int(data.get('forward_counts' , 0)),
-                )
-            )
-            posts.append(post)
-
-            # print("posts:",posts)
-
-        connection.commit()
-        
-        next_page = page + 1 if has_more_data else None
-        return PostListRes(next_page = next_page , data = posts )
         
     except Exception as e:
         print(f"Error getting member's post data details: {e}")
@@ -297,66 +165,22 @@ def db_get_single_post_data(account_id : str , post_id : int) -> Optional[Post] 
         ## 顯示以下貼文內容
 
         sql = """select content.* ,
-            member.name , member.account_id , member.avatar,  
-            likes.like_state
+            member.name , member.account_id , member.avatar 
+            
         FROM content
         
         Left Join member on content.member_id = member.account_id
-        Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+        
         WHERE content.member_id = %s 
         AND content.content_id = %s
         AND content.content_type = 'Post'
         """
-        cursor.execute( sql , (account_id , account_id , post_id) )
-        post_data = cursor.fetchone()
-        # print("post_data:",post_data)
+
+        params = (account_id, post_id)
+    
+        return db_get_post_data(sql, params, multiple=False)
   
 
-        if not post_data:
-            return None
-
-        media = Media(
-        images=post_data.get('image'),
-        videos=post_data.get('video'),
-        audios=post_data.get('audio')
-        )
-
-        created_at = post_data['created_at']
-        if isinstance(created_at, str):
-            created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-
-        parent_post = None
-        if post_data.get('parent_id'):
-            parent_post = ParentPostId(
-                account_id = post_data.get('account_id'),  
-                post_id = post_data['parent_id']       
-            )
-
-        post = Post(
-            post_id = post_data['content_id'] ,
-            parent = parent_post,
-            created_at = created_at ,
-            user = MemberBase(
-                name = post_data['name'],
-                account_id = post_data['account_id'],
-                avatar = post_data['avatar']
-            ),
-            content = PostContent(
-                text = post_data['text'],
-                media = media,
-            ),
-            visibility = post_data['visibility'],
-            like_state = bool(post_data.get('like_state' , False)),
-            counts = PostCounts(
-                like_counts = int(post_data.get('like_counts', 0)),
-                reply_counts = int(post_data.get('reply_counts', 0)),
-                forward_counts = int(post_data.get('forward_counts', 0)),
-            )
-        )
-            
-        connection.commit()
-        
-        return post
         
     except Exception as e:
         print(f"Error getting single post data details: {e}")
