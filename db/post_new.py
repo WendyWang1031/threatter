@@ -359,10 +359,16 @@ def db_get_single_post_data(account_id : str , post_id : int) -> Optional[Post] 
         if isinstance(created_at, str):
             created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
 
+        parent_post = None
+        if post_data.get('parent_id'):
+            parent_post = ParentPostId(
+                account_id=post_data.get('account_id'),  
+                post_id=post_data['parent_id']       
+            )
 
         post = Post(
             post_id = post_data['content_id'] ,
-            parent=ParentPostId(id=post_data['parent_id']) if post_data.get('parent_id') else None ,
+            parent = parent_post,
             created_at = created_at ,
             user = MemberBase(
                 name = post_data['name'],
