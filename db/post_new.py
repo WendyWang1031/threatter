@@ -391,9 +391,7 @@ def db_get_single_post_data(account_id : str , post_id : int) -> Optional[Post] 
     try:
         connection.begin()
     
-        
         ## 顯示以下貼文內容
-
 
         sql = """select content.* ,
             member.name , member.account_id , member.avatar,  
@@ -406,96 +404,52 @@ def db_get_single_post_data(account_id : str , post_id : int) -> Optional[Post] 
         AND content.content_id = %s
         """
         cursor.execute( sql , (account_id , account_id , post_id) )
-        post_data = cursor.fetchall()
+        post_data = cursor.fetchone()
         # print("post_data:",post_data)
-
-        # 讚數
-        like_count_sql ="""
-            SELECT COUNT(*) as total_likes FROM likes
-            where content_id = %s AND like_state = TRUE
-        """
-        cursor.execute(like_count_sql , (post_id ,))
-        total_likes_row = cursor.fetchone()
-        
-        if total_likes_row:
-            total_likes = total_likes_row["total_likes"]
-        else:
-            total_likes = 0
-         
-        # print("total_likes:",total_likes)
-
-        # 留言數
-        comment_count_sql ="""
-            SELECT COUNT(*) as total_replies FROM content
-            where parent_id = %s AND content_type = 'Comment'
-        """
-        cursor.execute(comment_count_sql , (post_id ,))
-        total_replies_row = cursor.fetchone()
-        
-        if total_replies_row:
-            total_replies = total_replies_row["total_replies"]
-        else:
-            total_replies = 0
-
-        # 轉發數
-        forward_count_sql ="""
-            SELECT COUNT(*) as total_forwards FROM content
-            where parent_id = %s AND content_type = 'Post'
-        """
-        cursor.execute(forward_count_sql , (post_id ,))
-        total_forwards_row = cursor.fetchone()
-        
-        if total_forwards_row:
-            total_forwards = total_forwards_row["total_forwards"]
-        else:
-            total_forwards = 0
-         
-        
+  
 
         if not post_data:
             return None
-        
-        for data in post_data:
-        
-            media = Media(
-            images=data.get('image'),
-            videos=data.get('video'),
-            audios=data.get('audio')
+
+        media = Media(
+        images=post_data.get('image'),
+        videos=post_data.get('video'),
+        audios=post_data.get('audio')
+        )
+
+        created_at = post_data['created_at']
+        if isinstance(created_at, str):
+            created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+
+
+        post = Post(
+            post_id = post_data['content_id'] ,
+            parent=ParentPostId(id=post_data['parent_id']) if post_data.get('parent_id') else None ,
+            created_at = created_at ,
+            user = MemberBase(
+                name = post_data['name'],
+                account_id = post_data['account_id'],
+                avatar = post_data['avatar']
+            ),
+            content = PostContent(
+                text = post_data['text'],
+                media = media,
+            ),
+            visibility = post_data['visibility'],
+            like_state = bool(post_data.get('like_state' , False)),
+            counts = PostCounts(
+                like_counts = int(post_data.get('like_counts', 0)),
+                reply_counts = int(post_data.get('reply_counts', 0)),
+                forward_counts = int(post_data.get('forward_counts', 0)),
             )
-
-            created_at = data['created_at']
-            if isinstance(created_at, str):
-                created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-
-
-            post = Post(
-                post_id = data['content_id'] ,
-                parent=ParentPostId(id=data['parent_id']) if data.get('parent_id') else None ,
-                created_at = created_at ,
-                user = MemberBase(
-                    name = data['name'],
-                    account_id = data['account_id'],
-                    avatar = data['avatar']
-                ),
-                content = PostContent(
-                    text = data['text'],
-                    media = media,
-                ),
-                visibility = data['visibility'],
-                like_state = bool(data.get('like_state' , False)),
-                counts = PostCounts(
-                    like_counts = int(total_likes or 0),
-                    reply_counts = int(total_replies or 0),
-                    forward_counts = int(total_forwards or 0),
-                )
-            )
+        )
             
         connection.commit()
         
         return post
         
     except Exception as e:
-        print(f"Error getting post data details: {e}")
+        print(f"Error getting single post data details: {e}")
         connection.rollback()
         return None
     finally:

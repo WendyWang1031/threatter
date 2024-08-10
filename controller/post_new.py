@@ -178,21 +178,23 @@ async def get_post_single_page(current_user: Optional[dict], account_id: str , p
                 content=error_response.dict())
             return response
         
-        elif relation is True:
-            post_data = db_get_single_post_data(account_id , post_id)
-            if post_data: 
-                response = JSONResponse(
-                    status_code = status.HTTP_200_OK,
-                    content = json.loads(post_data.json())
-                )
-                return response
-            else:
-                error_response = ErrorResponse(error=True, message="No post data found")
-                response = JSONResponse(
-                    status_code=status.HTTP_404_NOT_FOUND, 
-                    content=error_response.dict()
-                )
-                return response
+        post_exist_result = db_check_post_exist_or_not(account_id , post_id)
+        if post_exist_result is False:
+            error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        
+        
+        post_data = db_get_single_post_data(account_id , post_id)
+        if post_data: 
+            response = JSONResponse(
+                status_code = status.HTTP_200_OK,
+                content = json.loads(post_data.json())
+            )
+            return response
+
         else:
             error_response = ErrorResponse(error=True, message="Failed to get member's single post")
             response = JSONResponse (
