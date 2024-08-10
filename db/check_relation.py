@@ -113,14 +113,7 @@ def has_permission_to_view(member_id: Optional[str], post_visibility: str, relat
     # 如果貼文內容是公開，任何人都能觀看
     if post_visibility == "Public":
         return True
-    
-    # 如果未登入，且貼文內容是私人，就不能觀看
-    if member_id is None and post_visibility == "Private":
-        return False
-    
-    # 貼文內容是私人，關係是沒關係、確認中，就不能觀看
-    if post_visibility == "Private" and (relation_state is None or relation_state in ["None", "Pending"]):
-        return False
+
     
     # 觀看私人貼文的條件是必須已追蹤
     if post_visibility == "Private" and relation_state == "Following":
@@ -130,4 +123,4 @@ def has_permission_to_view(member_id: Optional[str], post_visibility: str, relat
     # print("post_visibility:",post_visibility)
     # print("relation_state:",relation_state)
     
-    return True
+    return False
