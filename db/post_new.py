@@ -39,7 +39,6 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             
             WHERE content.content_type = 'Post' AND
             content.visibility = 'Public'
-            AND content.content_type = 'Post'
             ORDER BY created_at DESC LIMIT %s OFFSET %s
             """
             cursor.execute( sql , (limit+1 , offset) )
@@ -85,42 +84,42 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             post_data.pop()
 
         
-        post_ids = tuple(post['content_id'] for post in post_data)
-        # print("post_ids:",post_ids)
-        like_count_sql = """
-            SELECT content_id, COUNT(*) as total_likes 
-            FROM likes
-            WHERE content_id IN %s AND like_state = TRUE
-            GROUP BY content_id
-        """
-        cursor.execute(like_count_sql, (post_ids,))
-        likes_data = cursor.fetchall()
-        # print("likes_data:",likes_data)
+        # post_ids = tuple(post['content_id'] for post in post_data)
+        # # print("post_ids:",post_ids)
+        # like_count_sql = """
+        #     SELECT content_id, COUNT(*) as total_likes 
+        #     FROM likes
+        #     WHERE content_id IN %s AND like_state = TRUE
+        #     GROUP BY content_id
+        # """
+        # cursor.execute(like_count_sql, (post_ids,))
+        # likes_data = cursor.fetchall()
+        # # print("likes_data:",likes_data)
 
-        comment_count_sql = """
-            SELECT parent_id, COUNT(*) as total_replies 
-            FROM content
-            WHERE parent_id IN %s AND content_type = 'Comment'
-            GROUP BY parent_id
-        """
-        cursor.execute(comment_count_sql, (post_ids,))
-        comments_data = cursor.fetchall()
-        # print("comments_data:",comments_data)
+        # comment_count_sql = """
+        #     SELECT parent_id, COUNT(*) as total_replies 
+        #     FROM content
+        #     WHERE parent_id IN %s AND content_type = 'Comment'
+        #     GROUP BY parent_id
+        # """
+        # cursor.execute(comment_count_sql, (post_ids,))
+        # comments_data = cursor.fetchall()
+        # # print("comments_data:",comments_data)
 
-        forward_count_sql = """
-            SELECT parent_id, COUNT(*) as total_forwards 
-            FROM content
-            WHERE parent_id IN %s AND content_type = 'Post'
-            GROUP BY parent_id
-        """
-        cursor.execute(forward_count_sql, (post_ids,))
-        forwards_data = cursor.fetchall()
-        # print("forwards_data:",forwards_data)
+        # forward_count_sql = """
+        #     SELECT parent_id, COUNT(*) as total_forwards 
+        #     FROM content
+        #     WHERE parent_id IN %s AND content_type = 'Post'
+        #     GROUP BY parent_id
+        # """
+        # cursor.execute(forward_count_sql, (post_ids,))
+        # forwards_data = cursor.fetchall()
+        # # print("forwards_data:",forwards_data)
 
-        # 創建字典
-        likes_dict = {like['content_id']: like['total_likes'] for like in likes_data}
-        comments_dict = {comment['parent_id']: comment['total_replies'] for comment in comments_data}
-        forwards_dict = {forward['parent_id']: forward['total_forwards'] for forward in forwards_data}
+        # # 創建字典
+        # likes_dict = {like['content_id']: like['total_likes'] for like in likes_data}
+        # comments_dict = {comment['parent_id']: comment['total_replies'] for comment in comments_data}
+        # forwards_dict = {forward['parent_id']: forward['total_forwards'] for forward in forwards_data}
 
 
 
@@ -130,14 +129,13 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             parent_post = None
             if data.get('parent_id'):
                 parent_post = ParentPostId(
-                    id=data['parent_id'],
                     account_id=data.get('account_id'),  
-                    post_id=data.get('post_id')         
+                    post_id=data['parent_id']       
                 )
 
-            total_likes = likes_dict.get(data['content_id'], 0)
-            total_replies = comments_dict.get(data['content_id'], 0)
-            total_forwards = forwards_dict.get(data['content_id'], 0)
+            # total_likes = likes_dict.get(data['content_id'], 0)
+            # total_replies = comments_dict.get(data['content_id'], 0)
+            # total_forwards = forwards_dict.get(data['content_id'], 0)
 
             media = Media(
             images=data.get('image'),
@@ -166,9 +164,9 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
                 visibility = data['visibility'],
                 like_state = bool(data.get('like_state' , False)),
                 counts = PostCounts(
-                    like_counts = int(total_likes or 0),
-                    reply_counts = int(total_replies or 0),
-                    forward_counts = int(total_forwards or 0),
+                    like_counts = int(data.get('like_counts' , 0)),
+                    reply_counts = int(data.get('reply_counts' , 0)),
+                    forward_counts = int(data.get('forward_counts' , 0)),
                 )
             )
             posts.append(post)
