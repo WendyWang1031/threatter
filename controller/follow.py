@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from model.model import *
 from db.follow import *
 from db.check_relation import *
+from db.get_member_data import *
 from service.security import security_get_current_user
 
 

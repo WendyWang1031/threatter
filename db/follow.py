@@ -4,6 +4,7 @@ from model.model import *
 
 from db.connection_pool import get_db_connection_pool
 from db.check_relation import *
+from db.get_member_data import *
 
 RELATION_STATUS_PENDING = "Pending"
 
@@ -100,17 +101,7 @@ def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_
         cursor.close()
         connection.close()
 
-def exp_get_follow_target(account_id :str, page : int) -> list[str]:
-     pass
 
-def exp_get_follow_fans(account_id :str, page : int) -> list[str]:
-     pass
-
-def exp_search(keyword :str, page : int) -> list[str]:
-     pass
-
-def exp_getFollowMemberList(account_id :str, target_id_list: list[str]) -> List[FollowMember]:
-     pass
 
 def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
@@ -207,8 +198,6 @@ def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes |
         cursor.close()
         connection.close()
 
-    
-    
 
 
 def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | None:
@@ -259,41 +248,7 @@ def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | N
 
 
 
-def db_get_members_list_data(member_data , total_count , page : int , has_more_data: bool) -> FollowMemberListRes | None:
-    
-    try:
 
-        follow_list = []
-        for data in member_data:
-            follow_member = FollowMember(
-                user = MemberBase(
-                    name = data['name'],
-                    account_id = data['account_id'],
-                    avatar = data['avatar']
-                ),
-                follow_state = data["relation_state"]
-            )
-            follow_list.append(follow_member)
-            
-        
-        next_page = page + 1 if has_more_data else None
-
-        follow_result = FollowMemberListRes(
-            next_page = next_page, 
-            fans_counts = total_count,
-            data = follow_list
-        )
-        
-        return follow_result
-        
-    except Exception as e:
-        print(f"Error getting member list data details: {e}")
-        return None
-
-       
-
-
-def db_get_member_single_data(account_id: str , relation_state) -> FollowMember :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
