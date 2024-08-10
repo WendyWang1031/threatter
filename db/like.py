@@ -2,19 +2,6 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 from db.connection_pool import get_db_connection_pool
-import uuid
-
-
-
-def generate_short_uuid(content_type: str) -> str:
-    prefix = {
-        'Post': 'P-',
-        'Comment': 'C-',
-        'Reply': 'R-'
-    }.get(content_type, 'O-')
-    
-    short_uuid = str(uuid.uuid4())[:8]  
-    return f"{prefix}{short_uuid}"
 
 
 def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool :
