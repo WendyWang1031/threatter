@@ -260,10 +260,8 @@ def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | N
 
 
 def db_get_members_list_data(member_data , total_count , page : int , has_more_data: bool) -> FollowMemberListRes | None:
-    connection = get_db_connection_pool()
-    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
     try:
-        connection.begin()
 
         follow_list = []
         for data in member_data:
@@ -289,12 +287,10 @@ def db_get_members_list_data(member_data , total_count , page : int , has_more_d
         return follow_result
         
     except Exception as e:
-        print(f"Error getting members data details: {e}")
-        connection.rollback()
+        print(f"Error getting member list data details: {e}")
         return None
-    finally:
-        cursor.close()
-        connection.close()
+
+       
 
 
 def db_get_member_single_data(account_id: str , relation_state) -> FollowMember :
@@ -329,7 +325,7 @@ def db_get_member_single_data(account_id: str , relation_state) -> FollowMember 
         return follow_member
     
     except Exception as e:
-        print(f"Error update private follow: {e}")
+        print(f"Error getting member single data details: {e}")
         connection.rollback() 
         return False
     finally:

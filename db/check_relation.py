@@ -43,7 +43,7 @@ def db_check_each_other_relation(member_id: str , account_id : str ):
             """
             cursor.execute(check_relation_sql, (member_id, account_id))
             check_relation = cursor.fetchone()
-            print("check_relation:",check_relation)
+            # print("check_relation:",check_relation)
 
             if check_relation is None or check_relation['relation_state'] == 'None':
                 return None
