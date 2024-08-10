@@ -31,80 +31,24 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
             relation_state = "None"
             target_relation_state = "None"
 
-        check_relation_sql = """
-            SELECT * FROM member_relation
-            WHERE member_id = %s AND target_id = %s
+        # 插入或更新當前用戶和目標用戶的關係
+        insert_update_relation_sql = """
+            INSERT INTO member_relation (member_id, target_id, relation_state)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE relation_state = VALUES(relation_state)
         """
-        cursor.execute(check_relation_sql, (member_id, follow.account_id))
-        existing_relation = cursor.fetchone()
+        cursor.execute(insert_update_relation_sql, (member_id, follow.account_id, relation_state))
 
-        if existing_relation:
-            update_sql = """
-                update member_relation 
-                SET relation_state = %s
-                where member_id = %s AND target_id = %s
-            """
-            cursor.execute(update_sql , (relation_state , member_id , follow.account_id ,))
-            
-
-        else:
-            insert_sql = """
-                INSERT INTO member_relation 
-                (member_id, target_id, relation_state)
-                VALUES (%s, %s, %s)
-            """
-            cursor.execute(insert_sql , (member_id , follow.account_id, relation_state ,))
-            
-    
-        ## ”目標為本人“與對方的關係
-
-
-        target_check_sql = """
-            SELECT * FROM member_relation
-            WHERE member_id = %s AND target_id = %s   
+        # 插入或更新目標用戶和當前用戶的關係
+        insert_update_target_relation_sql = """
+            INSERT INTO member_relation (member_id, target_id, relation_state)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE relation_state = VALUES(relation_state)
         """
-        cursor.execute(target_check_sql, (follow.account_id, member_id))
-        existing_target_relation = cursor.fetchone()
-
-        if existing_target_relation :
-            update_target_sql = """
-                update member_relation 
-                SET relation_state = %s
-                where member_id = %s AND target_id = %s
-            """
-            cursor.execute(update_target_sql , (target_relation_state , follow.account_id , member_id ,))
-            
-
-        else:
-            insert_target_sql = """
-                INSERT INTO member_relation 
-                (member_id, target_id, relation_state)
-                VALUES (%s, %s, %s)
-            """
-            cursor.execute(insert_target_sql , (follow.account_id , member_id , target_relation_state ,))
-            
-
-        user_sql = """
-            SELECT member.name , member.account_id , member.avatar
-            FROM member
-            WHERE account_id = %s
-
-        """
-        cursor.execute(user_sql , (follow.account_id,))
-        member = cursor.fetchone()
-        
-        follow_member = FollowMember(
-            user = MemberBase(
-                    name = member['name'],
-                    account_id = member['account_id'],
-                    avatar = member['avatar']
-                ),
-            follow_state = relation_state
-        )
+        cursor.execute(insert_update_target_relation_sql, (follow.account_id, member_id, target_relation_state))
 
         connection.commit()
-        
-        return follow_member
+        return relation_state ,  True 
     
     except Exception as e:
         print(f"Error inserting follow: {e}")
@@ -128,29 +72,25 @@ def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_
             relation_state = "None"
             target_relation_state = "None"
             
-        print("here1")
-        
+        # 插入或更新當前用戶和目標用戶的關係
         update_sql = """
             update member_relation 
             SET relation_state = %s
             where member_id = %s AND target_id = %s 
-            AND relation_state = "PendingBeingFollow"
         """
         cursor.execute(update_sql , (relation_state , account_id , member_id ,))
+      
 
-        print("here2")        
-
-        if followAns.accept:
-            update_target_sql = """
-                INSERT INTO member_relation (member_id, target_id, relation_state)
-                VALUES (%s, %s, %s)
-                ON DUPLICATE KEY UPDATE relation_state = %s
-            """
-            cursor.execute(update_target_sql, (member_id, account_id, target_relation_state, target_relation_state))
-        
-        print("here3")     
+        # 插入或更新目標用戶和當前用戶的關係
+        update_target_sql = """
+            INSERT INTO member_relation (member_id, target_id, relation_state)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE relation_state = %s
+        """
+        cursor.execute(update_target_sql, (member_id, account_id, target_relation_state, target_relation_state))
+           
         connection.commit()
-        return True
+        return relation_state , True
     
     except Exception as e:
         print(f"Error update private follow: {e}")

@@ -30,20 +30,26 @@ async def post_follow_target(follow : FollowReq ,
                 content=error_response.dict())
             return response
        
-       # db change relation state
-        result = db_follow_target(follow , member_id)
-        # check success or fail
+       
+        relation_state , insert_result = db_follow_target(follow , member_id)
+        if insert_result is False:
+            error_response = ErrorResponse(error=True, message="Failed to insert private follower's data")
+            response = JSONResponse (
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                content=error_response.dict())
+            return response
 
         # db get FollowMember
         
-        if result:
+        follow_member_data = db_get_member_single_data(follow.account_id, relation_state)
+        if follow_member_data:
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
-            content=result.dict()
+            content=follow_member_data.dict()
             )
             return response
         else:
-            error_response = ErrorResponse(error=True, message="Failed to create follow data")
+            error_response = ErrorResponse(error=True, message="Failed to create post data")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
@@ -83,7 +89,7 @@ async def post_private_user_res_follow(followAns : FollowAns ,
             return response
           
         # db change relation state
-        insert_result = db_private_user_res_follow(followAns , followAns.account_id , member_id)
+        relation_state , insert_result = db_private_user_res_follow(followAns , followAns.account_id , member_id)
         # check success or fail
         if insert_result is False:
             error_response = ErrorResponse(error=True, message="Failed to insert private follower's data")
@@ -93,7 +99,7 @@ async def post_private_user_res_follow(followAns : FollowAns ,
             return response
 
         # db get FollowMember
-        follow_member_data = db_get_member_single_data(followAns.account_id, "Following")
+        follow_member_data = db_get_member_single_data(followAns.account_id, relation_state)
 
         if follow_member_data:
             response = JSONResponse(
