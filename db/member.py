@@ -10,13 +10,6 @@ def db_get_member_data( account_id : str ) -> MemberDetail | None:
     try:
         connection.begin()
 
-        count_sql = """select Count(*) AS fans_count
-            from member_relation
-            where target_id = %s AND relation_state = 'BeingFollow'
-        """
-        cursor.execute( count_sql , (account_id ,))
-        fans_count_data = cursor.fetchone()
-        fans_counts = fans_count_data['fans_count'] if fans_count_data else 0
         
         sql = """select name , account_id , avatar , self_intro , visibility 
             from member where account_id = %s
@@ -26,6 +19,15 @@ def db_get_member_data( account_id : str ) -> MemberDetail | None:
 
         if not member_data:
             return None
+        
+        count_sql = """select Count(*) AS fans_count
+            from member_relation
+            where target_id = %s AND relation_state = 'BeingFollow'
+        """
+        cursor.execute( count_sql , (account_id ,))
+        fans_count_data = cursor.fetchone()
+        fans_counts = fans_count_data['fans_count'] if fans_count_data else 0
+        
 
         member_detail = MemberDetail(
             name = member_data['name'] , 
