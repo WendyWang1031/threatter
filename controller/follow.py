@@ -19,7 +19,15 @@ async def post_follow_target(follow : FollowReq ,
             return response
 
         member_id = current_user["account_id"]    
+
+        # db get relation state
+        # check relation state (None, Following)
+
+        # db change relation state
         result = db_follow_target(follow , member_id)
+        # check success or fail
+
+        # db get FollowMember
         
         if result:
             response = JSONResponse(
@@ -55,8 +63,16 @@ async def post_private_follow(followAns : FollowAns ,
             return response
 
         member_id = current_user["account_id"]    
+          
+        # db get relation state
+        # check relation state (Pending)
+
+        # db change relation state
         result = db_private_follow(followAns , account_id , member_id)
-        
+        # check success or fail
+
+        # db get FollowMember
+
         if result:
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
@@ -90,7 +106,10 @@ async def get_pending_target(current_user: dict ,
                     status_code=status.HTTP_403_FORBIDDEN, 
                     content=error_response.dict())
             return response
-         
+        
+        # db get user 
+        # check success or fail
+        
         result = db_get_pending_target(member_id , page)
         if result is False:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
@@ -122,9 +141,17 @@ async def get_follow_target(current_user: Optional[dict] ,
     try:
     
         member_id = current_user["account_id"] if current_user else None
+
+        target_exist_result = db_check_target_exist_or_not(account_id)
+        if target_exist_result is False:
+            error_response = ErrorResponse(error=True, message="資料庫並不存在該用戶資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        
+        
         relation = db_check_member_target_relation(member_id , account_id)  
-        
-        
         if relation is False:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
@@ -156,8 +183,16 @@ async def get_follow_fans(current_user: Optional[dict] ,
     try:
     
         member_id = current_user["account_id"] if current_user else None
-        relation = db_check_member_target_relation(member_id , account_id) 
-          
+        
+        target_exist_result = db_check_target_exist_or_not(account_id)
+        if target_exist_result is False:
+            error_response = ErrorResponse(error=True, message="資料庫並不存在該用戶資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
+            return response
+        
+        relation = db_check_member_target_relation(member_id , account_id)   
         if relation is False:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
@@ -173,8 +208,6 @@ async def get_follow_fans(current_user: Optional[dict] ,
         )
         return response
 
-
-    
     except Exception as e :
         error_response = ErrorResponse(error=True, message=str(e))
         response = JSONResponse (

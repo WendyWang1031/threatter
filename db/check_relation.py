@@ -3,6 +3,33 @@ from typing import Optional
 from model.model import *
 from db.connection_pool import get_db_connection_pool
 
+def db_check_target_exist_or_not(account_id : str ):
+        connection = get_db_connection_pool()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        try:
+
+            check_exist_sql = """
+            SELECT *
+            FROM member
+            WHERE account_id = %s 
+            """
+            cursor.execute(check_exist_sql, ( account_id))
+            check_exist = cursor.fetchone()
+            # print("check_exist:",check_exist)
+
+            if check_exist is True:
+                 return True
+            else:
+                 return False
+    
+        except Exception as e:
+            print(f"Error getting follow and target relationship details: {e}")
+            connection.rollback()
+            return False
+        finally:
+            cursor.close()
+            connection.close()
+
 
 def db_check_member_target_relation(member_id: Optional[str] , account_id : str ):
         connection = get_db_connection_pool()
