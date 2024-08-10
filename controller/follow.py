@@ -23,15 +23,14 @@ async def post_follow_target(follow : FollowReq ,
         # db get relation state
         # check relation state (None, Following)
         relation = db_check_each_other_relation(member_id , follow.account_id)
-        print("relation:",relation)
-
         if follow.follow is True and relation == "Following" :
             error_response = ErrorResponse(error=True, message="該用戶已追蹤對方")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
             return response
-        # db change relation state
+       
+       # db change relation state
         result = db_follow_target(follow , member_id)
         # check success or fail
 
@@ -58,7 +57,7 @@ async def post_follow_target(follow : FollowReq ,
             content=error_response.dict())
         return response
     
-async def post_private_follow(followAns : FollowAns ,
+async def post_private_user_res_follow(followAns : FollowAns ,
                             current_user : dict = Depends(security_get_current_user),
                         ) -> JSONResponse :
     try:
@@ -70,20 +69,36 @@ async def post_private_follow(followAns : FollowAns ,
             return response
 
         member_id = current_user["account_id"]    
+        
           
         # db get relation state
         # check relation state (Pending)
-
+        relation = db_check_each_other_relation(member_id , followAns.account_id)
+        
+        if followAns.accept is True and relation == "Following" :
+            error_response = ErrorResponse(error=True, message="該用戶已追蹤對方")
+            response = JSONResponse (
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                content=error_response.dict())
+            return response
+          
         # db change relation state
-        result = db_private_follow(followAns , followAns.account_id , member_id)
+        insert_result = db_private_user_res_follow(followAns , followAns.account_id , member_id)
         # check success or fail
+        if insert_result is False:
+            error_response = ErrorResponse(error=True, message="Failed to insert private follower's data")
+            response = JSONResponse (
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                content=error_response.dict())
+            return response
 
         # db get FollowMember
+        follow_member_data = db_get_member_single_data(followAns.account_id, "Following")
 
-        if result:
+        if follow_member_data:
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
-            content=result.dict()
+            content=follow_member_data.dict()
             )
             return response
         else:

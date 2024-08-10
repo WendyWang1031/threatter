@@ -110,7 +110,7 @@ async def fetch_post_follow(follow : FollowReq,
 async def fetch_post_private_follow(followAns : FollowAns,
                                     current_user : dict = Depends(security_get_current_user)
                             ) -> JSONResponse :
-    return await post_private_follow(followAns , current_user)
+    return await post_private_user_res_follow(followAns , current_user)
 
 @app.get("/api/follow/member/follow",
         tags= ["Follow"],

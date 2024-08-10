@@ -114,86 +114,43 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
         cursor.close()
         connection.close()
 
-def db_private_follow(followAns : FollowAns , account_id: str , member_id : str) -> FollowMember :
+def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_id : str) -> FollowMember :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
         connection.begin()
 
-        if followAns.accept is True :
+        if followAns.accept:
             relation_state = "Following"
+            target_relation_state = "BeingFollow"
         else:
             relation_state = "None"
+            target_relation_state = "None"
             
-
-        check_sql = """
-            SELECT * FROM member_relation
-            WHERE member_id = %s AND target_id = %s
-            AND relation_state = "Pending"
+        print("here1")
+        
+        update_sql = """
+            update member_relation 
+            SET relation_state = %s
+            where member_id = %s AND target_id = %s 
+            AND relation_state = "PendingBeingFollow"
         """
-        cursor.execute(check_sql, (account_id, member_id))
-        existing_pending_relation = cursor.fetchone()
+        cursor.execute(update_sql , (relation_state , account_id , member_id ,))
 
-        if existing_pending_relation:
-            update_sql = """
-                update member_relation 
-                SET relation_state = %s
-                where member_id = %s AND target_id = %s
+        print("here2")        
+
+        if followAns.accept:
+            update_target_sql = """
+                INSERT INTO member_relation (member_id, target_id, relation_state)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE relation_state = %s
             """
-            cursor.execute(update_sql , (relation_state , account_id , member_id ,))
-            
-
-            if relation_state == "Following":
-                check_being_follow_sql ="""
-                    SELECT relation_state FROM member_relation
-                    where member_id = %s AND target_id = %s            
-                """ 
-                cursor.execute(check_being_follow_sql , (member_id , account_id ,))
-                existing_relation = cursor.fetchone()
-
-                if existing_relation:
-                    if existing_relation['relation_state'] != 'BeingFollow':
-                        update_being_follow_sql ="""
-                        UPDATE member_relation
-                        SET relation_state = "BeingFollow"
-                        WHERE member_id = %s AND target_id = %s            
-                """
-                    cursor.execute(update_being_follow_sql , (member_id , account_id ,)) 
-                else:
-                    insert_being_follow_sql = """
-                        INSERT into member_relation
-                        (member_id , target_id , relation_state)
-                        VALUES (%s , %s , 'BeingFollow')
-                """
-                    cursor.execute(insert_being_follow_sql , (member_id , account_id ,)) 
-        else:
-            print(f"No pending follow request found for {account_id} to {member_id}")
-            
-
-        user_sql = """
-            SELECT member.name , member.account_id , member.avatar
-            FROM member
-            WHERE account_id = %s
-
-        """
-        cursor.execute(user_sql , (account_id,))
-        member = cursor.fetchone()
-
+            cursor.execute(update_target_sql, (member_id, account_id, target_relation_state, target_relation_state))
         
-        follow_member = FollowMember(
-            user = MemberBase(
-                    name = member['name'],
-                    account_id = member['account_id'],
-                    avatar = member['avatar']
-                ),
-            follow_state = relation_state
-        )
-
-
+        print("here3")     
         connection.commit()
-        
-        return follow_member
+        return True
     
     except Exception as e:
         print(f"Error update private follow: {e}")
@@ -395,6 +352,46 @@ def db_get_members_list_data(member_data , total_count , page : int , has_more_d
         print(f"Error getting members data details: {e}")
         connection.rollback()
         return None
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def db_get_member_single_data(account_id: str , relation_state) -> FollowMember :
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    
+    try:
+        connection.begin()
+
+        user_sql = """
+            SELECT member.name , member.account_id , member.avatar
+            FROM member
+            WHERE account_id = %s
+
+        """
+        cursor.execute(user_sql , (account_id,))
+        member = cursor.fetchone()
+
+        
+        follow_member = FollowMember(
+            user = MemberBase(
+                    name = member['name'],
+                    account_id = member['account_id'],
+                    avatar = member['avatar']
+                ),
+            follow_state = relation_state
+        )
+
+
+        connection.commit()
+        
+        return follow_member
+    
+    except Exception as e:
+        print(f"Error update private follow: {e}")
+        connection.rollback() 
+        return False
     finally:
         cursor.close()
         connection.close()
