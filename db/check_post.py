@@ -31,3 +31,31 @@ def db_check_post_exist_or_not(account_id : str , post_id : str):
             connection.close()
 
 
+def db_check_comment_exist_or_not(post_id : str , content_id : str):
+        connection = get_db_connection_pool()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        try:
+
+            check_exist_post_sql = """
+            SELECT 1
+            FROM content
+            WHERE parent_id = %s AND content_id = %s
+            """
+            cursor.execute(check_exist_post_sql, (post_id , content_id))
+            check_comment_or_reply_exist = cursor.fetchone()
+            # print("check_comment_or_reply_exist:",check_comment_or_reply_exist)
+
+            if check_comment_or_reply_exist :
+                 return True
+            else:
+                 return False
+    
+        except Exception as e:
+            print(f"Error getting comment or reply existension details: {e}")
+            connection.rollback()
+            return False
+        finally:
+            cursor.close()
+            connection.close()
+
+

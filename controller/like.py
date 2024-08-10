@@ -99,20 +99,30 @@ async def post_comment_or_reply_like(comment_like : LikeReq ,
                 content=error_response.dict())
             return response
         
-
-        result = db_like_comment_or_reply(comment_like , comment_id , member_id)
-        
-        if result:
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=result.dict()
-            )
+        comment_exist_result = db_check_comment_exist_or_not(post_id , comment_id)
+        if comment_exist_result is False:
+            error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文底下留言資料")
+            response = JSONResponse (
+                status_code=status.HTTP_404_NOT_FOUND, 
+                content=error_response.dict())
             return response
-        else:
-            error_response = ErrorResponse(error=True, message="Failed to create post data")
+        
+        
+        total_counts = db_like_comment_or_reply(comment_like , comment_id , member_id)
+        
+        if total_counts is False:
+            error_response = ErrorResponse(error=True, message="Failed to update like data")
             response = JSONResponse (
                 status_code=status.HTTP_400_BAD_REQUEST, 
                 content=error_response.dict())
+            return response
+        
+        else:
+            result = db_get_like_counts(total_counts , post_id)
+            response = JSONResponse(
+                status_code = status.HTTP_200_OK,
+                content=result.dict()
+                )
             return response
 
     

@@ -367,7 +367,7 @@ async def fetch_post_comments_like(
     comment_id : str = Path(..., description="該留言的id"),
     current_user : dict = Depends(security_get_current_user),
     ) -> JSONResponse :
-    return await post_comment_or_reply_like(comment_like , comment_id , current_user)
+    return await post_comment_or_reply_like(comment_like , account_id , post_id , comment_id , current_user)
 
 @app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
         tags= ["Comment"],
