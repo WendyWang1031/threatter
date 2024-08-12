@@ -176,7 +176,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         # 處理留言列表，準備回覆留言的字典
         comment_detail_list = []
         replies_map = {}
-        print("comment_data:",comment_data)
+        # print("comment_data:",comment_data)
         for data in comment_data:
             if data['content_type'] == 'Comment':
                 comment = generate_comment_object(data)
@@ -184,7 +184,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
                 comment_detail_list.append(CommentDetail(comment=comment, replies=[]))
             elif data['content_type'] == 'Reply':
                 parent_id = data['parent_id']
-                print("parent_id:",parent_id)
+                # print("parent_id:",parent_id)
                 if parent_id not in replies_map:
                     replies_map[parent_id] = []
                 replies_map[parent_id].append(generate_comment_object(data))
