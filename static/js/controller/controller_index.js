@@ -7,7 +7,7 @@ import {
 import { PermissionAllIcon } from "../view/view_icon.js";
 import { uploadMediaFile } from "./controller_upload.js";
 
-import { displayPostElement, displayMenuBtn } from "../view/view_posts.js";
+import { displayContentElement, displayMenuBtn } from "../view/view_posts.js";
 
 import { closeCreatePost } from "../view/view_closePost.js";
 
@@ -160,7 +160,7 @@ async function fetchGetPost() {
 
       const postsContainer = document.querySelector(".postsContainer");
       result.data.forEach((post) => {
-        const postElement = displayPostElement(post);
+        const postElement = displayContentElement(post);
         postsContainer.appendChild(postElement);
       });
 
