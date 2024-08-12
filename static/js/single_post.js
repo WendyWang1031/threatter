@@ -2,6 +2,7 @@ import { PermissionAllIcon } from "./view/view_icon.js";
 import {
   displayContentElement,
   displayCommentElement,
+  displayFakeReplyContainer,
   displayMenuBtn,
 } from "./view/view_posts.js";
 
@@ -49,6 +50,10 @@ async function fetchGetPost() {
 
       const postElement = displayContentElement(result);
       postsContainer.appendChild(postElement);
+
+      const fake_reply_container = document.querySelector(".reply-header");
+      const fakeElement = displayFakeReplyContainer();
+      fake_reply_container.appendChild(fakeElement);
     }
   } catch (error) {
     console.error("Error fetching single post data:", error);

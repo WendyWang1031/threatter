@@ -93,6 +93,15 @@ export function displayContentElement(post) {
   return indivisial_postElement;
 }
 
+export function displayFakeReplyContainer() {
+  const section_fake_re_Element = document.createElement("div");
+  section_fake_re_Element.className = "reply-title";
+  section_fake_re_Element.innerHTML = `
+      <div class="reply">回覆</div>      
+  `;
+  return section_fake_re_Element;
+}
+
 export function displayCommentElement(comment) {
   const user = comment.comment.user || {};
   const account_id = user.account_id;
