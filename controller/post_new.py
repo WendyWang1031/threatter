@@ -190,7 +190,7 @@ async def get_post_single_page(current_user: Optional[dict], account_id: str , p
             return response
         
         
-        post_data = db_get_single_post_data(account_id , post_id)
+        post_data = db_get_single_post_data(member_id , account_id , post_id)
         if post_data: 
             response = JSONResponse(
                 status_code = status.HTTP_200_OK,

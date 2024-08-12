@@ -156,27 +156,42 @@ def db_get_member_post_data(account_id : str , page : int) -> Optional[PostListR
         connection.close()
 
 
-def db_get_single_post_data(account_id : str , post_id : int) -> Optional[Post] | None:
+def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_id : int) -> Optional[Post] | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
     
         ## 顯示以下貼文內容
+        if member_id is None:
+            sql = """
+                select content.* ,
+                member.name , member.account_id , member.avatar 
+                
+                FROM content
+                
+                Left Join member on content.member_id = member.account_id
+                
+                WHERE content.member_id = %s 
+                AND content.content_id = %s
+                AND content.content_type = 'Post'
+            """
+            params = (account_id, post_id)
 
-        sql = """select content.* ,
-            member.name , member.account_id , member.avatar 
-            
-        FROM content
-        
-        Left Join member on content.member_id = member.account_id
-        
-        WHERE content.member_id = %s 
-        AND content.content_id = %s
-        AND content.content_type = 'Post'
-        """
-
-        params = (account_id, post_id)
+        else:
+            sql = """
+                SELECT content.*, 
+                    member.name, member.account_id, member.avatar,  
+                    likes.like_state,
+                    member.visibility, member_relation.relation_state
+                FROM content
+                LEFT JOIN member ON content.member_id = member.account_id
+                LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
+                LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
+                WHERE content.content_type = 'Post' AND content.content_id = %s
+                ORDER BY created_at DESC 
+            """
+            params = (member_id , account_id , post_id)
     
         return db_get_post_data(sql, params, multiple=False)
   
