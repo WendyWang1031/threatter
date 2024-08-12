@@ -113,24 +113,34 @@ export async function checkUserState(callback) {
     return false;
   }
 
-  const result = await Model.fetchUserState(token);
-  // console.log("result:", result);
-
-  if (result) {
-    View.displayUserInterface(true);
-    localStorage.setItem("userName", result.name);
-    localStorage.setItem("account_id", result.account_id);
-    if (typeof callback === "function") {
-      callback(result);
-    }
-    return true;
-  } else {
-    console.error("驗證用戶狀態失敗：", result);
-    View.displayUserInterface(false);
-    if (result.status == 403) {
+  try {
+    const result = await Model.fetchUserState(token);
+    // console.log("result.status:", result.status);
+    if (result && result.message === "Failed to get user's data") {
       localStorage.clear();
       window.location.href = "/";
+      console.log("Token 已過期");
+      return false;
     }
+
+    if (result) {
+      console.log("result:", result);
+      View.displayUserInterface(true);
+      localStorage.setItem("userName", result.name);
+      localStorage.setItem("account_id", result.account_id);
+
+      if (typeof callback === "function") {
+        callback(result);
+      }
+
+      return true;
+    } else {
+      throw new Error("無法驗證用戶狀態");
+    }
+  } catch (error) {
+    console.error("驗證用戶狀態失敗：", error);
+    View.displayUserInterface(false);
+
     localStorage.clear();
     window.location.href = "/";
     return false;
