@@ -20,7 +20,8 @@ def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool 
         """
         new_like_state = post_like.like
         cursor.execute(insert_update_sql, (post_id, member_id, new_like_state))
-
+      
+        connection.commit()
         # 計算讚數
         count_sql ="""
             SELECT COUNT(*) as total_likes FROM likes
