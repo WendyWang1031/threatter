@@ -219,12 +219,22 @@ function selectSinglePost() {
     .querySelector(".postsContainer")
     .addEventListener("click", (event) => {
       // 確認點擊的元素或其父元素是否是 .post
-      const postElement = event.target.closest(".post");
-      if (postElement) {
-        console.log("Post clicked via delegation:", postElement);
+
+      const post_header = event.target.closest(".post-header");
+      const post_content = event.target.closest(".post-content");
+
+      // 檢查是否點擊了 menu-button 或其子元素
+      const menuButton = event.target.closest(".menu-button");
+      if (menuButton) {
+        return; // 直接返回，不進行後續處理
+      }
+
+      if (post_header || post_content) {
+        console.log("Post clicked via delegation:", post_header, post_content);
         event.preventDefault(); // 阻止默認行為
 
         // 獲取 account_id 和 post_id
+        const postElement = event.target.closest(".post");
         const accountIdElement = postElement.querySelector(".account_id");
         const postIdElement = postElement.querySelector(".post_id");
 
