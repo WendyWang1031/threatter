@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   fetchGetPost();
   fetchGetCommentAndReply();
+
   displayMenuBtn();
 });
 
@@ -50,11 +51,13 @@ async function fetchGetPost() {
       postsContainer.appendChild(postElement);
     }
   } catch (error) {
-    console.error("Error fetching post data:", error);
+    console.error("Error fetching single post data:", error);
   }
 }
 
 async function fetchGetCommentAndReply() {
+  document.getElementById("loading").classList.remove("hidden");
+
   const currentUrl = window.location.pathname;
   const pathSegments = currentUrl.split("/"); // 以 "/" 分割路徑成為陣列
   const accountId = pathSegments[2]; // 第三個元素為 account_id
@@ -96,5 +99,7 @@ async function fetchGetCommentAndReply() {
   } catch (error) {
     console.error("Error fetching comment data:", error);
     isWaitingForData = false;
+  } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }

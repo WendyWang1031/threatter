@@ -70,6 +70,7 @@ function validateForm() {
 }
 
 async function submitPost(content, imageFile, videoFile, audioFile) {
+  document.getElementById("loading").classList.remove("hidden");
   let postData = {
     post_parent_id: null,
     content: {
@@ -112,6 +113,8 @@ async function submitPost(content, imageFile, videoFile, audioFile) {
   } catch (error) {
     console.error("Error submitting post:", error);
     alert("Failed to submit post: " + error.message);
+  } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }
 

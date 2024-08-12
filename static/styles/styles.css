@@ -480,6 +480,12 @@ section.postsContainer .indivisial-area .post .post-header .user-info-post .acco
   font-size: 16px;
   color: #424242;
   font-weight: bold;
+  margin-right: 10px;
+}
+section.postsContainer .indivisial-area .post .post-header .user-info-post .created_at {
+  font-size: 16px;
+  color: #b0b0b0;
+  font-weight: 100;
 }
 section.postsContainer .indivisial-area .post .post-header .menu-button {
   position: relative;
@@ -1082,6 +1088,12 @@ section.single-postsContainer .indivisial-area .post .post-header .user-info-pos
   font-size: 16px;
   color: #424242;
   font-weight: bold;
+  margin-right: 10px;
+}
+section.single-postsContainer .indivisial-area .post .post-header .user-info-post .created_at {
+  font-size: 16px;
+  color: #b0b0b0;
+  font-weight: 100;
 }
 section.single-postsContainer .indivisial-area .post .post-header .menu-button {
   position: relative;
@@ -1230,9 +1242,18 @@ section.single-CommentContainer .indivisial-area .post .post-header .user-info-p
 section.single-CommentContainer .indivisial-area .post .post-header .user-info-reply .account_id,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-post .account_id,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-reply .account_id {
+  margin-right: 10px;
   font-size: 16px;
   color: #424242;
   font-weight: bold;
+}
+section.single-CommentContainer .indivisial-area .post .post-header .user-info-post .created_at,
+section.single-CommentContainer .indivisial-area .post .post-header .user-info-reply .created_at,
+section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-post .created_at,
+section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-reply .created_at {
+  font-size: 16px;
+  color: #b0b0b0;
+  font-weight: 100;
 }
 section.single-CommentContainer .indivisial-area .post .post-header .menu-button,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .menu-button {

@@ -5,7 +5,7 @@ import {
 } from "./controller/controller_member.js";
 import { closeEditMember } from "./view/view_member.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
-import { displayPostElement, displayMenuBtn } from "./view/view_posts.js";
+import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -52,7 +52,9 @@ async function fetchGetPost() {
     return;
   }
 
-  const memberPostsUrl = `/api/member/${encodeURIComponent(account_id)}/posts`;
+  const memberPostsUrl = `/api/member/${encodeURIComponent(
+    account_id
+  )}/posts?page=${currentPage}`;
 
   try {
     //開始新的資料加載前設定
@@ -67,7 +69,7 @@ async function fetchGetPost() {
 
       const postsContainer = document.querySelector(".postsContainer");
       result.data.forEach((post) => {
-        const postElement = displayPostElement(post);
+        const postElement = displayContentElement(post);
         postsContainer.appendChild(postElement);
       });
 

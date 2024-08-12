@@ -539,6 +539,12 @@ section.postsContainer {
             font-size: 16px;
             color: $font-color;
             font-weight: bold;
+            margin-right: 10px;
+          }
+          .created_at {
+            font-size: 16px;
+            color: #b0b0b0;
+            font-weight: 100;
           }
         }
         .menu-button {
@@ -1217,6 +1223,12 @@ section.single-postsContainer {
             font-size: 16px;
             color: $font-color;
             font-weight: bold;
+            margin-right: 10px;
+          }
+          .created_at {
+            font-size: 16px;
+            color: #b0b0b0;
+            font-weight: 100;
           }
         }
         .menu-button {
@@ -1374,9 +1386,15 @@ section.single-CommentContainer {
           }
 
           .account_id {
+            margin-right: 10px;
             font-size: 16px;
             color: $font-color;
             font-weight: bold;
+          }
+          .created_at {
+            font-size: 16px;
+            color: #b0b0b0;
+            font-weight: 100;
           }
         }
         .menu-button {

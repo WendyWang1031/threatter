@@ -59,7 +59,10 @@ export function displayContentElement(post) {
               ${avatarHtml}
               <a href="/member/${encodeURIComponent(
                 account_id
-              )}" class="account_id">${account_id}</a>    
+              )}" class="account_id">${account_id}</a> 
+              <div class="created_at">${formatTimeToTaipeiTime(
+                post.created_at
+              )}</div>
               </div>
               <div class="menu-button">
               <i class="fa fa-ellipsis-h"></i>
@@ -128,6 +131,7 @@ export function displayCommentElement(comment) {
           account_id
         )}" class="account_id">${account_id}</a>
       </div>
+      <div class="created_at">${formatTimeToTaipeiTime(post.created_at)}</div>
       <div class="menu-button">
         <i class="fa fa-ellipsis-h"></i>
         <ul class="dropdown-menu">
@@ -199,6 +203,9 @@ function createReplyElement(reply) {
                 <div class="post_id reply_id" style="display: none">${
                   reply.reply_id
                 }</div>
+                <div class="created_at">${formatTimeToTaipeiTime(
+                  post.created_at
+                )}</div>
               </div>
               <div class="menu-button">
                 <i class="fa fa-ellipsis-h"></i>
@@ -324,4 +331,27 @@ export function displayMenuBtn() {
           });
       }
     });
+}
+
+function formatTimeToTaipeiTime(utcTime) {
+  // 將資料庫時間（假設為 UTC-8）轉換為 UTC 時間
+  const createdAtDate = new Date(utcTime);
+
+  // 將 UTC-8 時間轉換為 UTC+8（台北時間），需加 16 小時
+  const offsetHours = 8;
+  const taipeiTime = new Date(
+    createdAtDate.getTime() + offsetHours * 60 * 60 * 1000
+  );
+
+  // 計算當前時間與貼文時間的差異
+  const now = new Date();
+  const diffInMs = now - taipeiTime;
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInHours < 24) {
+    return diffInHours === 0 ? "剛剛" : `${diffInHours} 小時前`;
+  } else {
+    return `${diffInDays} 天前`;
+  }
 }
