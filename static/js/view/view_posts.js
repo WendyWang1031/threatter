@@ -29,7 +29,7 @@ export function displayContentElement(post) {
   // 媒體內容
   let mediaHtml = "";
   const media = post.content.media || {};
-  console.log("media:", media);
+  // console.log("media:", media);
 
   // 根據媒體類型決定如何顯示
   // 圖片
@@ -161,7 +161,7 @@ export function displayCommentElement(comment) {
   });
 
   const indivisial_postElement = document.createElement("div");
-  indivisial_postElement.className = "indivisial-area";
+  indivisial_postElement.className = "indivisial-area Comment-Container";
   indivisial_postElement.appendChild(postElement);
 
   return indivisial_postElement;
