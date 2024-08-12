@@ -6,6 +6,7 @@ import {
 import { closeEditMember } from "./view/view_member.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
+import { likePost } from "./controller/controller_like.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -15,6 +16,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   displayMenuBtn();
 
   uploadAvatar();
+
+  likePost();
 
   const OutsideMemberBtn = document.querySelector(".edit-profile-button");
   OutsideMemberBtn.addEventListener("click", editMember);

@@ -6,10 +6,13 @@ import {
   displayMenuBtn,
 } from "./view/view_posts.js";
 
+import { likePost } from "./controller/controller_like.js";
+
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
 
   fetchGetPost();
+  likePost();
   fetchGetCommentAndReply();
 
   displayMenuBtn();
@@ -37,15 +40,21 @@ async function fetchGetPost() {
   const accountId = pathSegments[2]; // 第三個元素為 account_id
   const postId = pathSegments[4]; // 第五個元素為 post_id
 
+  const token = localStorage.getItem("userToken");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
   const singlePostsUrl = `/api/member/${encodeURIComponent(
     accountId
   )}/post/${postId}`;
 
   try {
-    const response = await fetch(singlePostsUrl);
+    const response = await fetch(singlePostsUrl, {
+      headers: headers,
+    });
     const result = await response.json();
 
     if (result) {
+      console.log("result:", result);
       const postsContainer = document.querySelector(".postsContainer");
 
       const postElement = displayContentElement(result);

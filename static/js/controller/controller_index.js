@@ -156,7 +156,12 @@ async function fetchGetPost() {
     //開始新的資料加載前設定
     isWaitingForData = true;
 
-    const response = await fetch(`${postHomeURL}?page=${currentPage}`);
+    const token = localStorage.getItem("userToken");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const response = await fetch(`${postHomeURL}?page=${currentPage}`, {
+      headers: headers,
+    });
     const result = await response.json();
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
