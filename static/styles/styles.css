@@ -195,6 +195,9 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
 .stat:active {
   transform: scale(1.3);
 }
+.stat .fa-heart.liked {
+  color: #ff0000;
+}
 
 .media img[src=""],
 .text:null {

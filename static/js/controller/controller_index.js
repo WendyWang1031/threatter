@@ -6,6 +6,7 @@ import {
 } from "../view/view_index.js";
 import { PermissionAllIcon } from "../view/view_icon.js";
 import { uploadMediaFile } from "./controller_upload.js";
+import { likePost } from "./controller_like.js";
 
 import { displayContentElement, displayMenuBtn } from "../view/view_posts.js";
 
@@ -28,6 +29,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   previewCreatePost();
   displayMenuBtn();
   selectSinglePost(event);
+
+  likePost();
 
   // 提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");
