@@ -89,6 +89,9 @@ export function likeCommentAndReply() {
     .querySelector(".single-CommentContainer")
     .addEventListener("click", (event) => {
       const likeIcon = event.target.closest(".fa-heart");
+      if (!likeIcon) {
+        return;
+      }
 
       if (likeIcon) {
         // console.log("Post clicked via delegation:", like_post);
