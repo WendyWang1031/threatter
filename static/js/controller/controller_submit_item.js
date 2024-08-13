@@ -5,7 +5,7 @@ function buildUrl({ accountId, postId, commentId, type }) {
 
   if (type === "post") {
     return "/api/post";
-  } else if (type === "reply") {
+  } else if (type === "comment") {
     if (commentId) {
       return `${baseUrl}/${encodeURIComponent(
         accountId
