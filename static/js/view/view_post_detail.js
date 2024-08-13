@@ -116,23 +116,3 @@ export function displayCreatePost() {
     });
   }
 }
-
-export function displayCreateComment(event) {
-  const token = localStorage.getItem("userToken");
-  const createPosterCard = document.querySelector(".create-poster-card");
-  const signin_mask = document.querySelector(".signin-mask");
-
-  document
-    .querySelector(".postsContainer")
-    .addEventListener("click", (event) => {
-      const commentBtn = event.target.closest(".fa-comment");
-
-      if (commentBtn) {
-        if (!token) {
-          signin_mask.style.display = "flex";
-        } else {
-          createPosterCard.style.display = "flex";
-        }
-      }
-    });
-}

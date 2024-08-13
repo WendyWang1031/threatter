@@ -7,11 +7,7 @@ import {
   displayMenuBtn,
 } from "./view/view_posts.js";
 
-import {
-  closeCreatePost,
-  previewCreatePost,
-  displayCreateComment,
-} from "./view/view_post_detail.js";
+import { closeCreatePost, previewCreatePost } from "./view/view_post_detail.js";
 
 import { validateForm } from "./controller/controller_submit_item.js";
 
@@ -27,11 +23,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   likeCommentAndReply();
 
-  submitComment();
+  submitForm();
 
   closeCreatePost();
   previewCreatePost();
-  displayCreateComment();
+  displayCreateCommentAndReply();
 
   displayMenuBtn();
 });
@@ -39,6 +35,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 let currentPage = 0;
 let hasNextPage = true;
 let isWaitingForData = false;
+
+let currentAction = "comment";
+let currentReplyID = null;
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -163,14 +162,73 @@ async function fetchGetMemberDetail() {
   }
 }
 
-function submitComment() {
-  const submitCommentButton = document.querySelector(".submit-post-btn");
-  submitCommentButton.addEventListener("click", function (event) {
+function submitForm() {
+  const submitButton = document.querySelector(".submit-post-btn");
+  submitButton.addEventListener("click", function (event) {
     event.preventDefault();
+
     const currentUrl = window.location.pathname;
     const pathSegments = currentUrl.split("/"); // 以 "/" 分割路徑成為陣列
     const accountId = pathSegments[2]; // 第三個元素為 account_id
     const postId = pathSegments[4]; // 第五個元素為 post_id
-    validateForm("comment", accountId, postId, null);
+
+    if (currentAction === "comment") {
+      validateForm("comment", accountId, postId, null);
+    } else if (currentAction === "reply" && currentReplyID) {
+      validateForm("reply", accountId, postId, currentReplyID);
+    } else {
+      console.error("Reply ID is missing");
+    }
   });
+}
+
+function displayCreateCommentAndReply() {
+  const token = localStorage.getItem("userToken");
+  const createPosterCard = document.querySelector(".create-poster-card");
+  const signin_mask = document.querySelector(".signin-mask");
+
+  document
+    .querySelector(".postsContainer")
+    .addEventListener("click", (event) => {
+      console.log("click comment");
+      const commentBtn = event.target.closest(".fa-comment");
+
+      if (commentBtn) {
+        currentAction = "comment";
+        if (!token) {
+          signin_mask.style.display = "flex";
+        } else {
+          createPosterCard.style.display = "flex";
+        }
+      }
+    });
+
+  document
+    .querySelector(".single-CommentContainer")
+    .addEventListener("click", (event) => {
+      const replyBtn = event.target.closest(".fa-comment");
+      if (!replyBtn) {
+        return;
+      }
+
+      currentAction = "reply";
+
+      const commentElement = replyBtn.closest(".indivisial-area");
+      const replyElement = commentElement.querySelector(".message_id");
+
+      // console.log("commentElement:", commentElement);
+      // console.log("replyElement:", replyElement);
+
+      if (replyElement) {
+        currentReplyID = replyElement.textContent.trim();
+      } else {
+        console.error("Reply ID element not found");
+      }
+
+      if (!token) {
+        signin_mask.style.display = "flex";
+      } else {
+        createPosterCard.style.display = "flex";
+      }
+    });
 }
