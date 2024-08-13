@@ -1,16 +1,15 @@
-import {
-  displayCreatePostAccount,
-  previewCreatePost,
-  displayCreatePost,
-  displayMemberDetail,
-} from "../view/view_index.js";
+import { displayMemberDetail } from "../view/view_index.js";
 import { PermissionAllIcon } from "../view/view_icon.js";
 import { likePost } from "./controller_like.js";
 import { validateForm } from "./controller_submit_item.js";
 
 import { displayContentElement, displayMenuBtn } from "../view/view_posts.js";
 
-import { closeCreatePost } from "../view/view_closePost.js";
+import {
+  closeCreatePost,
+  previewCreatePost,
+  displayCreatePost,
+} from "../view/view_post_detail.js";
 
 const postHomeURL = "/api/post/home";
 
@@ -19,17 +18,19 @@ let hasNextPage = true;
 let isWaitingForData = false;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  displayCreatePost();
   PermissionAllIcon();
-  closeCreatePost();
+
   await fetchGetMemberDetail();
   // 更新貼文內容
   fetchGetPost();
+  likePost();
+
+  closeCreatePost();
+  displayCreatePost();
   previewCreatePost();
+
   displayMenuBtn();
   selectSinglePost(event);
-
-  likePost();
 
   // 首頁：提交貼文按鈕
   const submitPostButton = document.querySelector(".submit-post-btn");
@@ -98,6 +99,7 @@ async function fetchGetMemberDetail() {
     console.error("Error fetching post data:", error);
   }
 }
+
 const observer = new IntersectionObserver(
   (entries) => {
     const firstEntry = entries[0];
