@@ -3,11 +3,11 @@ import {
   editMember,
   uploadAvatar,
 } from "./controller/controller_member.js";
+import { closeEditMember } from "./view/view_member.js";
 import {
-  closeEditMember,
   displayOrCloseFansAndFollow,
   setupTabSwitching,
-} from "./view/view_member.js";
+} from "./view/view_fans_follower.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
 import { likePost } from "./controller/controller_like.js";
