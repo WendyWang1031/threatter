@@ -4,8 +4,15 @@ function buildUrl({ accountId, postId, commentId, type }) {
   const baseUrl = "/api/member";
 
   if (type === "post") {
+    // 發布新貼文
     return "/api/post";
   } else if (type === "comment") {
+    // 在貼文底下發表評論
+    return `${baseUrl}/${encodeURIComponent(
+      accountId
+    )}/post/${encodeURIComponent(postId)}/reply`;
+  } else if (type === "reply") {
+    // 回覆評論
     if (commentId) {
       return `${baseUrl}/${encodeURIComponent(
         accountId
@@ -13,12 +20,11 @@ function buildUrl({ accountId, postId, commentId, type }) {
         commentId
       )}/reply`;
     } else {
-      return `${baseUrl}/${encodeURIComponent(
-        accountId
-      )}/post/${encodeURIComponent(postId)}/reply`;
+      throw new Error("Missing commentId for reply type");
     }
+  } else {
+    throw new Error("Invalid type provided");
   }
-  throw new Error("Invalid type provided");
 }
 
 export function validateForm(type, accountId, postId, commentId) {
@@ -136,7 +142,7 @@ async function fetchUpdateData(data, url) {
 
       throw new Error(`HTTP status ${response.status}`);
     } else {
-      window.location = "/";
+      location.reload();
     }
   } catch (error) {
     console.error("Error updating data", error);
