@@ -139,8 +139,11 @@ export function displayCommentElement(comment) {
         <a href="/member/${encodeURIComponent(
           account_id
         )}" class="account_id">${account_id}</a>
+        <div class="created_at">${formatTimeToTaipeiTime(
+          comment.comment.created_at
+        )}</div>
       </div>
-      <div class="created_at">${formatTimeToTaipeiTime(post.created_at)}</div>
+      
       <div class="menu-button">
         <i class="fa fa-ellipsis-h"></i>
         <ul class="dropdown-menu">
@@ -163,10 +166,7 @@ export function displayCommentElement(comment) {
       <div class="stat"><i class="fa fa-comment"></i> <span>${
         counts.reply_counts || 0
       }</span></div>
-      <div class="stat"><i class="fa fa-share"></i> <span>${
-        counts.forward_counts || 0
-      }</span></div>
-    </div>`;
+      `;
 
   replies.forEach((reply) => {
     const replyElement = createReplyElement(reply);
@@ -213,7 +213,7 @@ function createReplyElement(reply) {
                   reply.reply_id
                 }</div>
                 <div class="created_at">${formatTimeToTaipeiTime(
-                  post.created_at
+                  reply.created_at
                 )}</div>
               </div>
               <div class="menu-button">

@@ -25,7 +25,7 @@ export function likePost() {
 
           // 抓取當前的讚數並更新
           const likeCountElement = likeIcon.nextElementSibling; // 抓取 <span> 元素
-          let likeCount = parseInt(likeCountElement.textContent, 10); // 將文字轉換為數字
+          let likeCount = parseInt(likeCountElement.textContent, 10); // 將文字轉換為十進制數字
           if (!isLiked) {
             likeCount += 1;
           } else {

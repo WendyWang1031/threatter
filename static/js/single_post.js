@@ -54,7 +54,7 @@ async function fetchGetPost() {
     const result = await response.json();
 
     if (result) {
-      console.log("result:", result);
+      // console.log("result:", result);
       const postsContainer = document.querySelector(".postsContainer");
 
       const postElement = displayContentElement(result);
@@ -88,7 +88,7 @@ async function fetchGetCommentAndReply() {
 
     let lastItem = document.querySelector(".Comment-Container:last-child");
     if (result && result.data.length > 0) {
-      console.log("result next_page:", result.next_page);
+      // console.log("result next_page:", result.next_page);
       currentPage++;
       hasNextPage = result.next_page != null;
 
