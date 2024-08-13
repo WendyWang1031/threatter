@@ -144,20 +144,20 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
                     visibility_clause = "content.visibility = 'Public'"
         
         sql = f"""
-        select content.* ,
-            member.name , 
-            member.account_id , 
-            member.avatar,  
-            likes.like_state
-        FROM content
-        
-        Left Join member on content.member_id = member.account_id
-        Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-        WHERE (content.content_type = "Comment" OR content.content_type = "Reply")
-          AND content.parent_id = %s 
-          AND {visibility_clause}
-        ORDER BY created_at DESC 
-        LIMIT %s OFFSET %s
+            select content.* ,
+                member.name , 
+                member.account_id , 
+                member.avatar,  
+                likes.like_state
+            FROM content
+            
+            Left Join member on content.member_id = member.account_id
+            Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+            WHERE (content.content_type = "Comment" OR content.content_type = "Reply")
+            AND content.parent_id = %s 
+            AND {visibility_clause}
+            ORDER BY created_at DESC 
+            LIMIT %s OFFSET %s
         """
         
         cursor.execute( sql , (member_id , post_id , limit+1 , offset) )

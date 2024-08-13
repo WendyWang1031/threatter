@@ -21,7 +21,6 @@ def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool 
         new_like_state = post_like.like
         cursor.execute(insert_update_sql, (post_id, member_id, new_like_state))
       
-        connection.commit()
         # 計算讚數
         count_sql ="""
             SELECT COUNT(*) as total_likes FROM likes
@@ -29,6 +28,16 @@ def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool 
         """
         cursor.execute(count_sql , (post_id ,))
         total_likes = cursor.fetchone()["total_likes"]
+
+         # 更新 content 表的 like_counts 字段
+        update_sql = """
+            UPDATE content
+            SET like_counts = %s
+            WHERE content_id = %s AND content_type = 'Post'
+        """
+        cursor.execute(update_sql, (total_likes, post_id))
+
+        connection.commit()
         
         return total_likes
     
@@ -71,6 +80,14 @@ def db_like_comment_or_reply(comment_like : LikeReq , comment_id : str , member_
         """
         cursor.execute(count_sql , (comment_id ,))
         total_likes = cursor.fetchone()["total_likes"]
+
+        # 更新 content 表的 like_counts 字段
+        update_sql = """
+            UPDATE content
+            SET like_counts = %s
+            WHERE content_id = %s AND content_type = %s
+        """
+        cursor.execute(update_sql, (total_likes, comment_id, content_type))
 
         connection.commit()
 
