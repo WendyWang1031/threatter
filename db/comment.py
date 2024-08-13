@@ -127,7 +127,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
 
         # 預設狀況下，用戶只能看到公開的內容
         visibility_clause = "content.visibility = 'Public'"
-        print("member_id:",member_id)
+        # print("member_id:",member_id)
         
         if member_id : 
             # 檢查已登入用戶
