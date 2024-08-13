@@ -837,8 +837,18 @@ section.member-self-area .profile-header .profile-info .profile-details .user-ac
   font-size: 16px;
   color: #888;
 }
+section.member-self-area .profile-header .profile-info .profile-details a {
+  color: #252525;
+}
+section.member-self-area .profile-header .profile-info .profile-details a:link {
+  text-decoration: none;
+}
+section.member-self-area .profile-header .profile-info .profile-details a:hover {
+  text-decoration: underline;
+}
 section.member-self-area .profile-header .profile-info .profile-details .user-fans {
   margin: 10px 0;
+  color: #888;
 }
 section.member-self-area .profile-header .profile-info .profile-details .user-fans p {
   margin: 0;
@@ -1364,4 +1374,107 @@ section.single-CommentContainer .indivisial-area .reply-pic {
   font-size: 40px;
   color: #d7d7d7;
   margin-right: 10px;
+}
+
+section.fans-follow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+  z-index: 1000;
+}
+section.fans-follow .follower-container {
+  width: 500px;
+  max-width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+section.fans-follow .follower-container .follower-header {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+section.fans-follow .follower-container .follower-header .tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  cursor: pointer;
+  font-weight: bold;
+  color: #999;
+  position: relative;
+}
+section.fans-follow .follower-container .follower-header .tab.active {
+  color: #525151;
+  border-bottom: 2px solid #636363;
+}
+section.fans-follow .follower-container .follower-header .tab .count {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+  color: #888;
+}
+section.fans-follow .follower-container .follower-lists {
+  max-height: 650px;
+  overflow-y: auto;
+}
+section.fans-follow .follower-container .follower-lists .follower-list {
+  display: none;
+}
+section.fans-follow .follower-container .follower-lists .follower-list.active {
+  display: block;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item:last-child {
+  border-bottom: none;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-profile-pic {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  color: #ccd0d5;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-user-info {
+  flex: 1;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-user-info a {
+  color: #252525;
+  text-decoration: none;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-user-info a:hover {
+  text-decoration: underline;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-user-info .list-username {
+  font-weight: bold;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-user-info .list-user-fullname {
+  color: #888;
+  font-size: 14px;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-follow-btn {
+  background: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  cursor: pointer;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-follow-btn:hover {
+  background-color: #ebebeb;
 }/*# sourceMappingURL=styles.css.map */

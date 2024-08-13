@@ -191,3 +191,35 @@ async function fetchUpdateMember(memberData) {
   } finally {
   }
 }
+
+export async function fetchGetFans() {
+  const currentUrl = window.location.pathname;
+  const urlAccountId = currentUrl.split("/").pop();
+
+  // 抓取當前用戶
+  const localAccountId = localStorage.getItem("account_id");
+
+  // 判斷是否當前用戶
+  const isCurrentUser = urlAccountId === localAccountId;
+  const account_id = isCurrentUser ? localAccountId : urlAccountId;
+
+  if (!account_id) {
+    console.log("User not logged in, using default avatar.");
+    return;
+  }
+
+  const memberUrl = `/api/member/${encodeURIComponent(account_id)}/follow/fans`;
+
+  try {
+    const response = await fetch(memberUrl);
+    const result = await response.json();
+
+    if (result) {
+      displayMemberDetail(result);
+    } else {
+      console.error("Failed to retrieve fans data.");
+    }
+  } catch (error) {
+    console.error("Error fetching fans data:", error);
+  }
+}

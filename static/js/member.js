@@ -3,7 +3,11 @@ import {
   editMember,
   uploadAvatar,
 } from "./controller/controller_member.js";
-import { closeEditMember } from "./view/view_member.js";
+import {
+  closeEditMember,
+  displayOrCloseFansAndFollow,
+  setupTabSwitching,
+} from "./view/view_member.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
 import { likePost } from "./controller/controller_like.js";
@@ -17,7 +21,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   uploadAvatar();
 
+  setupTabSwitching();
+
   likePost();
+
+  const fans_follow_list = document.querySelector(".user-fans");
+  fans_follow_list.addEventListener("click", displayOrCloseFansAndFollow);
 
   const OutsideMemberBtn = document.querySelector(".edit-profile-button");
   OutsideMemberBtn.addEventListener("click", editMember);

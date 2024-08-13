@@ -937,9 +937,19 @@ section.member-self-area {
           font-size: 16px;
           color: #888;
         }
+        a {
+          color: #252525;
+        }
+        a:link {
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
 
         .user-fans {
           margin: 10px 0;
+          color: #888;
 
           p {
             margin: 0;
@@ -1506,6 +1516,126 @@ section.single-CommentContainer {
       color: #d7d7d7;
 
       margin-right: 10px;
+    }
+  }
+}
+
+section.fans-follow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+  z-index: 1000;
+
+  .follower-container {
+    width: 500px;
+    max-width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+
+    .follower-header {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      border-bottom: 1px solid #e0e0e0;
+
+      .tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        cursor: pointer;
+        font-weight: bold;
+        color: #999;
+        position: relative;
+
+        &.active {
+          color: #525151;
+          border-bottom: 2px solid #636363;
+        }
+
+        .count {
+          display: block;
+          margin-top: 5px;
+          font-size: 14px;
+          color: #888;
+        }
+      }
+    }
+
+    .follower-lists {
+      max-height: 650px;
+      overflow-y: auto;
+
+      .follower-list {
+        &.active {
+          display: block;
+        }
+        display: none;
+
+        .list-item {
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          border-bottom: 1px solid #e0e0e0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .list-profile-pic {
+            width: 40px;
+            height: 40px;
+            font-size: 40px;
+            color: $gray-border;
+            border-radius: 50%;
+            margin-right: 10px;
+          }
+
+          .list-user-info {
+            flex: 1;
+
+            a {
+              color: #252525;
+              text-decoration: none;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+
+            .list-username {
+              font-weight: bold;
+            }
+
+            .list-user-fullname {
+              color: #888;
+              font-size: 14px;
+            }
+          }
+
+          .list-follow-btn {
+            background: #fff;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-weight: bold;
+            cursor: pointer;
+
+            &:hover {
+              background-color: #ebebeb;
+            }
+          }
+        }
+      }
     }
   }
 }
