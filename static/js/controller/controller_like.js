@@ -105,11 +105,11 @@ export function likeCommentAndReply() {
         const commentIdElement = postElement.querySelector(".message_id");
 
         const replyElement = event.target.closest(".reply-area");
-        console.log("replyElement:", replyElement);
+        // console.log("replyElement:", replyElement);
         const replycontent = replyElement.querySelector(".reply-content");
-        console.log("replycontent:", replycontent);
+        // console.log("replycontent:", replycontent);
         const replyIdElement = replycontent.querySelector(".reply_id");
-        console.log("replyIdElement:", replyIdElement);
+        // console.log("replyIdElement:", replyIdElement);
 
         // 根據是否存在 commentId 或 replyId 決定 itemId
         const itemId =
