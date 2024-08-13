@@ -146,6 +146,83 @@
       </div> -->
     </section>
 
+    <section
+      class="create-poster-card create-comment-card"
+      style="display: none"
+    >
+      <div class="create-poster-container create-comment-container">
+        <h2 class="modal-title">回覆</h2>
+        <form class="post-form comment-form">
+          <div class="form-header comment-form-header">
+            <i
+              class="fa-regular fa-circle-user profile-pic-create-post profile-pic-create-comment"
+            ></i>
+            <span class="account_id comment_account_id">帳號名稱</span>
+          </div>
+          <div class="media-preview" id="media-preview"></div>
+          <textarea
+            rows="6"
+            cols="40"
+            wrap="hard"
+            type="text"
+            placeholder="回覆"
+            class="post-input"
+          ></textarea>
+          <input
+            type="file"
+            id="file-input"
+            accept="image/*,video/*,audio/*"
+            class="file-input"
+            hidden
+          />
+          <div class="form-actions">
+            <button type="button" class="action-btn">
+              <label for="image-upload" class="action-btn">
+                <i class="fa fa-image"></i>
+              </label>
+              <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                class="file-input"
+                hidden
+              />
+            </button>
+            <button type="button" class="action-btn">
+              <label for="video-upload" class="action-btn">
+                <i class="fa-solid fa-video"></i>
+              </label>
+              <input
+                type="file"
+                id="video-upload"
+                accept="video/*"
+                class="file-input"
+                hidden
+              />
+            </button>
+
+            <button type="button" class="action-btn">
+              <label for="audio-upload" class="action-btn">
+                <i class="fa-solid fa-microphone"></i>
+              </label>
+              <input
+                type="file"
+                id="audio-upload"
+                accept="audio/*"
+                class="file-input"
+                hidden
+              />
+            </button>
+          </div>
+          <div class="create-submit create-comment-submit">
+            <button type="submit" class="submit-post-btn submit-comment-btn">
+              發佈
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
     <div class="signin-mask" style="display: none">
       <form class="signin">
         <div class="sign-content">
