@@ -127,6 +127,7 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
 
         # 預設狀況下，用戶只能看到公開的內容
         visibility_clause = "content.visibility = 'Public'"
+        print("member_id:",member_id)
         
         if member_id : 
             # 檢查已登入用戶
@@ -142,13 +143,20 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
                     visibility_clause = "(content.visibility = 'Public' OR content.visibility = 'Private')"
                 else:
                     visibility_clause = "content.visibility = 'Public'"
-        
+            
+            # 如果用戶已登入，查詢該用戶的按讚狀態
+            likes_clause = "likes.like_state"
+        else:
+            # 如果用戶未登入，按讚狀態應該為 NULL
+            likes_clause = "NULL as like_state"
+
         sql = f"""
             select content.* ,
                 member.name , 
                 member.account_id , 
                 member.avatar,  
-                likes.like_state
+                {likes_clause}
+            
             FROM content
             
             Left Join member on content.member_id = member.account_id
@@ -159,7 +167,9 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             ORDER BY created_at DESC 
             LIMIT %s OFFSET %s
         """
-        
+        if not member_id:
+            member_id = None
+
         cursor.execute( sql , (member_id , post_id , limit+1 , offset) )
         
         comment_data = cursor.fetchall()
@@ -246,16 +256,23 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             )
             
 
-            replies_sql = """
+            replies_sql = f"""
                 SELECT content.*,
                     member.name,
                     member.account_id,
-                    member.avatar
+                    member.avatar,
+                    {likes_clause}
                 FROM content
                 LEFT JOIN member ON content.member_id = member.account_id
+                LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
                 WHERE content.parent_id = %s AND content.content_type = 'Reply'
+                AND {visibility_clause}
+                ORDER BY content.created_at DESC
             """
-            cursor.execute(replies_sql, (data['content_id'],))
+
+            if not member_id:
+                member_id = None
+            cursor.execute(replies_sql, (member_id , data['content_id'],))
             reply_data = cursor.fetchall()
             # print("reply_data:",reply_data)
 
