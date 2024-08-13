@@ -100,26 +100,35 @@ export function likeCommentAndReply() {
         const accountId = pathSegments[2]; // 第三個元素為 account_id
         const postId = pathSegments[4]; // 第五個元素為 post_id
 
-        // 獲取 account_id 和 comment_id 和 reply_id
-        const postElement = event.target.closest(".post");
-        const commentIdElement = postElement.querySelector(".message_id");
+        // 判斷是留言的讚還是回覆的讚
+        let itemId = null;
 
-        const replyElement = event.target.closest(".reply-area");
-        // console.log("replyElement:", replyElement);
-        const replycontent = replyElement.querySelector(".reply-content");
-        // console.log("replycontent:", replycontent);
-        const replyIdElement = replycontent.querySelector(".reply_id");
-        // console.log("replyIdElement:", replyIdElement);
+        // 檢查用戶是否點擊了回覆的讚
+        const replyarea = event.target.closest(".reply-area");
 
-        // 根據是否存在 commentId 或 replyId 決定 itemId
-        const itemId =
-          (replyIdElement ? replyIdElement.textContent.trim() : null) ||
-          (commentIdElement ? commentIdElement.textContent.trim() : null);
+        if (replyarea) {
+          // 點擊的是回覆留言的讚
+          console.log("reply click");
+          const replycontent = replyarea.querySelector(".reply-content");
+          console.log("replycontent:", replycontent);
+          const replyIdElement = replycontent.querySelector(".reply_id");
+          if (replyIdElement) {
+            itemId = replyIdElement.textContent.trim();
+          }
+        } else {
+          // 點擊的是留言的讚
+          const postElement = event.target.closest(".post");
+          const commentIdElement = postElement.querySelector(".message_id");
+          if (commentIdElement) {
+            itemId = commentIdElement.textContent.trim();
+          }
+        }
 
         if (!itemId) {
           console.error("itemId is missing or undefined");
           return;
         }
+
         // 檢查當前是否已經點讚（通過檢查圖標顏色或狀態）
         const isLiked = likeIcon.classList.contains("liked");
 
