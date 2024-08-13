@@ -6,7 +6,7 @@ import {
   displayMenuBtn,
 } from "./view/view_posts.js";
 
-import { likePost } from "./controller/controller_like.js";
+import { likePost, likeCommentAndReply } from "./controller/controller_like.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   fetchGetPost();
   likePost();
   fetchGetCommentAndReply();
+
+  likeCommentAndReply();
 
   displayMenuBtn();
 });
@@ -72,6 +74,9 @@ async function fetchGetPost() {
 async function fetchGetCommentAndReply() {
   document.getElementById("loading").classList.remove("hidden");
 
+  const token = localStorage.getItem("userToken");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
   const currentUrl = window.location.pathname;
   const pathSegments = currentUrl.split("/"); // 以 "/" 分割路徑成為陣列
   const accountId = pathSegments[2]; // 第三個元素為 account_id
@@ -83,7 +88,10 @@ async function fetchGetCommentAndReply() {
 
   try {
     isWaitingForData = true;
-    const response = await fetch(commentAndReplyUrl);
+
+    const response = await fetch(commentAndReplyUrl, {
+      headers: headers,
+    });
     const result = await response.json();
 
     let lastItem = document.querySelector(".Comment-Container:last-child");

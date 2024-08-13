@@ -167,7 +167,7 @@ export function displayCommentElement(comment) {
         counts.reply_counts || 0
       }</span></div>
       `;
-
+  // console.log("comment.comment.:", comment.comment);
   replies.forEach((reply) => {
     const replyElement = createReplyElement(reply);
     postElement.appendChild(replyElement);
@@ -226,6 +226,9 @@ function createReplyElement(reply) {
             </div>
             <div class="reply-content">
               <div class="text">${textContent}</div>
+              <div class="post_id reply_id" style="display: none">${
+                reply.comment_id
+              }</div>
             </div>
             <div class="reply-stats">
               <div class="stat">
