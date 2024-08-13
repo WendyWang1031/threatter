@@ -124,7 +124,7 @@ export async function checkUserState(callback) {
     }
 
     if (result) {
-      console.log("result:", result);
+      // console.log("result:", result);
       View.displayUserInterface(true);
       localStorage.setItem("userName", result.name);
       localStorage.setItem("account_id", result.account_id);
