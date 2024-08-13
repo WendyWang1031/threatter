@@ -2,7 +2,7 @@ export function closeCreatePost() {
   const createPosterCard = document.querySelector(".create-poster-card");
   const postForm = document.querySelector(".post-form");
   const mediaPreviewContainer = document.getElementById("media-preview");
-  console.log("postForm:", postForm);
+  // console.log("postForm:", postForm);
 
   // 點擊遮罩地方可以關閉
   createPosterCard.addEventListener("click", function (event) {
@@ -97,6 +97,7 @@ export function displayCreatePost() {
   const userPostContainer = document.querySelector(".user-post-container-fake");
   const createPosterCard = document.querySelector(".create-poster-card");
   const plusBtn = document.querySelector(".create-post-btn");
+
   const signin_mask = document.querySelector(".signin-mask");
 
   if (!token) {
@@ -114,4 +115,24 @@ export function displayCreatePost() {
       createPosterCard.style.display = "flex";
     });
   }
+}
+
+export function displayCreateComment(event) {
+  const token = localStorage.getItem("userToken");
+  const createPosterCard = document.querySelector(".create-poster-card");
+  const signin_mask = document.querySelector(".signin-mask");
+
+  document
+    .querySelector(".postsContainer")
+    .addEventListener("click", (event) => {
+      const commentBtn = event.target.closest(".fa-comment");
+
+      if (commentBtn) {
+        if (!token) {
+          signin_mask.style.display = "flex";
+        } else {
+          createPosterCard.style.display = "flex";
+        }
+      }
+    });
 }
