@@ -97,6 +97,9 @@ def db_delete_comment_and_reply(comment_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
+        delete_likes_sql = "DELETE FROM likes WHERE content_id = %s"
+        cursor.execute(delete_likes_sql, (comment_id,))
+
         sql = "delete from content where content_id = %s and member_id = %s "
         cursor.execute(sql , ( comment_id , member_id ))
         connection.commit()  
