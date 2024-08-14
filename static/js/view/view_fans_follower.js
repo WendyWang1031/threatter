@@ -15,33 +15,31 @@ export function displayOrCloseFansAndFollow() {
   }
 }
 
-export function setupTabSwitching() {
-  const tabs = document.querySelectorAll(".follower-header .tab");
-  const followerLists = {
-    fans: document.querySelector(".fans-list"),
-    follow: document.querySelector(".follow-list"),
-  };
+export function displayFollowerItem(data) {
+  const item = document.createElement("div");
+  item.className = "list-item";
+  console.log("data:", data);
 
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", async function () {
-      // 移除所有標籤的 active
-      tabs.forEach((t) => t.classList.remove("active"));
-      // 添加 active
-      this.classList.add("active");
+  // 生成頭像的 HTML
+  let avatarHtml;
+  if (data.user.avatar) {
+    avatarHtml = `<img src="${data.user.avatar}" alt="${data.user.account_id}'s avatar" class="profile-pic">`;
+  } else {
+    avatarHtml = `<i class="fa-regular fa-circle-user profile-pic"></i>`;
+  }
 
-      // 隱藏
-      Object.values(followerLists).forEach(
-        (list) => (list.style.display = "none")
-      );
+  item.innerHTML = `
+      ${avatarHtml}
+        <div class="list-user-info">
+          <a href="/api/member/${encodeURIComponent(
+            data.user.account_id
+          )}" class="list-username">${data.user.account_id}</a>
+          <div class="list-user-fullname">${data.user.name}</div>
+        </div>
+        <button class="list-follow-btn">${
+          data.follow_state ? "取消追蹤" : "追蹤"
+        }</button>
+      `;
 
-      const targetListClass = this.getAttribute("data-target");
-      const targetList = document.querySelector(`.${targetListClass}`);
-
-      if (targetListClass === "fans-list") {
-        await fetchAndDisplayFans(targetList);
-      } else if (targetListClass === "follow-list") {
-        await fetchAndDisplayFollowers(targetList);
-      }
-    });
-  });
+  return item;
 }

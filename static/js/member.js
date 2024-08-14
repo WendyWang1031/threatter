@@ -4,13 +4,14 @@ import {
   uploadAvatar,
 } from "./controller/controller_member.js";
 import { closeEditMember } from "./view/view_member.js";
-import {
-  displayOrCloseFansAndFollow,
-  setupTabSwitching,
-} from "./view/view_fans_follower.js";
+import { displayOrCloseFansAndFollow } from "./view/view_fans_follower.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
 import { likePost } from "./controller/controller_like.js";
+import {
+  fetchAndDisplayFans,
+  fetchAndDisplayFollowers,
+} from "./controller/controller_fans_follower.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -98,4 +99,35 @@ async function fetchGetPost() {
     console.error("Error fetching post data:", error);
     isWaitingForData = false;
   }
+}
+
+function setupTabSwitching() {
+  const tabs = document.querySelectorAll(".follower-header .tab");
+  const followerLists = {
+    fans: document.querySelector(".fans-list"),
+    follow: document.querySelector(".follow-list"),
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", async function () {
+      // 移除所有標籤的 active
+      tabs.forEach((t) => t.classList.remove("active"));
+      // 添加 active
+      this.classList.add("active");
+
+      // 隱藏
+      Object.values(followerLists).forEach(
+        (list) => (list.style.display = "none")
+      );
+
+      const targetListClass = this.getAttribute("data-target");
+      const targetList = document.querySelector(`.${targetListClass}`);
+
+      if (targetListClass === "fans-list") {
+        await fetchAndDisplayFans(targetList);
+      } else if (targetListClass === "follow-list") {
+        await fetchAndDisplayFollowers(targetList);
+      }
+    });
+  });
 }

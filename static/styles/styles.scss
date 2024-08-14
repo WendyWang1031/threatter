@@ -1590,6 +1590,7 @@ section.fans-follow {
             border-bottom: none;
           }
 
+          .profile-pic,
           .list-profile-pic {
             width: 40px;
             height: 40px;
@@ -1597,6 +1598,8 @@ section.fans-follow {
             color: $gray-border;
             border-radius: 50%;
             margin-right: 10px;
+
+            object-fit: cover;
           }
 
           .list-user-info {
