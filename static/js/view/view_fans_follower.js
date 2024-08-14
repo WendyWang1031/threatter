@@ -18,7 +18,7 @@ export function displayOrCloseFansAndFollow() {
 export function displayFollowerItem(data) {
   const item = document.createElement("div");
   item.className = "list-item";
-  console.log("data:", data);
+  //   console.log("data:", data);
 
   // 生成頭像的 HTML
   let avatarHtml;
@@ -28,6 +28,30 @@ export function displayFollowerItem(data) {
     avatarHtml = `<i class="fa-regular fa-circle-user profile-pic"></i>`;
   }
 
+  let buttonText;
+
+  switch (data.follow_state) {
+    case "None":
+      buttonText = "追蹤";
+      break;
+    case "Following":
+      buttonText = "取消追蹤";
+      break;
+    case "BeingFollow":
+      buttonText = "追蹤";
+      break;
+    case "Pending":
+      buttonText = "取消請求";
+      break;
+    case "PendingBeingFollow":
+      buttonText = "取消請求";
+      break;
+    default:
+      buttonText = "追蹤";
+  }
+
+  //   console.log("data.follow_state:", data.follow_state);
+
   item.innerHTML = `
       ${avatarHtml}
         <div class="list-user-info">
@@ -36,9 +60,8 @@ export function displayFollowerItem(data) {
           )}" class="list-username">${data.user.account_id}</a>
           <div class="list-user-fullname">${data.user.name}</div>
         </div>
-        <button class="list-follow-btn">${
-          data.follow_state ? "取消追蹤" : "追蹤"
-        }</button>
+        <button class="list-follow-btn">
+            ${buttonText}</button>
       `;
 
   return item;
