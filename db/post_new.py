@@ -102,6 +102,24 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
+        select_comment_sql = """
+            SELECT content_id FROM content WHERE parent_id = %s
+        """
+        cursor.execute(select_comment_sql, (post_id,))
+        child_comment_ids = [row['content_id'] for row in cursor.fetchall()]
+
+        for child_id in child_comment_ids:  
+            delete_child_reply_sql = """
+                DELETE FROM content WHERE parent_id = %s
+            """
+            cursor.execute(delete_child_reply_sql, (child_id,))
+
+        delete_child_comment_sql = """
+            DELETE FROM content 
+            WHERE parent_id = %s
+        """
+        cursor.execute(delete_child_comment_sql, (post_id,))
+
         # 刪除 likes 表和 post 相關的紀錄
         delete_likes_sql = "DELETE FROM likes WHERE content_id = %s"
         cursor.execute(delete_likes_sql, (post_id,))
