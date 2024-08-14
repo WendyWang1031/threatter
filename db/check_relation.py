@@ -89,14 +89,13 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
             """
             cursor.execute(check_relation_sql, (member_id, account_id))
             check_relation = cursor.fetchone()
-            # print("check_relation:",check_relation)
 
             if check_relation is None:
                     check_relation_state = "None"
             else:
                     check_relation_state = check_relation["relation_state"]
-
-            if check_relation_state in ["None", "Pending"] and target_visibility == "Private":
+            
+            if check_relation_state in ["None", "Pending"] and target_visibility == "Private": 
                     return False
             
             return True

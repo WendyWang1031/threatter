@@ -136,7 +136,7 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
         
         relation = db_check_member_target_relation(member_id , account_id) 
 
-        if relation is None:
+        if relation is False:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (
                 status_code=status.HTTP_403_FORBIDDEN, 
