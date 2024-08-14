@@ -152,7 +152,7 @@ def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes |
 
 
 
-def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes | None:
+def db_get_follow_target(member_id : str ,account_id : str , page : int) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -163,9 +163,15 @@ def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes |
 
         
         select_sql = """
-            SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+            SELECT member.name, member.account_id, member.avatar, 
+            IFNULL(relation.relation_state, 'None') AS relation_state
             FROM member_relation
+            
             JOIN member ON member_relation.target_id = member.account_id
+            LEFT JOIN member_relation AS relation 
+            ON relation.target_id = member.account_id 
+            AND relation.member_id = %s
+            
             WHERE member_relation.member_id = %s 
             AND member_relation.relation_state = 'Following'
             LIMIT %s OFFSET %s
@@ -175,7 +181,7 @@ def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes |
             FROM member_relation
             WHERE member_id = %s AND relation_state = 'Following'
         """
-        cursor.execute(select_sql, (account_id, limit+1, offset))
+        cursor.execute(select_sql, (member_id , account_id , limit+1, offset))
         follow_data = cursor.fetchall()
 
         cursor.execute(count_sql, (account_id,))
@@ -200,7 +206,7 @@ def db_get_follow_target(account_id : str , page : int) -> FollowMemberListRes |
 
 
 
-def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | None:
+def db_get_follow_fans(member_id : str , account_id : str , page : int) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -211,9 +217,14 @@ def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | N
 
         
         select_sql = """
-                SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
+                SELECT member.name, member.account_id, member.avatar, 
+                IFNULL(relation.relation_state, 'None') AS relation_state
                 FROM member_relation
+                
                 JOIN member ON member_relation.member_id = member.account_id
+                LEFT JOIN member_relation AS relation ON relation.target_id = member.account_id 
+                AND member_relation.member_id = %s
+                
                 WHERE member_relation.target_id = %s 
                 AND member_relation.relation_state = 'Following'
                 LIMIT %s OFFSET %s
@@ -223,7 +234,7 @@ def db_get_follow_fans(account_id : str , page : int) -> FollowMemberListRes | N
             FROM member_relation
             WHERE target_id = %s AND relation_state = 'Following'
         """
-        cursor.execute(select_sql, (account_id, limit+1, offset))
+        cursor.execute(select_sql, (member_id , account_id, limit+1, offset))
         follow_data = cursor.fetchall()
 
         cursor.execute(count_sql, (account_id,))
