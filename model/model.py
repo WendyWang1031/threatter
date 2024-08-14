@@ -49,6 +49,7 @@ class MemberDetail(MemberBase):
     self_intro: Optional[str] = Field(None, example="安安你好我是黑貓")
     fans_counts: int = Field(default=0, example=1456000)
     visibility: str = Field(..., example="public", description="帳號的權限，例如 public, private")
+    follow_state: str = Field(default="None", example="following, pending, beingFollow ,None") # following, pending, beingFollow
 
 class MemberUpdateReq(BaseModel):
     name: Optional[str] = Field(None, example="王黑喵")

@@ -83,9 +83,11 @@ async def update_member_data(
         return response
     
     
-async def get_member_data( account_id : str ) -> JSONResponse :
+async def get_member_data(current_user: Optional[dict] , account_id : str ) -> JSONResponse :
     try:
-        member_detail = db_get_member_data(account_id)
+        member_id = current_user["account_id"] if current_user else None
+       
+        member_detail = db_get_member_data(member_id , account_id)
 
         if member_detail is not None:
             response = JSONResponse(

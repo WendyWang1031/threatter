@@ -4,7 +4,7 @@ from typing import Any
 from db.connection_pool import get_db_connection_pool
 
 
-def db_get_member_data( account_id : str ) -> MemberDetail | None:
+def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -28,6 +28,15 @@ def db_get_member_data( account_id : str ) -> MemberDetail | None:
         fans_count_data = cursor.fetchone()
         fans_counts = fans_count_data['fans_count'] if fans_count_data else 0
         
+        relation_sql = """
+            SELECT relation_state
+            FROM member_relation
+            WHERE member_id = %s AND target_id = %s
+        """
+        cursor.execute(relation_sql, (member_id, account_id))
+        relation_data = cursor.fetchone()
+        follow_state = relation_data['relation_state'] if relation_data else 'None'
+
 
         member_detail = MemberDetail(
             name = member_data['name'] , 
@@ -35,7 +44,8 @@ def db_get_member_data( account_id : str ) -> MemberDetail | None:
             avatar = member_data.get('avatar', None) ,
             self_intro=member_data.get('self_intro', None) ,
             fans_counts = fans_counts ,
-            visibility = member_data['visibility'] 
+            visibility = member_data['visibility'],
+            follow_state = follow_state
         )
         
         connection.commit()

@@ -70,8 +70,9 @@ async def fetch_patch_member(member_update : MemberUpdateReq ,
                 "description" : "伺服器內部錯誤"
             }
          })
-async def fetch_get_member(account_id: str = Path(..., description="該會員的帳號")) -> JSONResponse :
-    return await get_member_data(account_id)
+async def fetch_get_member(current_user :  Optional[dict] = Depends(security_get_current_user),
+                        account_id: str = Path(..., description="該會員的帳號")) -> JSONResponse :
+    return await get_member_data(current_user , account_id)
 
 # 追蹤
 @app.post("/api/follow",
