@@ -89,7 +89,22 @@ export function displayFollowerItem(data) {
         }),
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const result = await response.json();
+        console.log("操作成功:", result);
+
+        // 更新按鈕狀態根據返回的 follow_state
+        if (result.follow_state === "Following") {
+          button.textContent = "取消追蹤";
+          data.follow_state = "Following";
+        } else if (result.follow_state === "Pending") {
+          button.textContent = "請求追蹤中";
+          data.follow_state = "Pending";
+        } else {
+          button.textContent = "追蹤";
+          data.follow_state = "None";
+        }
+      } else {
         const errorResult = await response.json();
         console.error("操作失敗:", errorResult);
 
