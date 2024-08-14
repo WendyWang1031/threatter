@@ -1,4 +1,7 @@
-import { displayFollowerItem } from "../view/view_fans_follower.js";
+import {
+  displayFollowerItem,
+  displayUpdateFollowerCount,
+} from "../view/view_fans_follower.js";
 
 export async function fetchAndDisplayFans(targetList) {
   const token = localStorage.getItem("userToken");
@@ -25,6 +28,8 @@ export async function fetchAndDisplayFans(targetList) {
       const fanItem = displayFollowerItem(fan);
       targetList.appendChild(fanItem);
     });
+
+    displayUpdateFollowerCount("fans-list", fansData.fans_counts);
 
     targetList.style.display = "block";
   } catch (error) {
@@ -53,6 +58,8 @@ export async function fetchAndDisplayFollowers(targetList) {
       const followerItem = displayFollowerItem(follower);
       targetList.appendChild(followerItem);
     });
+
+    displayUpdateFollowerCount("follow-list", followersData.fans_counts);
 
     targetList.style.display = "block";
   } catch (error) {

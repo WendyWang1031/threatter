@@ -43,3 +43,13 @@ export function displayFollowerItem(data) {
 
   return item;
 }
+
+export function displayUpdateFollowerCount(listType, count) {
+  const countElement = document.querySelector(
+    `.tab[data-target="${listType}"] .count`
+  );
+
+  if (countElement) {
+    countElement.textContent = count;
+  }
+}

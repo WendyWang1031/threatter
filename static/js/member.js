@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   uploadAvatar();
 
+  setupIntersectionObserver();
   setupTabSwitching();
 
   likePost();
@@ -130,4 +131,20 @@ function setupTabSwitching() {
       }
     });
   });
+}
+
+function setupIntersectionObserver() {
+  const fansListContainer = document.querySelector(".fans-list");
+  const followListContainer = document.querySelector(".follow-list");
+  const observer = new IntersectionObserver(async (entries, observer) => {
+    const [entry] = entries;
+    if (entry.isIntersecting) {
+      await fetchAndDisplayFans(fansListContainer);
+      await fetchAndDisplayFollowers(followListContainer);
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(fansListContainer);
+  observer.observe(followListContainer);
 }
