@@ -50,7 +50,7 @@ export async function fetchAndDisplayFollowers(targetList) {
       headers: headers,
     });
     const followersData = await response.json();
-    console.log("followersData:", followersData);
+    // console.log("followersData:", followersData);
 
     targetList.innerHTML = "";
 

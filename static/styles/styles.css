@@ -1480,4 +1480,7 @@ section.fans-follow .follower-container .follower-lists .follower-list .list-ite
 }
 section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-follow-btn:hover {
   background-color: #ebebeb;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-follow-btn:active {
+  transform: scale(1.1);
 }/*# sourceMappingURL=styles.css.map */
