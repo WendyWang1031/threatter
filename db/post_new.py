@@ -102,8 +102,13 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
-        sql = "delete from content where content_id = %s and member_id = %s "
-        cursor.execute(sql , ( post_id , member_id ))
+        # 刪除 likes 表和 post 相關的紀錄
+        delete_likes_sql = "DELETE FROM likes WHERE content_id = %s"
+        cursor.execute(delete_likes_sql, (post_id,))
+        
+        # 刪除 content 表的紀錄
+        delete_content_sql = "DELETE FROM content WHERE content_id = %s AND member_id = %s"
+        cursor.execute(delete_content_sql, (post_id, member_id))
         connection.commit()  
 
         if cursor.rowcount > 0:
