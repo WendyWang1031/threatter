@@ -222,10 +222,11 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
                 FROM member_relation
                 
                 JOIN member ON member_relation.member_id = member.account_id
-                LEFT JOIN member_relation AS relation ON relation.target_id = member.account_id 
-                AND member_relation.member_id = %s
+                LEFT JOIN member_relation AS relation 
+                ON relation.target_id = member.account_id 
+                AND relation.member_id = %s
                 
-                WHERE member_relation.target_id = %s 
+                WHERE member_relation.target_id = %s  
                 AND member_relation.relation_state = 'Following'
                 LIMIT %s OFFSET %s
             """
