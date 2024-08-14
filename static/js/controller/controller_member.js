@@ -64,8 +64,17 @@ export function uploadAvatar() {
 }
 
 export async function fetchMemberDetail() {
+  const followProfileButton = document.querySelector(".follow-profile-button");
+
+  const userToken = localStorage.getItem("userToken");
+
   const currentUrl = window.location.pathname;
   const urlAccountId = currentUrl.split("/").pop();
+
+  if (!userToken) {
+    // 用戶未登入，隱藏追蹤按鈕
+    followProfileButton.style.display = "none";
+  }
 
   // 抓取當前用戶
   const localAccountId = localStorage.getItem("account_id");
@@ -88,10 +97,13 @@ export async function fetchMemberDetail() {
     if (result) {
       displayMemberDetail(result);
       // 顯示或隱藏按鈕
+
       const editProfileButton = document.querySelector(".edit-profile-button");
-      const followProfileButton = document.querySelector(
-        ".follow-profile-button"
-      );
+
+      if (!userToken) {
+        // 用戶未登入，隱藏追蹤按鈕
+        followProfileButton.style.display = "none";
+      }
 
       if (isCurrentUser) {
         // 顯示編輯會員按鈕
@@ -100,13 +112,15 @@ export async function fetchMemberDetail() {
       } else {
         // 顯示追蹤按鈕
         editProfileButton.style.display = "none";
-        followProfileButton.style.display = "block";
+        if (userToken) {
+          followProfileButton.style.display = "block";
+        }
       }
     } else {
-      console.error("Failed to retrieve post data.");
+      console.error("Failed to retrieve member data.");
     }
   } catch (error) {
-    console.error("Error fetching post data:", error);
+    console.error("Error fetching member data:", error);
   }
 }
 
