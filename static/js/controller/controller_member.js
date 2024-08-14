@@ -64,7 +64,9 @@ export function uploadAvatar() {
 }
 
 export async function fetchMemberDetail() {
-  const followProfileButton = document.querySelector(".follow-profile-button");
+  const followProfileButtonContainer = document.querySelector(
+    ".follow-profile-button"
+  );
 
   const userToken = localStorage.getItem("userToken");
 
@@ -73,11 +75,12 @@ export async function fetchMemberDetail() {
 
   if (!userToken) {
     // 用戶未登入，隱藏追蹤按鈕
-    followProfileButton.style.display = "none";
+    followProfileButtonContainer.style.display = "none";
   }
 
   // 抓取當前用戶
   const localAccountId = localStorage.getItem("account_id");
+  console.log("localAccountId.:", localAccountId);
 
   // 判斷是否當前用戶
   const isCurrentUser = urlAccountId === localAccountId;
@@ -88,32 +91,56 @@ export async function fetchMemberDetail() {
     return;
   }
 
-  const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
+  // 目前的token是否須攜帶 可選
+  const headers = userToken ? { Authorization: `Bearer ${userToken}` } : {};
 
   try {
-    const response = await fetch(memberUrl);
+    const response = await fetch(
+      `/api/member/${encodeURIComponent(account_id)}`,
+      {
+        headers: headers,
+      }
+    );
     const result = await response.json();
 
     if (result) {
       displayMemberDetail(result);
       // 顯示或隱藏按鈕
-
+      const followProfileButton =
+        followProfileButtonContainer.querySelector("button");
       const editProfileButton = document.querySelector(".edit-profile-button");
 
       if (!userToken) {
         // 用戶未登入，隱藏追蹤按鈕
-        followProfileButton.style.display = "none";
+        followProfileButtonContainer.style.display = "none";
       }
 
       if (isCurrentUser) {
         // 顯示編輯會員按鈕
         editProfileButton.style.display = "block";
-        followProfileButton.style.display = "none";
+        followProfileButtonContainer.style.display = "none";
       } else {
         // 顯示追蹤按鈕
         editProfileButton.style.display = "none";
         if (userToken) {
-          followProfileButton.style.display = "block";
+          followProfileButtonContainer.style.display = "block";
+
+          // 根據 follow_state 動態設置按鈕文本
+          let buttonText;
+          switch (result.follow_state) {
+            case "None":
+              buttonText = "追蹤";
+              break;
+            case "Following":
+              buttonText = "取消追蹤";
+              break;
+            case "Pending":
+              buttonText = "請求追蹤中";
+              break;
+            default:
+              buttonText = "追蹤";
+          }
+          followProfileButton.textContent = buttonText;
         }
       }
     } else {
@@ -181,7 +208,6 @@ async function submitPost(content, imageFile, userName) {
 async function fetchUpdateMember(memberData) {
   const memberUpdateURL = "/api/member";
   const token = localStorage.getItem("userToken");
-  console.log("memberData:", JSON.stringify(memberData));
 
   try {
     const response = await fetch(memberUpdateURL, {
