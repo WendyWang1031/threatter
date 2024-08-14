@@ -80,7 +80,6 @@ export async function fetchMemberDetail() {
 
   // 抓取當前用戶
   const localAccountId = localStorage.getItem("account_id");
-  console.log("localAccountId.:", localAccountId);
 
   // 判斷是否當前用戶
   const isCurrentUser = urlAccountId === localAccountId;
@@ -132,7 +131,7 @@ export async function fetchMemberDetail() {
               buttonText = "追蹤";
               break;
             case "Following":
-              buttonText = "取消追蹤";
+              buttonText = "追蹤中";
               break;
             case "Pending":
               buttonText = "請求追蹤中";
@@ -141,6 +140,72 @@ export async function fetchMemberDetail() {
               buttonText = "追蹤";
           }
           followProfileButton.textContent = buttonText;
+
+          // 添加點擊事件處理程序
+          followProfileButtonContainer.addEventListener(
+            "click",
+            async function () {
+              // 保存當前狀態以便回滾
+              const previousState = {
+                follow_state: result.follow_state,
+                buttonText: followProfileButton.textContent,
+              };
+
+              // 決定當前的操作是追蹤還是取消追蹤
+              const followAction =
+                result.follow_state === "None" ||
+                result.follow_state === "Pending";
+
+              // 即時更新按鈕狀態
+              followProfileButton.textContent = followAction
+                ? "追蹤中"
+                : "追蹤";
+
+              try {
+                const apiEndpoint = "/api/follow";
+                const response = await fetch(apiEndpoint, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem(
+                      "userToken"
+                    )}`,
+                  },
+                  body: JSON.stringify({
+                    follow: followAction,
+                    account_id: result.account_id,
+                  }),
+                });
+
+                if (response.ok) {
+                  const res = await response.json();
+                  if (res.follow_state === "Following") {
+                    followProfileButton.textContent = "追蹤中";
+                    result.follow_state = "Following";
+                  } else if (res.follow_state === "Pending") {
+                    followProfileButton.textContent = "請求追蹤中";
+                    result.follow_state = "Pending";
+                  } else {
+                    followProfileButton.textContent = "追蹤";
+                    result.follow_state = "None";
+                  }
+                } else {
+                  const errorResult = await response.json();
+                  console.error("操作失敗:", errorResult);
+
+                  // API 響應失敗時回滾狀態
+                  followProfileButton.textContent = previousState.buttonText;
+                  result.follow_state = previousState.follow_state;
+                }
+              } catch (error) {
+                console.error("請求錯誤:", error);
+
+                // 請求出錯時回滾狀態
+                followProfileButton.textContent = previousState.buttonText;
+                result.follow_state = previousState.follow_state;
+              }
+            }
+          );
         }
       }
     } else {

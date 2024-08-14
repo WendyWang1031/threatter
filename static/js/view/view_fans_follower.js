@@ -35,7 +35,7 @@ export function displayFollowerItem(data) {
       buttonText = "追蹤";
       break;
     case "Following":
-      buttonText = "取消追蹤";
+      buttonText = "追蹤中";
       break;
     case "BeingFollow":
       buttonText = "追蹤";
@@ -70,7 +70,7 @@ export function displayFollowerItem(data) {
 
       // 即時更新按鈕狀態
       if (followAction) {
-        button.textContent = "取消追蹤";
+        button.textContent = "追蹤中";
         data.follow_state = "Following";
       } else {
         button.textContent = "追蹤";
@@ -95,7 +95,7 @@ export function displayFollowerItem(data) {
 
         // 更新按鈕狀態根據返回的 follow_state
         if (result.follow_state === "Following") {
-          button.textContent = "取消追蹤";
+          button.textContent = "追蹤中";
           data.follow_state = "Following";
         } else if (result.follow_state === "Pending") {
           button.textContent = "請求追蹤中";
