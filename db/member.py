@@ -22,7 +22,7 @@ def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | No
         
         count_sql = """select Count(*) AS fans_count
             from member_relation
-            where target_id = %s AND relation_state = 'BeingFollow'
+            where target_id = %s AND relation_state = 'Following'
         """
         cursor.execute( count_sql , (account_id ,))
         fans_count_data = cursor.fetchone()

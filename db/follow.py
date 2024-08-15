@@ -223,10 +223,10 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
                 
                 JOIN member ON member_relation.member_id = member.account_id
                 LEFT JOIN member_relation AS relation 
-                ON relation.target_id = member.account_id 
-                AND relation.member_id = %s
+                    ON relation.member_id = %s 
+                   AND relation.target_id = member.account_id 
                 
-                WHERE member_relation.member_id = %s 
+                WHERE member_relation.target_id = %s 
                 AND member_relation.relation_state = 'Following'
                 LIMIT %s OFFSET %s
             """
@@ -235,8 +235,9 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
             FROM member_relation
             WHERE target_id = %s AND relation_state = 'Following'
         """
-        cursor.execute(select_sql, (account_id , member_id, limit+1, offset))
+        cursor.execute(select_sql, (member_id , account_id, limit+1, offset))
         follow_data = cursor.fetchall()
+        print("follow_data:",follow_data)
 
         cursor.execute(count_sql, (account_id,))
         total_count = cursor.fetchone()['total']
@@ -261,40 +262,40 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
 
 
 
-    connection = get_db_connection_pool()
-    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    # connection = get_db_connection_pool()
+    # cursor = connection.cursor(pymysql.cursors.DictCursor)
     
-    try:
-        connection.begin()
+    # try:
+    #     connection.begin()
 
-        user_sql = """
-            SELECT member.name , member.account_id , member.avatar
-            FROM member
-            WHERE account_id = %s
+    #     user_sql = """
+    #         SELECT member.name , member.account_id , member.avatar
+    #         FROM member
+    #         WHERE account_id = %s
 
-        """
-        cursor.execute(user_sql , (account_id,))
-        member = cursor.fetchone()
+    #     """
+    #     cursor.execute(user_sql , (account_id,))
+    #     member = cursor.fetchone()
 
         
-        follow_member = FollowMember(
-            user = MemberBase(
-                    name = member['name'],
-                    account_id = member['account_id'],
-                    avatar = member['avatar']
-                ),
-            follow_state = relation_state
-        )
+    #     follow_member = FollowMember(
+    #         user = MemberBase(
+    #                 name = member['name'],
+    #                 account_id = member['account_id'],
+    #                 avatar = member['avatar']
+    #             ),
+    #         follow_state = relation_state
+    #     )
 
 
-        connection.commit()
+    #     connection.commit()
         
-        return follow_member
+    #     return follow_member
     
-    except Exception as e:
-        print(f"Error getting member single data details: {e}")
-        connection.rollback() 
-        return False
-    finally:
-        cursor.close()
-        connection.close()
+    # except Exception as e:
+    #     print(f"Error getting member single data details: {e}")
+    #     connection.rollback() 
+    #     return False
+    # finally:
+    #     cursor.close()
+    #     connection.close()
