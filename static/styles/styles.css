@@ -1201,8 +1201,23 @@ section.single-postsContainer .indivisial-area .message {
 }
 
 section.reply-header .reply-title {
+  display: grid;
+  justify-content: center;
+}
+section.reply-header .reply-title .no-data {
   display: flex;
   justify-content: center;
+  align-self: center;
+}
+section.reply-header .reply-title .no-data .no-data-message {
+  width: 600px;
+  padding: 20px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: #fff;
+  padding-top: 150px;
+  border-radius: 0 0 20px 20px;
 }
 section.reply-header .reply-title .reply {
   width: 600px;

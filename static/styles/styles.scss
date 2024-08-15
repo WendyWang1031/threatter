@@ -1351,8 +1351,24 @@ section.single-postsContainer {
 
 section.reply-header {
   .reply-title {
-    display: flex;
+    display: grid;
+
     justify-content: center;
+    .no-data {
+      display: flex;
+      justify-content: center;
+      align-self: center;
+      .no-data-message {
+        width: 600px;
+        padding: 20px;
+        text-align: center;
+        color: #9a9a9a;
+        height: 200px;
+        background-color: $bg-color;
+        padding-top: 150px;
+        border-radius: 0 0 20px 20px;
+      }
+    }
     .reply {
       width: 600px;
       background-color: $bg-color;

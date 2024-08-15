@@ -115,6 +115,18 @@ async function fetchGetCommentAndReply() {
     });
     const result = await response.json();
 
+    if (result.message === "沒有留言資料") {
+      const replyContainer = document.querySelector(".reply-title");
+      const noData = document.createElement("div");
+      noData.className = "no-data";
+      const noDataMessage = document.createElement("div");
+      noDataMessage.className = "no-data-message";
+      noDataMessage.textContent = "尚無任何留言。";
+
+      noData.appendChild(noDataMessage);
+      replyContainer.appendChild(noData);
+    }
+
     let lastItem = document.querySelector(".Comment-Container:last-child");
     if (result && result.data.length > 0) {
       // console.log("result next_page:", result.next_page);
