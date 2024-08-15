@@ -1700,13 +1700,6 @@ section.notify-area {
       .notify-list {
         display: none;
 
-        .no-data-message {
-          padding: 50px;
-          text-align: center;
-          color: $font-color;
-          height: 200px;
-        }
-
         &.active {
           display: block;
         }
@@ -1805,4 +1798,12 @@ section.notify-area {
       }
     }
   }
+}
+
+.no-data-message {
+  padding: 50px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: $bg-color;
 }

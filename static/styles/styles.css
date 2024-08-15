@@ -1533,12 +1533,6 @@ section.notify-area .notify-header .notify-lists {
 section.notify-area .notify-header .notify-lists .notify-list {
   display: none;
 }
-section.notify-area .notify-header .notify-lists .notify-list .no-data-message {
-  padding: 50px;
-  text-align: center;
-  color: #424242;
-  height: 200px;
-}
 section.notify-area .notify-header .notify-lists .notify-list.active {
   display: block;
 }
@@ -1619,4 +1613,12 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
 }
 section.notify-area .notify-header .notify-lists .notify-list .list-item .list-follow-btn:active {
   transform: scale(1.1);
+}
+
+.no-data-message {
+  padding: 50px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: #fff;
 }/*# sourceMappingURL=styles.css.map */

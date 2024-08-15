@@ -61,6 +61,9 @@ async function fetchGetPost() {
   const isCurrentUser = urlAccountId === localAccountId;
   const account_id = isCurrentUser ? localAccountId : urlAccountId;
 
+  const token = localStorage.getItem("userToken");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
   if (!account_id) {
     console.log("User not logged in, using default avatar.");
     return;
@@ -73,15 +76,25 @@ async function fetchGetPost() {
   try {
     //開始新的資料加載前設定
     isWaitingForData = true;
-    const response = await fetch(memberPostsUrl);
+    const response = await fetch(memberPostsUrl, {
+      headers: headers,
+    });
     const result = await response.json();
+    const postsContainer = document.querySelector(".postsContainer");
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
+
+    // if (result.message === "該用戶並無權限調閱") {
+    //   const noDataMessage = document.createElement("div");
+    //   noDataMessage.className = "no-data-message";
+    //   noDataMessage.textContent = "此個人檔案不公開。";
+    //   postsContainer.appendChild(noDataMessage);
+    // }
+
     if (result && result.data.length > 0) {
       currentPage++;
       hasNextPage = result.next_page != null;
 
-      const postsContainer = document.querySelector(".postsContainer");
       result.data.forEach((post) => {
         const postElement = displayContentElement(post);
         postsContainer.appendChild(postElement);
@@ -94,6 +107,11 @@ async function fetchGetPost() {
       }
     } else {
       hasNextPage = false;
+
+      const noDataMessage = document.createElement("div");
+      noDataMessage.className = "no-data-message";
+      noDataMessage.textContent = "目前尚無串文";
+      postsContainer.appendChild(noDataMessage);
     }
     isWaitingForData = false;
   } catch (error) {
