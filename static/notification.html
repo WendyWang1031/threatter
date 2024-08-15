@@ -52,11 +52,18 @@
         <div class="notify-info"></div>
 
         <div class="notify-nav">
-          <button class="nav-button answer-follow active">追蹤</button>
-          <button class="nav-button notification">動態</button>
+          <button
+            class="nav-button answer-follow active"
+            data-target="notify-req-list"
+          >
+            追蹤
+          </button>
+          <button class="nav-button notification" data-target="notify-ani-list">
+            動態
+          </button>
         </div>
         <div class="notify-lists">
-          <div class="notify-list fans-list active">
+          <div class="notify-list notify-req-list active">
             <div class="list-item">
               <i
                 class="fa-regular fa-circle-user profile-pic list-profile-pic"
@@ -69,7 +76,7 @@
             </div>
             <!-- 更多 .list-item -->
           </div>
-          <div class="notify-list follow-list" style="display: none">
+          <div class="notify-list notify-ani-list" style="display: none">
             <div class="list-item">
               <i
                 class="fa-regular fa-circle-user profile-pic list-profile-pic"
@@ -185,6 +192,6 @@
     </div>
   </body>
   <!-- <script type="module" src="static/js/controller/controller_index.js"></script> -->
-
+  <script type="module" src="../static/js/notification.js"></script>
   <script type="module" src="../static/js/auth.js"></script>
 </html>
