@@ -115,9 +115,9 @@ def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes |
         select_sql = """
             SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
             FROM member_relation
-            JOIN member ON member_relation.member_id = member.account_id
-            WHERE member_relation.target_id = %s 
-            AND member_relation.relation_state = 'Pending'
+            JOIN member ON member_relation.target_id = member.account_id
+            WHERE member_relation.member_id = %s 
+            AND member_relation.relation_state = 'PendingBeingFollow'
             LIMIT %s OFFSET %s
         """
         count_sql = """
@@ -226,7 +226,7 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
                 ON relation.target_id = member.account_id 
                 AND relation.member_id = %s
                 
-                WHERE member_relation.target_id = %s  
+                WHERE member_relation.member_id = %s 
                 AND member_relation.relation_state = 'Following'
                 LIMIT %s OFFSET %s
             """
@@ -235,7 +235,7 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
             FROM member_relation
             WHERE target_id = %s AND relation_state = 'Following'
         """
-        cursor.execute(select_sql, (member_id , account_id, limit+1, offset))
+        cursor.execute(select_sql, (account_id , member_id, limit+1, offset))
         follow_data = cursor.fetchall()
 
         cursor.execute(count_sql, (account_id,))
