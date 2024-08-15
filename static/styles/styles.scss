@@ -1724,6 +1724,36 @@ section.notify-area {
             margin-right: 10px;
             object-fit: cover;
           }
+          .action-buttons {
+            display: flex;
+            gap: 12px;
+
+            .accept-btn,
+            .reject-btn {
+              padding: 6px 14px;
+              border-radius: 8px;
+
+              cursor: pointer;
+              font-size: 14px;
+            }
+
+            .accept-btn,
+            .reject-btn {
+              background: #fff;
+              color: #505050;
+              padding: 10px 20px;
+              border-radius: 8px;
+              border: 1px solid #ccc;
+            }
+
+            .accept-btn:hover,
+            .reject-btn:hover {
+              opacity: 0.8;
+            }
+            :active {
+              transform: scale(1.1);
+            }
+          }
 
           .list-user-info {
             flex: 1;

@@ -1556,6 +1556,32 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-p
   -o-object-fit: cover;
      object-fit: cover;
 }
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons {
+  display: flex;
+  gap: 12px;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons .accept-btn,
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons .reject-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons .accept-btn,
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons .reject-btn {
+  background: #fff;
+  color: #505050;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons .accept-btn:hover,
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons .reject-btn:hover {
+  opacity: 0.8;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .action-buttons :active {
+  transform: scale(1.1);
+}
 section.notify-area .notify-header .notify-lists .notify-list .list-item .list-user-info {
   flex: 1;
 }
