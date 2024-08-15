@@ -1,3 +1,5 @@
+import { displayFollowerItem } from "../view/view_notification.js";
+
 export function setupTabSwitching() {
   console.log("here");
   const tabs = document.querySelectorAll(".nav-button");
@@ -24,11 +26,59 @@ export function setupTabSwitching() {
       targetList.style.display = "block";
       targetList.classList.add("active");
 
-      //   if (targetListClass === "notify-req-list") {
-      //     await fetchAndDisplayFans(targetList);
-      //   } else if (targetListClass === "notify-ani-list") {
-      //     await fetchAndDisplayFollowers(targetList);
-      //   }
+      if (targetListClass === "notify-req-list") {
+        await fetchAndDisplayFollowReq(targetList);
+        //   } else if (targetListClass === "notify-ani-list") {
+        //     await fetchAndDisplayFollowAni(targetList);
+      }
     });
   });
+}
+
+export async function fetchAndDisplayFollowReq(targetList) {
+  const token = localStorage.getItem("userToken");
+
+  try {
+    // const response = await fetch(
+    //     `/api/member/${urlAccountId}/follow/fans?page=${currentPage}`,
+    //     {
+    //       headers: headers,
+    //     }
+    //   );
+    const response = await fetch(`/api/follow/member/follow`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const followReqData = await response.json();
+    console.log("followReqData:", followReqData);
+
+    targetList.innerHTML = "";
+
+    followReqData.data.forEach((followerReq) => {
+      const fanItem = displayFollowerItem(followerReq);
+      targetList.appendChild(fanItem);
+    });
+
+    targetList.style.display = "block";
+  } catch (error) {
+    console.error("Error fetching follower Request:", error);
+  } finally {
+  }
+}
+
+export function setupIntersectionObserver() {
+  const followerReqListContainer = document.querySelector(".notify-req-list");
+
+  const observer = new IntersectionObserver(async (entries, observer) => {
+    const [entry] = entries;
+    if (entry.isIntersecting) {
+      await fetchAndDisplayFollowReq(followerReqListContainer);
+
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(followerReqListContainer);
 }
