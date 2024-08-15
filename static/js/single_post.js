@@ -10,6 +10,10 @@ import {
 import { closeCreatePost, previewCreatePost } from "./view/view_post_detail.js";
 
 import { validateForm } from "./controller/controller_submit_item.js";
+import {
+  deleteComment,
+  deleteReply,
+} from "./controller/controller_delete_comment_reply.js";
 
 import { likePost, likeCommentAndReply } from "./controller/controller_like.js";
 
@@ -22,6 +26,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   fetchGetCommentAndReply();
 
   likeCommentAndReply();
+  deleteComment();
+  deleteReply();
 
   submitForm();
 

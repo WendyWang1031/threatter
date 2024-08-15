@@ -147,7 +147,7 @@ export function displayCommentElement(comment) {
       <div class="menu-button">
         <i class="fa fa-ellipsis-h"></i>
         <ul class="dropdown-menu">
-          <li class="menu-item delete-post" id="delete-post">刪除</li>
+          <li class="menu-item delete-post" id="delete-comment">刪除</li>
           <li class="menu-item copy-link" id="copy-link">複製連結</li>
         </ul>
       </div>
@@ -169,7 +169,7 @@ export function displayCommentElement(comment) {
       `;
   // console.log("comment.comment.:", comment.comment);
   replies.forEach((reply) => {
-    const replyElement = createReplyElement(reply);
+    const replyElement = displayReplyElement(reply);
     postElement.appendChild(replyElement);
   });
 
@@ -180,7 +180,7 @@ export function displayCommentElement(comment) {
   return indivisial_postElement;
 }
 
-function createReplyElement(reply) {
+function displayReplyElement(reply) {
   const replyElement = document.createElement("div");
   replyElement.className = "reply-area";
 
@@ -219,7 +219,7 @@ function createReplyElement(reply) {
               <div class="menu-button">
                 <i class="fa fa-ellipsis-h"></i>
                 <ul class="dropdown-menu">
-                  <li class="menu-item delete-post" id="delete-post">刪除</li>
+                  <li class="menu-item delete-post" id="delete-reply">刪除</li>
                   <li class="menu-item copy-link" id="copy-link">複製連結</li>
                 </ul>
               </div>
@@ -284,16 +284,16 @@ export function displayMenuBtn() {
     });
   });
 
-  // 刪除
+  // 刪除貼文
   document.body.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("delete-post")) {
+    if (event.target.id.includes("delete-post")) {
       const postElement = event.target.closest(".post");
       const postIdElement = postElement.querySelector(".post_id");
       const token = localStorage.getItem("userToken");
 
       if (postElement && postIdElement) {
         const postId = postIdElement.textContent.trim();
-
+        document.getElementById("loading").classList.remove("hidden");
         try {
           // fetch delete
           const response = await fetch(`/api/post/${postId}`, {
@@ -304,12 +304,19 @@ export function displayMenuBtn() {
           });
 
           if (response.ok) {
-            window.location.reload();
+            const currentUrl = window.location.pathname;
+            if (currentUrl.includes("/post/")) {
+              window.location.href = "/";
+            } else {
+              window.location.reload();
+            }
           } else {
             alert("刪除失敗，請排查問題。");
           }
         } catch (error) {
           console.error("刪除失敗:", error);
+        } finally {
+          document.getElementById("loading").classList.add("hidden");
         }
       }
     }
