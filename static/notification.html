@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Threatter</title>
+    <link rel="stylesheet" href="/static/styles/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="navigation sticky">
+      <div class="navi-content">
+        <div class="icon logo"><i class="fa-solid fa-at"></i></div>
+
+        <div class="header-button-area">
+          <div class="header-2-buttons-area">
+            <button class="login-signin">登入</button>
+            <button class="logout" style="display: none">登出</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="loading" class="loading-overlay hidden">
+      <div class="loader"></div>
+    </div>
+
+    <section class="main-sider-area">
+      <div class="main-sider">
+        <!-- <div class="icon logo"><i class="fa-solid fa-at"></i></div> -->
+        <div class="sidebar">
+          <div class="icon home"><i class="fa-solid fa-house"></i></div>
+          <div class="icon search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div class="icon heart"><i class="fa-regular fa-heart"></i></div>
+          <div class="icon profile"><i class="fa-regular fa-user"></i></div>
+        </div>
+
+        <!-- <section class="login-signin-area">
+          <button class="login-signin">登入</button>
+          <button class="logout" style="display: none">登出</button>
+        </section> -->
+      </div>
+    </section>
+
+    <section class="member-self-area">
+      <div class="profile-header">
+        <div class="profile-info">
+          <div class="profile-details">
+            <h1 class="user-name"></h1>
+            <p class="user-account-id"></p>
+            <p class="user-self-intro"></p>
+            <a class="user-fans"></a>
+          </div>
+          <div class="profile-avatar">
+            <i class="fa-regular fa-circle-user profile-pic"></i>
+            <!-- <img src="path/to/avatar.jpg" alt="User Avatar" /> -->
+          </div>
+        </div>
+        <div class="edit-profile-button" style="display: none">
+          <button>編輯個人檔案</button>
+        </div>
+        <div class="follow-profile-button" style="display: none">
+          <button>追蹤</button>
+        </div>
+        <div class="profile-nav">
+          <button class="nav-button active">串文</button>
+          <!-- <button class="nav-button">回覆</button> -->
+        </div>
+      </div>
+    </section>
+
+    <section class="postsContainer">
+      <!-- <div class="indivisial-area">
+        <div class="post">
+          <div class="post-header">
+            <div class="user-info-post">
+              <i class="fa-regular fa-circle-user profile-pic"></i>
+              <a href="" class="account_id">meow</a>
+            </div>
+            <div class="menu-button">
+              <i class="fa fa-ellipsis-h"></i>
+              <ul class="dropdown-menu">
+                <li class="menu-item delete-post" id="delete-post">刪除</li>
+                <li class="menu-item copy-link" id="copy-link">複製連結</li>
+              </ul>
+            </div>
+          </div>
+          <div class="post-content">
+            <div class="post_id" style="display: none"></div>
+            <div class="text">這是範例串文，請留言</div>
+            <div class="media"></div>
+          </div>
+          <div class="post-stats">
+            <div class="stat"><i class="fa fa-heart"></i> <span>304</span></div>
+            <div class="stat">
+              <i class="fa fa-comment"></i> <span>10</span>
+            </div>
+            <div class="stat"><i class="fa fa-share"></i> <span>38</span></div>
+          </div>
+        </div>
+      </div> -->
+    </section>
+
+    <section class="fans-follow" style="display: none">
+      <div class="follower-container">
+        <div class="follower-header">
+          <div class="tab active" data-target="fans-list">
+            粉絲
+            <span class="count"></span>
+          </div>
+          <div class="tab" data-target="follow-list">
+            追蹤中
+            <span class="count"></span>
+          </div>
+        </div>
+        <div class="follower-lists">
+          <div class="follower-list fans-list active">
+            <div class="list-item">
+              <!-- <i
+                class="fa-regular fa-circle-user profile-pic list-profile-pic"
+              ></i>
+              <div class="list-user-info">
+                <a href="" class="list-username">dfsdfsd4555</a>
+                <div class="list-user-fullname">逃出桃花源</div>
+              </div>
+              <button class="list-follow-btn">追蹤</button> -->
+            </div>
+            <!-- 更多 .list-item -->
+          </div>
+          <div class="follower-list follow-list" style="display: none">
+            <div class="list-item">
+              <!-- <i
+                class="fa-regular fa-circle-user profile-pic list-profile-pic"
+              ></i>
+              <div class="list-user-info">
+                <a href="" class="list-username">twfm1205</a>
+                <div class="list-user-fullname">老玩童</div>
+              </div>
+              <button class="list-follow-btn">追蹤</button> -->
+            </div>
+            <!-- 更多 .list-item -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="edit-profile-modal" id="editProfileModal" style="display: none">
+      <div class="edit-profile-content">
+        <form class="edit-profile-form">
+          <div class="form-group name-avatar">
+            <div class="name">
+              <label for="name">名稱</label>
+              <input type="text" id="username" name="username" />
+            </div>
+
+            <div class="edit-profile-avatar">
+              <i class="fa-regular fa-circle-user profile-pic"></i>
+              <input
+                type="file"
+                id="avatar-upload-input"
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bio">個人簡介</label>
+            <textarea id="bio" name="bio"></textarea>
+          </div>
+
+          <div class="form-group privacy-toggle">
+            <label for="privacy">不公開個人檔案</label>
+            <input type="checkbox" id="privacy" name="privacy" />
+          </div>
+          <div class="form-group">
+            <button type="submit" class="save-button">完成</button>
+          </div>
+        </form>
+      </div>
+      <div class="error-message"></div>
+    </div>
+
+    <div class="signin-mask" style="display: none">
+      <form class="signin">
+        <div class="sign-content">
+          <div class="decorator-bar"></div>
+          <div class="close">
+            <button class="close-signin" type="button">
+              <img src="/static/images/icon/icon_close.png" alt="close" />
+            </button>
+
+            <h1>登入會員帳號</h1>
+          </div>
+          <div class="main">
+            <input
+              type="text"
+              placeholder="輸入帳號"
+              name="account_id"
+              id="signin-account-id"
+            />
+            <input
+              type="password"
+              placeholder="輸入密碼"
+              name="password"
+              id="signin-password"
+            />
+            <div
+              class="hint-signin-message"
+              style="
+                color: red;
+                display: none;
+                text-align: center;
+                margin-bottom: 10px;
+              "
+            ></div>
+            <button class="signin-button" type="submit">登入帳戶</button>
+            <button class="go-to-signup" type="button">
+              還沒有帳戶？點此註冊
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="signup-mask" style="display: none">
+      <form class="signup">
+        <div class="signup-content">
+          <div class="decorator-bar"></div>
+          <div class="close">
+            <button class="close-signup" type="button">
+              <img src="/static/images/icon/icon_close.png" alt="close" />
+            </button>
+            <h1>註冊會員帳號</h1>
+          </div>
+          <div class="main">
+            <input
+              type="text"
+              placeholder="輸入姓名"
+              name="name"
+              id="signup-name"
+              required
+            />
+            <input
+              type="text"
+              placeholder="輸入帳號"
+              name="account_id"
+              id="signup-account-id"
+              required
+            />
+            <input
+              type="email"
+              placeholder="輸入電子信箱"
+              name="email"
+              id="signup-email"
+              required
+            />
+            <input
+              type="password"
+              placeholder="輸入密碼"
+              name="password"
+              id="signup-password"
+              required
+            />
+            <div
+              class="hint-signup-message"
+              style="
+                color: red;
+                display: none;
+                text-align: center;
+                margin-bottom: 10px;
+              "
+            ></div>
+            <button class="signup-button" type="submit">註冊新帳戶</button>
+            <button class="go-to-signin" type="button">
+              已經有新帳戶了？點此登入
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+  <!-- <script type="module" src="static/js/controller/controller_index.js"></script> -->
+
+  <script type="module" src="../static/js/member.js"></script>
+  <script type="module" src="../static/js/auth.js"></script>
+</html>

@@ -29,5 +29,10 @@ export function PermissionAllIcon() {
       const memberUrl = `/member/${encodeURIComponent(account_id)}`;
       window.location.href = memberUrl;
     });
+
+    notify.addEventListener("click", function () {
+      const notifyUrl = "/notification";
+      window.location.href = notifyUrl;
+    });
   }
 }
