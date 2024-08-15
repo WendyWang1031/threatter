@@ -56,10 +56,17 @@ export async function fetchAndDisplayFollowReq(targetList) {
 
     targetList.innerHTML = "";
 
-    followReqData.data.forEach((followerReq) => {
-      const fanItem = displayFollowerItem(followerReq);
-      targetList.appendChild(fanItem);
-    });
+    if (followReqData.data && followReqData.data.length > 0) {
+      followReqData.data.forEach((followerReq) => {
+        const fanItem = displayFollowerItem(followerReq);
+        targetList.appendChild(fanItem);
+      });
+    } else {
+      const noDataMessage = document.createElement("div");
+      noDataMessage.className = "no-data-message";
+      noDataMessage.textContent = "目前尚無 要求追蹤 的對象清單";
+      targetList.appendChild(noDataMessage);
+    }
 
     targetList.style.display = "block";
   } catch (error) {
