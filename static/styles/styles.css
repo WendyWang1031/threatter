@@ -1483,4 +1483,108 @@ section.fans-follow .follower-container .follower-lists .follower-list .list-ite
 }
 section.fans-follow .follower-container .follower-lists .follower-list .list-item .list-follow-btn:active {
   transform: scale(1.1);
+}
+
+section.notify-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+section.notify-area .notify-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 20px 20px 20px 20px;
+  padding: 20px 20px 20px 20px;
+  background-color: #fff;
+  border: 1px solid #e1e4e8;
+  width: 600px;
+}
+section.notify-area .notify-header .notify-nav {
+  display: flex;
+  justify-content: center;
+}
+section.notify-area .notify-header .notify-nav .nav-button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s;
+  transition: transform 0.2s ease;
+}
+section.notify-area .notify-header .notify-nav .nav-button.active {
+  border-bottom-color: #333;
+  font-weight: bold;
+}
+section.notify-area .notify-header .notify-nav .nav-button:hover {
+  color: #333;
+}
+section.notify-area .notify-header .notify-nav .nav-button:active {
+  transform: scale(1.1);
+}
+section.notify-area .notify-header .notify-lists {
+  overflow-y: auto;
+}
+section.notify-area .notify-header .notify-lists .notify-list {
+  display: none;
+}
+section.notify-area .notify-header .notify-lists .notify-list.active {
+  display: block;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item:last-child {
+  border-bottom: none;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .profile-pic,
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-profile-pic {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  color: #ccd0d5;
+  border-radius: 50%;
+  margin-right: 10px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-user-info {
+  flex: 1;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-user-info a {
+  color: #252525;
+  text-decoration: none;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-user-info a:hover {
+  text-decoration: underline;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-user-info .list-username {
+  font-weight: bold;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-user-info .list-user-fullname {
+  color: #888;
+  font-size: 14px;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-follow-btn {
+  background: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  cursor: pointer;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-follow-btn:hover {
+  background-color: #ebebeb;
+}
+section.notify-area .notify-header .notify-lists .notify-list .list-item .list-follow-btn:active {
+  transform: scale(1.1);
 }/*# sourceMappingURL=styles.css.map */

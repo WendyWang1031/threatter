@@ -1645,3 +1645,127 @@ section.fans-follow {
     }
   }
 }
+
+section.notify-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  .notify-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 20px 20px 20px 20px;
+    padding: 20px 20px 20px 20px;
+    background-color: $bg-color;
+    border: 1px solid $border-color;
+    width: 600px;
+
+    .notify-nav {
+      display: flex;
+      justify-content: center;
+
+      .nav-button {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #555;
+        border-bottom: 1px solid transparent;
+        transition: color 0.2s;
+        transition: transform 0.2s ease;
+
+        &.active {
+          border-bottom-color: #333;
+          font-weight: bold;
+        }
+
+        &:hover {
+          color: #333;
+        }
+
+        &:active {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    .notify-lists {
+      // max-height: 650px;
+      overflow-y: auto;
+
+      .notify-list {
+        display: none;
+
+        &.active {
+          display: block;
+        }
+
+        .list-item {
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          border-bottom: 1px solid #e0e0e0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .profile-pic,
+          .list-profile-pic {
+            width: 40px;
+            height: 40px;
+            font-size: 40px;
+            color: $gray-border;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+          }
+
+          .list-user-info {
+            flex: 1;
+
+            a {
+              color: #252525;
+              text-decoration: none;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+
+            .list-username {
+              font-weight: bold;
+            }
+
+            .list-user-fullname {
+              color: #888;
+              font-size: 14px;
+            }
+          }
+
+          .list-follow-btn {
+            background: #fff;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-weight: bold;
+            cursor: pointer;
+
+            &:hover {
+              background-color: #ebebeb;
+            }
+
+            &:active {
+              transform: scale(1.1);
+            }
+          }
+        }
+      }
+    }
+  }
+}
