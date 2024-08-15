@@ -84,12 +84,17 @@ async function fetchGetPost() {
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
 
-    // if (result.message === "該用戶並無權限調閱") {
-    //   const noDataMessage = document.createElement("div");
-    //   noDataMessage.className = "no-data-message";
-    //   noDataMessage.textContent = "此個人檔案不公開。";
-    //   postsContainer.appendChild(noDataMessage);
-    // }
+    if (result.message === "No member's post data found") {
+      const noData = document.createElement("div");
+      noData.className = "no-data";
+      const noDataMessage = document.createElement("div");
+      noDataMessage.className = "no-data-message";
+
+      noDataMessage.textContent = "尚無任何串文。";
+
+      noData.appendChild(noDataMessage);
+      postsContainer.appendChild(noData);
+    }
 
     if (result && result.data.length > 0) {
       currentPage++;
@@ -108,10 +113,11 @@ async function fetchGetPost() {
     } else {
       hasNextPage = false;
 
-      const noDataMessage = document.createElement("div");
-      noDataMessage.className = "no-data-message";
-      noDataMessage.textContent = "目前尚無串文";
-      postsContainer.appendChild(noDataMessage);
+      // const memberSelfArea = document.querySelector(".member-self-area");
+      // const noDataMessage = document.createElement("div");
+      // noDataMessage.className = "no-data-message";
+      // noDataMessage.textContent = "此個人檔案不公開。";
+      // memberSelfArea.appendChild(noDataMessage);
     }
     isWaitingForData = false;
   } catch (error) {

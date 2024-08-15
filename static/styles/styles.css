@@ -437,6 +437,21 @@ section.main-sider-area div.main-sider .sidebar .icon:active {
   background-color: #f8f8f8;
 }
 
+section.postsContainer .no-data {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+section.postsContainer .no-data .no-data-message {
+  width: 600px;
+  padding: 20px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: #fff;
+  padding-top: 150px;
+  border-radius: 0 0 20px 20px;
+}
 section.postsContainer .indivisial-area {
   display: flex;
   justify-content: center;
@@ -1533,6 +1548,13 @@ section.notify-area .notify-header .notify-lists {
 section.notify-area .notify-header .notify-lists .notify-list {
   display: none;
 }
+section.notify-area .notify-header .notify-lists .notify-list .no-data-message {
+  padding: 50px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: #fff;
+}
 section.notify-area .notify-header .notify-lists .notify-list.active {
   display: block;
 }
@@ -1613,12 +1635,4 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
 }
 section.notify-area .notify-header .notify-lists .notify-list .list-item .list-follow-btn:active {
   transform: scale(1.1);
-}
-
-.no-data-message {
-  padding: 50px;
-  text-align: center;
-  color: #9a9a9a;
-  height: 200px;
-  background-color: #fff;
 }/*# sourceMappingURL=styles.css.map */
