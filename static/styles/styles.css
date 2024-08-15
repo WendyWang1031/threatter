@@ -1533,6 +1533,12 @@ section.notify-area .notify-header .notify-lists {
 section.notify-area .notify-header .notify-lists .notify-list {
   display: none;
 }
+section.notify-area .notify-header .notify-lists .notify-list .no-data-message {
+  padding: 50px;
+  text-align: center;
+  color: #424242;
+  height: 200px;
+}
 section.notify-area .notify-header .notify-lists .notify-list.active {
   display: block;
 }

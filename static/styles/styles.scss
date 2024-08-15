@@ -1700,6 +1700,13 @@ section.notify-area {
       .notify-list {
         display: none;
 
+        .no-data-message {
+          padding: 50px;
+          text-align: center;
+          color: $font-color;
+          height: 200px;
+        }
+
         &.active {
           display: block;
         }
