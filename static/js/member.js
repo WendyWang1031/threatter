@@ -82,18 +82,30 @@ async function fetchGetPost() {
     const result = await response.json();
     const postsContainer = document.querySelector(".postsContainer");
 
+    const noData = document.createElement("div");
+    noData.className = "no-data";
+    const noDataMessage = document.createElement("div");
+    noDataMessage.className = "no-data-message";
+
     let lastItem = document.querySelector(".indivisial-area:last-child");
 
     if (result.message === "No member's post data found") {
-      const noData = document.createElement("div");
-      noData.className = "no-data";
-      const noDataMessage = document.createElement("div");
-      noDataMessage.className = "no-data-message";
-
       noDataMessage.textContent = "尚無任何串文。";
 
       noData.appendChild(noDataMessage);
       postsContainer.appendChild(noData);
+    } else if (result.message === "該用戶並無權限調閱") {
+      noDataMessage.textContent = "此個人檔案不公開。";
+
+      noData.appendChild(noDataMessage);
+      postsContainer.appendChild(noData);
+
+      const userFansLink = document.querySelector(".user-fans");
+      if (userFansLink) {
+        userFansLink.removeAttribute("href");
+        userFansLink.style.pointerEvents = "none";
+        userFansLink.style.color = "gray";
+      }
     }
 
     if (result && result.data.length > 0) {
