@@ -108,11 +108,24 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
         cursor.execute(select_comment_sql, (post_id,))
         child_comment_ids = [row['content_id'] for row in cursor.fetchall()]
 
-        for child_id in child_comment_ids:  
+        for child_id in child_comment_ids: 
+            delete_child_reply_likes_sql = """
+                DELETE FROM likes WHERE content_id IN 
+                (SELECT content_id FROM content WHERE parent_id = %s)
+            """
+            cursor.execute(delete_child_reply_likes_sql, (child_id,))
+
             delete_child_reply_sql = """
                 DELETE FROM content WHERE parent_id = %s
             """
             cursor.execute(delete_child_reply_sql, (child_id,))
+
+        delete_child_comment_likes_sql = """
+            DELETE FROM likes WHERE content_id IN (%s)
+            """ % ','.join(['%s'] * len(child_comment_ids))
+        if child_comment_ids:
+            cursor.execute(delete_child_comment_likes_sql, tuple(child_comment_ids))
+
 
         delete_child_comment_sql = """
             DELETE FROM content 
