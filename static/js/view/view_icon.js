@@ -11,6 +11,7 @@ export function PermissionAllIcon() {
   const token = localStorage.getItem("userToken");
 
   const notify = document.querySelector(".heart");
+  const search = document.querySelector(".search");
   const profileIcon = document.querySelector(".icon.profile");
   const memeber = document.querySelector(".profile");
   const signin_mask = document.querySelector(".signin-mask");
@@ -33,6 +34,11 @@ export function PermissionAllIcon() {
     notify.addEventListener("click", function () {
       const notifyUrl = "/notification";
       window.location.href = notifyUrl;
+    });
+
+    search.addEventListener("click", function () {
+      const searchUrl = "/search";
+      window.location.href = searchUrl;
     });
   }
 }
