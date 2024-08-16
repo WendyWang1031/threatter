@@ -7,6 +7,13 @@ export function selectSinglePost() {
 
       // const post_header = event.target.closest(".post-header");
       const post_content = event.target.closest(".post-content");
+      const comment = event.target.closest(".fa-comment");
+      const share = event.target.closest(".fa-share");
+
+      const heart = event.target.closest(".fa-heart");
+      if (heart) {
+        return; // 直接返回，不進行後續處理
+      }
 
       // 檢查是否點擊了 menu-button 或其子元素
       const menuButton = event.target.closest(".menu-button");
@@ -25,7 +32,7 @@ export function selectSinglePost() {
         window.location.href = targetUrl;
       }
 
-      if (post_content) {
+      if (post_content || comment || share) {
         console.log("Post clicked via delegation:", post_content);
         event.preventDefault(); // 阻止默認行為
 
