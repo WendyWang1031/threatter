@@ -21,6 +21,13 @@ export function displayFollowerItem(data) {
           </div>
         `;
 
+  const currentAccountId = localStorage.getItem("account_id");
+
+  // 如果是自己帳號，不顯示追蹤按鈕
+  if (data.user.account_id === currentAccountId) {
+    return item;
+  }
+
   let buttonText;
 
   switch (data.follow_state) {
