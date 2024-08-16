@@ -61,8 +61,9 @@ export function setupEventListeners() {
         localStorage.setItem("userToken", result.data.token);
         View.updateMessage(".hint-signin-message", "登入成功", true);
         View.clearInputs("signin-account-id", "signin-password");
-        window.location.reload();
+
         View.displayUserInterface(true);
+        window.location.reload();
       } else {
         View.updateMessage(".hint-signin-message", result.message, false);
         View.clearInputs("signin-account-id", "signin-password");

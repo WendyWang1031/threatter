@@ -109,9 +109,15 @@ export function displayCreatePost() {
     });
   } else {
     userPostContainer.addEventListener("click", function () {
+      const account_id = localStorage.getItem("account_id");
+      console.log("account_id:", account_id);
+      const userName = localStorage.getItem("userName");
+      console.log("userName:", userName);
       createPosterCard.style.display = "flex";
     });
     plusBtn.addEventListener("click", function () {
+      const account_id = localStorage.getItem("account_id");
+      const userName = localStorage.getItem("userName");
       createPosterCard.style.display = "flex";
     });
   }

@@ -120,7 +120,7 @@ export async function fetchAndDisplayFollowers(targetList) {
         noData.className = "no-data";
         const noDataMessage = document.createElement("div");
         noDataMessage.className = "no-data-message";
-        noDataMessage.textContent = "目前尚無要求追蹤的對象";
+        noDataMessage.textContent = "目前尚無追蹤的對象";
         noData.appendChild(noDataMessage);
         targetList.appendChild(noData);
       }

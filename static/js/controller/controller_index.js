@@ -4,7 +4,7 @@ import { likePost } from "./controller_like.js";
 import { validateForm } from "./controller_submit_item.js";
 
 import { displayContentElement, displayMenuBtn } from "../view/view_posts.js";
-
+import { checkUserState } from "./controller_auth.js";
 import { selectSinglePost } from "./controller_select_single_post.js";
 
 import {
@@ -21,6 +21,7 @@ let isWaitingForData = false;
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
+  await checkUserState();
 
   await fetchGetMemberDetail();
   // 更新貼文內容
@@ -82,7 +83,9 @@ async function fetchGetPost() {
 }
 
 async function fetchGetMemberDetail() {
+  console.log("fetchGetMemberDetail called");
   const account_id = localStorage.getItem("account_id");
+  console.log("account_id:", account_id);
   const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
   if (!account_id) {
     console.log("User not logged in, using default avatar.");
@@ -95,7 +98,7 @@ async function fetchGetMemberDetail() {
     if (result) {
       displayMemberDetail(result);
     } else {
-      console.error("Failed to retrieve post data.");
+      console.error("Failed to retrieve member data.");
     }
   } catch (error) {
     console.error("Error fetching post data:", error);
