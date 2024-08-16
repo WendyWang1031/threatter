@@ -16,20 +16,16 @@ def db_get_search( search: str , page : int , member_id : str) -> FollowMemberLi
         offset = page * limit
 
         select_sql = """
-        SELECT member.name, member.account_id, member.avatar, 
-                IFNULL(member_relation.relation_state, 'None') AS relation_state
-                FROM member
-
-                LEFT JOIN member_relation ON member.account_id = member_relation.target_id
-                AND member_relation.member_id = %s 
-        
+        SELECT 
+            member.name, 
+            member.account_id, 
+            member.avatar, 
+            IFNULL(member_relation.relation_state, 'None') AS relation_state
+        FROM member
+        LEFT JOIN member_relation ON member.account_id = member_relation.target_id AND member_relation.member_id = %s 
         WHERE 
             member.account_id LIKE %s 
-
-        
-        
-        LIMIT 
-            %s OFFSET %s
+        LIMIT %s OFFSET %s
     """
         cursor.execute(select_sql, (member_id, '%'+search+'%' , limit , offset))
         search_member_data = cursor.fetchall()
