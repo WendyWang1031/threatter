@@ -12,15 +12,15 @@ export function PermissionAllIcon() {
 
   const notify = document.querySelector(".heart");
   const search = document.querySelector(".search");
-  const profileIcon = document.querySelector(".icon.profile");
-  const member = document.querySelector(".profile");
+  const profile = document.querySelector(".profile");
+
   const signin_mask = document.querySelector(".signin-mask");
 
   if (!token) {
     notify.addEventListener("click", function () {
       signin_mask.style.display = "flex";
     });
-    member.addEventListener("click", function () {
+    profile.addEventListener("click", function () {
       signin_mask.style.display = "flex";
     });
     search.addEventListener("click", function () {
@@ -29,7 +29,7 @@ export function PermissionAllIcon() {
   } else {
     const account_id = localStorage.getItem("account_id");
 
-    profileIcon.addEventListener("click", function () {
+    profile.addEventListener("click", function () {
       const memberUrl = `/member/${encodeURIComponent(account_id)}`;
       window.location.href = memberUrl;
     });
