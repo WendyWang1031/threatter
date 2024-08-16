@@ -109,7 +109,7 @@ async function fetchAndDisplayFollowReq(targetList) {
       hasNextPage = false;
       const noDataMessage = document.createElement("div");
       noDataMessage.className = "no-data-message";
-      noDataMessage.textContent = "目前尚無要求追蹤的對象";
+      noDataMessage.textContent = "目前尚無要求追蹤的對象清單";
       targetList.appendChild(noDataMessage);
     }
 

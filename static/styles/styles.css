@@ -1462,6 +1462,21 @@ section.fans-follow .follower-container .follower-lists .follower-list {
 section.fans-follow .follower-container .follower-lists .follower-list.active {
   display: block;
 }
+section.fans-follow .follower-container .follower-lists .follower-list .no-data {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+section.fans-follow .follower-container .follower-lists .follower-list .no-data .no-data-message {
+  width: 600px;
+  padding: 20px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: #fff;
+  padding-top: 150px;
+  border-radius: 0 0 20px 20px;
+}
 section.fans-follow .follower-container .follower-lists .follower-list .list-item {
   display: flex;
   align-items: center;

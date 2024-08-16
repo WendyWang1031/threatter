@@ -69,10 +69,13 @@ export async function fetchAndDisplayFans(targetList) {
     } else {
       hasNextPageFans = false;
       if (currentPageFans === 0) {
+        const noData = document.createElement("div");
+        noData.className = "no-data";
         const noDataMessage = document.createElement("div");
         noDataMessage.className = "no-data-message";
         noDataMessage.textContent = "目前尚無粉絲";
-        targetList.appendChild(noDataMessage);
+        noData.appendChild(noDataMessage);
+        targetList.appendChild(noData);
       }
     }
   } catch (error) {
@@ -113,10 +116,13 @@ export async function fetchAndDisplayFollowers(targetList) {
     } else {
       hasNextPageFollow = false;
       if (currentPageFollow === 0) {
+        const noData = document.createElement("div");
+        noData.className = "no-data";
         const noDataMessage = document.createElement("div");
         noDataMessage.className = "no-data-message";
-        noDataMessage.textContent = "目前尚無追蹤者";
-        targetList.appendChild(noDataMessage);
+        noDataMessage.textContent = "目前尚無要求追蹤的對象";
+        noData.appendChild(noDataMessage);
+        targetList.appendChild(noData);
       }
     }
   } catch (error) {
