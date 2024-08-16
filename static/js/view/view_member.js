@@ -11,27 +11,49 @@ export function displayMemberDetail(data) {
 
   // 頭像判斷
   const avatarUrl = data.avatar;
-  if (avatarUrl) {
+  const profileAvatar = document.querySelector(".profile-avatar");
+  profileAvatar.innerHTML = "";
+
+  if (data.avatar !== null) {
     const img = document.createElement("img");
     img.src = avatarUrl;
     img.alt = "User Avatar";
     img.classList.add("profile-pic");
+    profileAvatar.append(img);
   } else {
     const icon = document.createElement("i");
     icon.classList.add("fa-regular", "fa-circle-user", "profile-pic");
+    profileAvatar.append(icon);
   }
 
   // 編輯會員介面的顯示
   const editName = document.querySelector("#username");
   editName.placeholder = data.name;
   const editSelf = document.querySelector("#bio");
-  editSelf.placeholder = data.self_intro;
+  if (data.self_intro === null) {
+    editSelf.placeholder = "";
+  } else {
+    editSelf.placeholder = data.self_intro;
+  }
 
-  const editAvatar = document.querySelector(".profile-pic");
-  const editImg = document.createElement("img");
-  editImg.src = data.avatar;
-  editImg.classList.add("profile-pic");
-  editAvatar.replaceWith(editImg);
+  const editAvatar = document.querySelector(".edit-profile-avatar");
+  console.log("editAvatar:", editAvatar);
+
+  if (data.avatar === null) {
+    const icon = document.createElement("i");
+    icon.classList.add(
+      "fa-regular",
+      "fa-circle-user",
+      "profile-pic",
+      "edit-profile-pic"
+    );
+    editAvatar.append(icon);
+  } else {
+    const editImg = document.createElement("img");
+    editImg.src = data.avatar;
+    editImg.classList.add("profile-pic", "edit-profile-pic");
+    editAvatar.append(editImg);
+  }
 }
 
 export function closeEditMember() {

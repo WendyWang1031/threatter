@@ -16,7 +16,8 @@ export function editMember(event) {
 
 export function uploadAvatar() {
   const avatarIcon = document.querySelector(
-    ".edit-profile-avatar i.profile-pic"
+    ".edit-profile-avatar",
+    ".edit-profile-pic"
   );
   const avatarUploadInput = document.getElementById("avatar-upload-input");
 
@@ -33,7 +34,7 @@ export function uploadAvatar() {
       const reader = new FileReader();
       reader.onload = function (e) {
         // 隱藏圖標
-        avatarIcon.style.display = "none";
+        // avatarIcon.style.display = "none";
 
         // 預覽圖片
         let img = document.getElementById("avatar-preview");
@@ -234,23 +235,28 @@ export function validateForm() {
 
   console.log("imageFile:", imageFile);
 
-  if (content === "" && !imageFile && !userName_input) {
+  const privacyInput = document.getElementById("privacy");
+  const visibility = privacyInput.checked ? "Private" : "Public";
+  console.log("visibility:", visibility);
+
+  if (content === "" && !imageFile && !userName_input && !visibility) {
     error_hint.textContent = "請至少更新一個欄位";
     return false;
   }
-  submitPost(content, imageFile, userName_input);
+  submitMember(content, imageFile, userName_input, visibility);
   return true;
 }
 
-async function submitPost(content, imageFile, userName) {
+async function submitMember(content, imageFile, userName, visibility) {
   document.getElementById("loading").classList.remove("hidden");
 
   let memberData = {
     name: userName || "",
-    visibility: "public",
+    visibility: visibility,
     self_intro: content || "",
     avatar: "",
   };
+  console.log("memberData:", memberData);
 
   // 圖片
   if (imageFile) {
@@ -261,6 +267,7 @@ async function submitPost(content, imageFile, userName) {
   }
 
   try {
+    console.log("here1:");
     await fetchUpdateMember(memberData);
   } catch (error) {
     console.error("Error submitting member:", error);
