@@ -11,6 +11,7 @@ import {
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
 import { likePost } from "./controller/controller_like.js";
+import { selectSinglePost } from "./controller/controller_select_single_post.js";
 import {
   fetchAndDisplayFans,
   fetchAndDisplayFollowers,
@@ -31,6 +32,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   displayUpdateFollowerCount();
 
   likePost();
+  selectSinglePost();
 
   const fansListContainer = document.querySelector(".fans-list");
   const followListContainer = document.querySelector(".follow-list");

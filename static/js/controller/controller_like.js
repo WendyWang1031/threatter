@@ -2,6 +2,10 @@ export function likePost() {
   document
     .querySelector(".postsContainer")
     .addEventListener("click", (event) => {
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        return;
+      }
       const likeIcon = event.target.closest(".fa-heart");
 
       if (likeIcon) {
@@ -57,6 +61,10 @@ export function likePost() {
 async function fetchUpdatePostLike(accountId, postId, likePostData) {
   const token = localStorage.getItem("userToken");
 
+  if (!token) {
+    return;
+  }
+
   const likePostURL = `/api/member/${encodeURIComponent(
     accountId
   )}/post/${encodeURIComponent(postId)}/like`;
@@ -88,7 +96,12 @@ export function likeCommentAndReply() {
   document
     .querySelector(".single-CommentContainer")
     .addEventListener("click", (event) => {
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        return;
+      }
       const likeIcon = event.target.closest(".fa-heart");
+
       if (!likeIcon) {
         return;
       }
@@ -178,6 +191,9 @@ async function fetchUpdateCommentOrReplyLike(
   likeCommentOrReplyData
 ) {
   const token = localStorage.getItem("userToken");
+  if (!token) {
+    return;
+  }
 
   const likePostURL = `/api/member/${encodeURIComponent(
     accountId
