@@ -13,14 +13,17 @@ export function PermissionAllIcon() {
   const notify = document.querySelector(".heart");
   const search = document.querySelector(".search");
   const profileIcon = document.querySelector(".icon.profile");
-  const memeber = document.querySelector(".profile");
+  const member = document.querySelector(".profile");
   const signin_mask = document.querySelector(".signin-mask");
 
   if (!token) {
     notify.addEventListener("click", function () {
       signin_mask.style.display = "flex";
     });
-    memeber.addEventListener("click", function () {
+    member.addEventListener("click", function () {
+      signin_mask.style.display = "flex";
+    });
+    search.addEventListener("click", function () {
       signin_mask.style.display = "flex";
     });
   } else {
