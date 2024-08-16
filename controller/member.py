@@ -44,11 +44,12 @@ async def update_member_data(
        
         # 檢查是否有效的欄位更新
         if (member_data.name and member_data.name.strip()) or \
-            (member_data.visibility and member_data.name.strip()) or \
+            (member_data.visibility and member_data.visibility.strip()) or \
             (member_data.self_intro and member_data.self_intro.strip()) or \
             (member_data.avatar and member_data.avatar.strip()):
                 fields_updated = True
-        
+        print("member_data:",member_data)
+        print("fields_updated:",fields_updated)
     
 
         if not fields_updated:
