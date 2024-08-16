@@ -6,7 +6,7 @@ from db.connection_pool import get_db_connection_pool
 from db.get_member_data import *
 
 
-def db_get_search(search: str , page : int) -> FollowMemberListRes | None:
+def db_get_search( search: str , page : int , member_id : str) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -16,17 +16,23 @@ def db_get_search(search: str , page : int) -> FollowMemberListRes | None:
         offset = page * limit
 
         select_sql = """
-        select DISTINCT member.name , member.account_id ,  member.avatar ,
-        IFNULL(member_relation.relation_state, 'None') as relation_state
-        FROM member_relation
+        SELECT member.name, member.account_id, member.avatar, 
+                IFNULL(relation.relation_state, 'None') AS relation_state
+                FROM member_relation
+                
+                JOIN member ON member_relation.member_id = member.account_id
+                LEFT JOIN member_relation AS relation 
+                    ON relation.member_id = %s 
+                   AND relation.target_id = member.account_id
         
-        JOIN member ON member_relation.member_id = member.account_id
-        
-        WHERE member_relation.member_id like %s 
-        
-        LIMIT %s OFFSET %s
+        WHERE 
+            member_relation.member_id LIKE %s 
+        GROUP BY 
+            member.account_id, member.name, member.avatar
+        LIMIT 
+            %s OFFSET %s
     """
-        cursor.execute(select_sql, ('%'+search+'%' , limit , offset))
+        cursor.execute(select_sql, (member_id , '%'+search+'%' , limit , offset))
         search_member_data = cursor.fetchall()
         # print("beingFollow_data:",beingFollow_data)
 

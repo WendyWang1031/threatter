@@ -431,8 +431,9 @@ async def fetch_delete_comment(current_user : dict = Depends(security_get_curren
          })
 async def fetch_search(
     search: str = Query(..., description="輸入想要搜尋的帳號"), 
-    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
-    return await get_search(search , page)
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None"),
+    current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+    return await get_search(search , page , current_user)
 
 # 用戶
 @app.post("/api/user" , 
