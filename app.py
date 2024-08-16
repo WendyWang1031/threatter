@@ -513,6 +513,11 @@ async def member_single_post(request: Request):
 async def notification(request: Request):
     return FileResponse("./static/notification.html", media_type="text/html")
 
+@app.get("/search", include_in_schema=False)
+async def search(request: Request):
+    return FileResponse("./static/search.html", media_type="text/html")
+
+
 @app.get("/member")
 async def redirect_to_home(request: Request):
     return RedirectResponse(url="/")
