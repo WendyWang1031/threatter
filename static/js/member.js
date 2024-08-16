@@ -4,13 +4,17 @@ import {
   uploadAvatar,
 } from "./controller/controller_member.js";
 import { closeEditMember } from "./view/view_member.js";
-import { displayOrCloseFansAndFollow } from "./view/view_fans_follower.js";
+import {
+  displayOrCloseFansAndFollow,
+  displayUpdateFollowerCount,
+} from "./view/view_fans_follower.js";
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayContentElement, displayMenuBtn } from "./view/view_posts.js";
 import { likePost } from "./controller/controller_like.js";
 import {
   fetchAndDisplayFans,
   fetchAndDisplayFollowers,
+  setupIntersectionObserverFansAndFollow,
 } from "./controller/controller_fans_follower.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -24,8 +28,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   setupIntersectionObserver();
   setupTabSwitching();
+  displayUpdateFollowerCount();
 
   likePost();
+
+  const fansListContainer = document.querySelector(".fans-list");
+  const followListContainer = document.querySelector(".follow-list");
+
+  await fetchAndDisplayFans(fansListContainer);
+  await fetchAndDisplayFollowers(followListContainer);
+
+  setupIntersectionObserverFansAndFollow(
+    fansListContainer,
+    followListContainer
+  );
 
   const fans_follow_list = document.querySelector(".user-fans");
   fans_follow_list.addEventListener("click", displayOrCloseFansAndFollow);
@@ -147,12 +163,9 @@ function setupTabSwitching() {
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", async function () {
-      // 移除所有標籤的 active
       tabs.forEach((t) => t.classList.remove("active"));
-      // 添加 active
       this.classList.add("active");
 
-      // 隱藏
       Object.values(followerLists).forEach(
         (list) => (list.style.display = "none")
       );
@@ -165,6 +178,8 @@ function setupTabSwitching() {
       } else if (targetListClass === "follow-list") {
         await fetchAndDisplayFollowers(targetList);
       }
+
+      targetList.style.display = "block";
     });
   });
 }
