@@ -27,9 +27,8 @@ export function PermissionAllIcon() {
       signin_mask.style.display = "flex";
     });
   } else {
-    const account_id = localStorage.getItem("account_id");
-
     profile.addEventListener("click", function () {
+      const account_id = localStorage.getItem("account_id");
       const memberUrl = `/member/${encodeURIComponent(account_id)}`;
       window.location.href = memberUrl;
     });
