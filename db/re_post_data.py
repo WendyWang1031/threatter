@@ -50,7 +50,7 @@ def _generate_post_list(post_data, limit, page) -> PostListRes:
     has_more_data = len(post_data) > limit
     
     if has_more_data:
-        post_data.pop()
+        posts.pop()
     
     next_page = page + 1 if has_more_data else None
     return PostListRes(next_page = next_page, data = posts)

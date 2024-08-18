@@ -20,10 +20,9 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
             sql = """
                 SELECT content.*, 
                     member.name, member.account_id, member.avatar, 
-                    likes.like_state
+                    FALSE AS like_state
                 FROM content
                 LEFT JOIN member ON content.member_id = member.account_id
-                LEFT JOIN likes ON content.content_id = likes.content_id
                 WHERE content.content_type = 'Post' 
                 AND content.visibility = 'Public'
                 ORDER BY created_at DESC 
