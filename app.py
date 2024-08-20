@@ -22,6 +22,7 @@ from service.presigned_url import *
 
 ##
 from service.router_search import search_router
+from service.router_user import user_router
 
 
 
@@ -30,6 +31,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 security = HTTPBearer(auto_error=False)  
 
+app.include_router(user_router)
 app.include_router(search_router)
 
 
@@ -440,64 +442,64 @@ async def fetch_delete_comment(current_user : dict = Depends(security_get_curren
 #     current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
 #     return await get_search(search , page , current_user)
 
-# 用戶
-@app.post("/api/user" , 
-         tags= ["User"],
-         response_model = UserPutReq ,
-         summary = "註冊一個新會員",
+# # 用戶
+# @app.post("/api/user" , 
+#          tags= ["User"],
+#          response_model = UserPutReq ,
+#          summary = "註冊一個新會員",
         
-         responses = {
-            200:{
-                "model" : SuccessfulResponseForRegister,
-                "description" : "註冊成功"
-            },
-            400:{
-                "model" : ErrorResponse,
-                "description" : "註冊失敗，重複的 Email 或其他原因"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_post_user_signup(user_request : UserRegisterReq) -> JSONResponse :
-    return await register_user(user_request)
+#          responses = {
+#             200:{
+#                 "model" : SuccessfulResponseForRegister,
+#                 "description" : "註冊成功"
+#             },
+#             400:{
+#                 "model" : ErrorResponse,
+#                 "description" : "註冊失敗，重複的 Email 或其他原因"
+#             },
+#             500:{
+#                 "model" : ErrorResponse,
+#                 "description" : "伺服器內部錯誤"
+#             }
+#          })
+# async def fetch_post_user_signup(user_request : UserRegisterReq) -> JSONResponse :
+#     return await register_user(user_request)
 
-@app.get("/api/user/auth" , 
-         tags= ["User"],
-         response_model = UserGetCheck ,
-         summary = "取得當前的登入資訊",
+# @app.get("/api/user/auth" , 
+#          tags= ["User"],
+#          response_model = UserGetCheck ,
+#          summary = "取得當前的登入資訊",
         
-         responses = {
-            200:{
-                "model" : UserGetCheck,
-                "description" : "已登入的會員資料，null 表示未登入"
-            }
-         })
-async def fetch_get_user(user: UserGetCheck = Depends(security_get_current_user) )-> JSONResponse :
-    return await get_user_details(user)
+#          responses = {
+#             200:{
+#                 "model" : UserGetCheck,
+#                 "description" : "已登入的會員資料，null 表示未登入"
+#             }
+#          })
+# async def fetch_get_user(user: UserGetCheck = Depends(security_get_current_user) )-> JSONResponse :
+#     return await get_user_details(user)
 
-@app.put("/api/user/auth" , 
-         tags= ["User"],
-         response_model = UserPutReq ,
-         summary = "登入會員帳戶",
+# @app.put("/api/user/auth" , 
+#          tags= ["User"],
+#          response_model = UserPutReq ,
+#          summary = "登入會員帳戶",
         
-         responses = {
-            200:{
-                "model" : Token,
-                "description" : "登入成功，取得有效期為七天的 JWT 加密字串"
-            },
-            400:{
-                "model" : ErrorResponse,
-                "description" : "登入失敗，帳號或密碼錯誤或其他原因"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_put_user_signin(user_login_request : UserPutReq) -> JSONResponse :
-    return await authenticate_user(user_login_request)
+#          responses = {
+#             200:{
+#                 "model" : Token,
+#                 "description" : "登入成功，取得有效期為七天的 JWT 加密字串"
+#             },
+#             400:{
+#                 "model" : ErrorResponse,
+#                 "description" : "登入失敗，帳號或密碼錯誤或其他原因"
+#             },
+#             500:{
+#                 "model" : ErrorResponse,
+#                 "description" : "伺服器內部錯誤"
+#             }
+#          })
+# async def fetch_put_user_signin(user_login_request : UserPutReq) -> JSONResponse :
+#     return await authenticate_user(user_login_request)
 
 # ----------------------------------------------------------
 
