@@ -10,7 +10,9 @@ from service.router_member import member_router
 from service.router_post import post_router
 from service.router_follow import follow_router
 from service.router_comment import comment_router
+from service.router_SSE import notification_router
 from service.router_presigned_url import presigned_router
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -21,6 +23,7 @@ app.include_router(search_router)
 app.include_router(post_router)
 app.include_router(follow_router)
 app.include_router(comment_router)
+app.include_router(notification_router)
 app.include_router(presigned_router)
 
 # ----------------------------------------------------------
