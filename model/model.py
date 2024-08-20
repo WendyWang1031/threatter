@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field , field_validator , model_validator
-from typing import List , Optional 
+from typing import List , Optional , Dict , Any ,Union
 from datetime import datetime
 
 class PostData(BaseModel):
@@ -195,3 +195,40 @@ class MemberDataRequest(BaseModel):
                 raise ValueError("Phone number must be 10 digits long")
          return v
 
+
+# 通知
+
+class NotifyContent(BaseModel):
+    post_url : str = Field(..., example="/member/44/post/P-504c33e2")
+    content_id : str = Field(... , example="ec-abc45678")
+    text: Optional[str] = Field(None,example="這是貼文的內容，有什麼想說的？", max_length=500)
+    media: Optional[Media] = None 
+
+ ## 對象
+class NotifyMember(BaseModel): 
+    follow_type: str = Field(..., example="privateAllow, followYou") 
+    
+ ## 回覆
+class ContentReplyNotify(BaseModel):
+	parent: NotifyContent
+	children: NotifyContent
+
+ ## 按讚  
+class LikeNotify(BaseModel):
+    parent: NotifyContent
+
+
+class NotificationRes(BaseModel) : 
+    next_page: Optional[int] = Field(None, description="下一頁的頁面，如果沒有更多頁為None")
+    data : List['NotifyInfo']
+
+class NotifyInfo(BaseModel):
+    user: FollowMember
+    event_type: str = Field(... , example="Follow, Reply, Like")
+    is_read: bool = Field(default=False , example="未已讀")
+    created_at: datetime = Field(... , example="2024/07/28:00:15:43:56")
+    event_data: Union['NotifyMember' , 'ContentReplyNotify' , 'LikeNotify']
+
+
+
+ 
