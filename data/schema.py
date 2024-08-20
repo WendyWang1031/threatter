@@ -97,76 +97,20 @@ create_likes_table_sql = """
         );
 """
 
-# trigger_sql = [
-#         """
-#         CREATE Trigger update_like_counts_after_insert
-#         After insert on likes
-#         for each row
-#         BEGIN
-#                 Update content
-#                 SET like_counts = like_counts + 1
-#                 where content_id = NEW.content_id ;
-#         END;
-# """,
-#         """
-#         CREATE TRIGGER update_like_counts_after_delete
-#         AFTER DELETE ON likes
-#         FOR EACH ROW
-#         BEGIN
-#                 UPDATE content
-#                 SET like_counts = like_counts - 1
-#                 WHERE content_id = OLD.content_id;
-#         END;
-# """,
-#         """
-#         CREATE TRIGGER update_reply_counts_after_insert
-#         AFTER INSERT ON content
-#         FOR EACH ROW
-#         BEGIN
-#                 IF NEW.content_type = 'Reply' THEN
-#                 UPDATE content
-#                 SET reply_counts = reply_counts + 1
-#                 WHERE content_id = NEW.parent_id;
-#                 END IF;
-#         END;
-# """,
-#         """
-#         CREATE TRIGGER update_reply_counts_after_delete
-#         AFTER DELETE ON content
-#         FOR EACH ROW
-#         BEGIN
-#                 IF OLD.content_type = 'Reply' THEN
-#                 UPDATE content
-#                 SET reply_counts = reply_counts - 1
-#                 WHERE content_id = OLD.parent_id;
-#                 END IF;
-#         END;
-# """,
-#         """
-#         CREATE TRIGGER update_forward_counts_after_insert
-#         AFTER INSERT ON content
-#         FOR EACH ROW
-#         BEGIN
-#                 IF NEW.content_type = 'Post' AND NEW.parent_id IS NOT NULL THEN
-#                 UPDATE content
-#                 SET forward_counts = forward_counts + 1
-#                 WHERE content_id = NEW.parent_id;
-#                 END IF;
-#         END;
-# """,
-#         """
-#         CREATE TRIGGER update_forward_counts_after_delete
-#         AFTER DELETE ON content
-#         FOR EACH ROW
-#         BEGIN
-#                 IF OLD.content_type = 'Post' AND OLD.parent_id IS NOT NULL THEN
-#                 UPDATE content
-#                 SET forward_counts = forward_counts - 1
-#                 WHERE content_id = OLD.parent_id;
-#                 END IF;
-#         END;
-# """
-# ]
+create_notification_table_sql = """
+        CREATE TABLE IF NOT EXISTS notification (
+        id INT AUTO_INCREMENT PRIMARY KEY ,
+        member_id varchar(255) not null ,
+        target_id varchar(255) not null , 
+        event_type ENUM('Follow', 'Reply', 'Like') NOT NULL ,
+        event_data JSON NOT NULL , 
+        is_read BOOLEAN DEFAULT FALSE , 
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  NOT NULL , 
+        
+        FOREIGN KEY (member_id) REFERENCES member(account_id) ,
+        FOREIGN KEY (target_id) REFERENCES member(account_id)
+        );
+"""
 
 
 
@@ -174,9 +118,10 @@ try:
         cursor.execute("BEGIN;")
         cursor.execute(create_member_table_sql)
         cursor.execute(create_member_relation_table_sql)
-        cursor.execute(alter_member_relation_table_sql)
+        # cursor.execute(alter_member_relation_table_sql)
         cursor.execute(create_content_table_sql)
         cursor.execute(create_likes_table_sql)
+        cursor.execute(create_notification_table_sql)
 
         db.commit()
 except Exception as e :
