@@ -24,6 +24,7 @@ from service.presigned_url import *
 from service.router_search import search_router
 from service.router_user import user_router
 from service.router_member import member_router
+from service.router_post import post_router
 
 
 
@@ -35,6 +36,7 @@ security = HTTPBearer(auto_error=False)
 app.include_router(user_router)
 app.include_router(member_router)
 app.include_router(search_router)
+app.include_router(post_router)
 
 
 
