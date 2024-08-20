@@ -26,6 +26,7 @@ from service.router_user import user_router
 from service.router_member import member_router
 from service.router_post import post_router
 from service.router_follow import follow_router
+from service.router_comment import comment_router
 
 
 
@@ -39,6 +40,7 @@ app.include_router(member_router)
 app.include_router(search_router)
 app.include_router(post_router)
 app.include_router(follow_router)
+app.include_router(comment_router)
 
 
 
@@ -360,72 +362,72 @@ async def fetch_post_generate_presigned_url(presignedUrl_request: PresignedUrlRe
 
 
 
-# 留言
-@app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/like",
-        tags= ["Comment"],
-        response_model = LikeRes , 
-        summary = "對貼文的某則留言按讚",
-        responses = {
-            200:{
-                "model" : LikeRes,
-                "description" : "成功對貼文的某則留言按讚"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_post_comments_like(
-    comment_like : LikeReq,
-    account_id : str = Path(..., description="該會員的帳號"),
-    post_id : str = Path(..., description="該貼文的id"),
-    comment_id : str = Path(..., description="該留言的id"),
-    current_user : dict = Depends(security_get_current_user),
-    ) -> JSONResponse :
-    return await post_comment_or_reply_like(comment_like , account_id , post_id , comment_id , current_user)
+# # 留言
+# @app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/like",
+#         tags= ["Comment"],
+#         response_model = LikeRes , 
+#         summary = "對貼文的某則留言按讚",
+#         responses = {
+#             200:{
+#                 "model" : LikeRes,
+#                 "description" : "成功對貼文的某則留言按讚"
+#             },
+#             500:{
+#                 "model" : ErrorResponse,
+#                 "description" : "伺服器內部錯誤"
+#             }
+#          })
+# async def fetch_post_comments_like(
+#     comment_like : LikeReq,
+#     account_id : str = Path(..., description="該會員的帳號"),
+#     post_id : str = Path(..., description="該貼文的id"),
+#     comment_id : str = Path(..., description="該留言的id"),
+#     current_user : dict = Depends(security_get_current_user),
+#     ) -> JSONResponse :
+#     return await post_comment_or_reply_like(comment_like , account_id , post_id , comment_id , current_user)
 
-@app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
-        tags= ["Comment"],
-        response_model = Comment , 
-        summary = "在貼文底下某則留言回覆留言",
-        responses = {
-            200:{
-                "model" : Comment,
-                "description" : "成功在某則貼文底下留言"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_post_comment_relpy(
-    content_req:CommentReq,
-    account_id: str = Path(..., description="該會員的帳號"),
-    comment_id: str = Path(..., description="該留言的id"),
-    current_user: Optional[dict] = Depends(security_get_current_user),
-    ) -> JSONResponse :
-    return await create_replies(content_req , comment_id , current_user)
+# @app.post("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
+#         tags= ["Comment"],
+#         response_model = Comment , 
+#         summary = "在貼文底下某則留言回覆留言",
+#         responses = {
+#             200:{
+#                 "model" : Comment,
+#                 "description" : "成功在某則貼文底下留言"
+#             },
+#             500:{
+#                 "model" : ErrorResponse,
+#                 "description" : "伺服器內部錯誤"
+#             }
+#          })
+# async def fetch_post_comment_relpy(
+#     content_req:CommentReq,
+#     account_id: str = Path(..., description="該會員的帳號"),
+#     comment_id: str = Path(..., description="該留言的id"),
+#     current_user: Optional[dict] = Depends(security_get_current_user),
+#     ) -> JSONResponse :
+#     return await create_replies(content_req , comment_id , current_user)
 
-@app.delete("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
-        tags= ["Comment"],
-        response_model = Comment , 
-        summary = "刪除某則留言",
-        responses = {
-            200:{
-                "model" : SuccessfulRes,
-                "description" : "成功刪除某則留言"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_delete_comment(current_user : dict = Depends(security_get_current_user),
-                                account_id: str = Path(..., description="該會員的帳號"),
-                                post_id: str = Path(..., description="該貼文的id"),
-                                comment_id: str = Path(..., description="該留言的id")
-                                )-> JSONResponse :
-    return await delete_comment_and_reply(comment_id , current_user)
+# @app.delete("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
+#         tags= ["Comment"],
+#         response_model = Comment , 
+#         summary = "刪除某則留言",
+#         responses = {
+#             200:{
+#                 "model" : SuccessfulRes,
+#                 "description" : "成功刪除某則留言"
+#             },
+#             500:{
+#                 "model" : ErrorResponse,
+#                 "description" : "伺服器內部錯誤"
+#             }
+#          })
+# async def fetch_delete_comment(current_user : dict = Depends(security_get_current_user),
+#                                 account_id: str = Path(..., description="該會員的帳號"),
+#                                 post_id: str = Path(..., description="該貼文的id"),
+#                                 comment_id: str = Path(..., description="該留言的id")
+#                                 )-> JSONResponse :
+#     return await delete_comment_and_reply(comment_id , current_user)
 
 
 # # 搜尋
