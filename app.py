@@ -20,12 +20,17 @@ from model.model_user import *
 from service.security import security_get_current_user
 from service.presigned_url import *
 
+##
+from service.router_search import search_router
+
 
 
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 security = HTTPBearer(auto_error=False)  
+
+app.include_router(search_router)
 
 
 # 共用
@@ -414,26 +419,26 @@ async def fetch_delete_comment(current_user : dict = Depends(security_get_curren
     return await delete_comment_and_reply(comment_id , current_user)
 
 
-# 搜尋
-@app.get("/api/search",
-        tags= ["Search"],
-        response_model = FollowMemberListRes , 
-        summary = "搜尋用戶帳號",
-        responses = {
-            200:{
-                "model" : FollowMemberListRes,
-                "description" : "成功搜尋用戶帳號"
-            },
-            500:{
-                "model" : ErrorResponse,
-                "description" : "伺服器內部錯誤"
-            }
-         })
-async def fetch_search(
-    search: str = Query(..., description="輸入想要搜尋的帳號"), 
-    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None"),
-    current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
-    return await get_search(search , page , current_user)
+# # 搜尋
+# @app.get("/api/search",
+#         tags= ["Search"],
+#         response_model = FollowMemberListRes , 
+#         summary = "搜尋用戶帳號",
+#         responses = {
+#             200:{
+#                 "model" : FollowMemberListRes,
+#                 "description" : "成功搜尋用戶帳號"
+#             },
+#             500:{
+#                 "model" : ErrorResponse,
+#                 "description" : "伺服器內部錯誤"
+#             }
+#          })
+# async def fetch_search(
+#     search: str = Query(..., description="輸入想要搜尋的帳號"), 
+#     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None"),
+#     current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
+#     return await get_search(search , page , current_user)
 
 # 用戶
 @app.post("/api/user" , 
