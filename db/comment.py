@@ -137,6 +137,9 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
         # 預設狀況下，用戶只能看到公開的內容
         visibility_clause = "content.visibility = 'Public'"
         # print("member_id:",member_id)
+
+        if not member_id:
+            member_id = None
         
         if member_id : 
             # 檢查已登入用戶
@@ -156,11 +159,12 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             # 如果用戶已登入，查詢該用戶的按讚狀態
             likes_clause = "likes.like_state"
         else:
-            # 如果用戶未登入，按讚狀態應該為 NULL
-            likes_clause = "NULL as like_state"
+            # 如果用戶未登入，按讚狀態應該為 False
+            likes_clause = "FALSE AS like_state"
 
         sql = f"""
-            select content.* ,
+            select
+                content.* ,
                 member.name , 
                 member.account_id , 
                 member.avatar,  
@@ -176,164 +180,74 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             ORDER BY created_at DESC 
             LIMIT %s OFFSET %s
         """
-        if not member_id:
-            member_id = None
-
-        cursor.execute( sql , (member_id , post_id , limit+1 , offset) )
         
+
+        cursor.execute( sql , (member_id , post_id , limit+1 , offset) )    
         comment_data = cursor.fetchall()
         # print("comment_data:",comment_data)
 
         if not comment_data:
             return "No Comment Data" ,  None
-        
-        # # 處理留言列表，準備回覆留言的字典
-        # comment_detail_list = []
-        # replies_map = {}
-        # # print("comment_data:",comment_data)
-        # for data in comment_data:
-        #     if data['content_type'] == 'Comment':
-        #         comment = generate_comment_object(data)
-                
-        #         comment_detail_list.append(CommentDetail(comment=comment, replies=[]))
-        #     elif data['content_type'] == 'Reply':
-        #         parent_id = data['parent_id']
-        #         # print("parent_id:",parent_id)
-        #         if parent_id not in replies_map:
-        #             replies_map[parent_id] = []
-        #         replies_map[parent_id].append(generate_comment_object(data))
-        
-        # # print("replies_map:",replies_map)
-        # # 將回覆留言映射到相對應的留言
-        # for comment_detail in comment_detail_list:
-        #     comment_id = comment_detail.comment.comment_id
-        #     if comment_id in replies_map:
-        #         comment_detail.replies = replies_map[comment_id]
-        # # print("comment_detail_list:",comment_detail_list)
-        # connection.commit()
-        
-        # has_more_data = len(comment_data) > limit
-        
-        # if has_more_data:
-        #     comment_data.pop()
 
-        # next_page = page + 1 if has_more_data else None
+        # 將所有留言的id取出存放在列表 ['C-3b8cec09', 'C-22c1d5e4',...]
+        comment_ids = []
+        for comment in comment_data :
+            if comment['content_type'] == 'Comment' :
+                comment_ids.append(comment['content_id'])
+        # print("comment_ids:" , comment_ids)
 
-        # return "Success" , CommentDetailListRes(next_page=next_page, data=comment_detail_list)
+        if comment_ids : 
+            reply_sql =f"""
+                SELECT 
+                    content.*,
+                    member.name,
+                    member.account_id,
+                    member.avatar,
+                    {likes_clause}
+                FROM content
+                Left Join member on content.member_id = member.account_id
+                Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+                WHERE content.parent_id IN ({','.join(['%s'] * len(comment_ids))})
+                AND content.content_type = 'Reply'
+                AND {visibility_clause}
+                ORDER BY content.created_at DESC
 
+            """
+            cursor.execute( reply_sql , ([member_id] + comment_ids) )    
+            reply_data = cursor.fetchall()
+        else:
+            reply_data = []
+
+        # print("reply_data:" , reply_data)
         
+        replies_map = {}
+        for reply in reply_data :
+            parent_id = reply['parent_id']
+            if parent_id not in replies_map :
+                replies_map[parent_id] = []
+            replies_map[parent_id].append(reply)
+        # print("replies_map:" , replies_map)
+
+        comment_detail_list = []
+        for comment in comment_data :
+            if comment['content_type'] == 'Comment':
+                comment_obj = generate_comment_object(comment)
+                replies = replies_map.get(comment['content_id'],[])
+                # print("replies:" , replies)
+                reply_objects = [generate_comment_object(reply) for reply in replies]
+                comment_detail_list.append(CommentDetail(comment = comment_obj , replies=reply_objects))
+        # print("comment_data:" , comment_data)
+
         
         has_more_data = len(comment_data) > limit
         
         if has_more_data :
             comment_data.pop()
 
-        comment_detail_list = []
-        for data in comment_data:
-
-
-        
-            media = Media(
-            images=data.get('image'),
-            videos=data.get('video'),
-            audios=data.get('audio')
-            )
-
-            created_at = data['created_at']
-            if isinstance(created_at, str):
-                created_at = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
-
-
-            comment = Comment(
-                comment_id = data['content_id'] ,
-                user = MemberBase(
-                    name = data['name'],
-                    account_id = data['account_id'],
-                    avatar = data['avatar']
-                ),
-                content = PostContent(
-                    text = data['text'],
-                    media = media,
-                ),
-                created_at = created_at ,
-                like_state = bool(data.get('like_state' , False)),
-                counts = PostCounts(
-                    like_counts=int(data.get('like_counts', 0)),
-                    reply_counts=int(data.get('reply_counts', 0)),
-                    forward_counts=int(data.get('forward_counts', 0)),
-                )
-            )
-            
-
-            replies_sql = f"""
-                SELECT content.*,
-                    member.name,
-                    member.account_id,
-                    member.avatar,
-                    {likes_clause}
-                FROM content
-                LEFT JOIN member ON content.member_id = member.account_id
-                LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
-                WHERE content.parent_id = %s AND content.content_type = 'Reply'
-                AND {visibility_clause}
-                ORDER BY content.created_at DESC
-            """
-
-            if not member_id:
-                member_id = None
-            cursor.execute(replies_sql, (member_id , data['content_id'],))
-            reply_data = cursor.fetchall()
-            # print("reply_data:",reply_data)
-
-            replies = []
-            
-            if reply_data : 
-                for reply in reply_data:
-                    reply_media = Media(
-                        images=reply.get('image'),
-                        videos=reply.get('video'),
-                        audios=reply.get('audio')
-                    )
-
-                    reply_created_at = reply['created_at']
-                    if isinstance(reply_created_at, str):
-                        reply_created_at = datetime.strptime(reply_created_at, '%Y-%m-%d %H:%M:%S')
-
-                    reply_comment = Comment(
-                        comment_id=reply['content_id'],
-                        user=MemberBase(
-                            name=reply['name'],
-                            account_id=reply['account_id'],
-                            avatar=reply['avatar']
-                        ),
-                        content=PostContent(
-                            text=reply['text'],
-                            media=reply_media,
-                        ),
-                        created_at=reply_created_at,
-                        like_state=bool(reply.get('like_state', False)),
-                        counts=PostCounts(
-                            like_counts=int(reply.get('like_counts') or 0),
-                            reply_counts=int(reply.get('reply_counts') or 0),
-                            forward_counts=int(reply.get('forward_counts') or 0),
-                        )
-                    )
-                    # print("reply_comment:",reply_comment)
-
-                    replies.append(reply_comment)
-            else:
-                replies = []
-        
-            comment_detail = CommentDetail(
-            comment = comment,
-            replies = replies 
-            )
-            
-            comment_detail_list.append(comment_detail)
-            
-        connection.commit()
         
         next_page = page + 1 if has_more_data else None
+
+        connection.commit()
         
         return "Success" , CommentDetailListRes(next_page = next_page , data = comment_detail_list )
         
