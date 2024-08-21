@@ -92,7 +92,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                     parent = notify_content
                 )
             # print("event_data:",event_data)
-            print("created_at:",created_at)
+            # print("created_at:",created_at)
             notify_info = NotifyInfo(
                 user = follow_member,
                 event_type = data['event_type'],
@@ -100,7 +100,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                 created_at = created_at,
                 event_data = event_data
             )
-            print("notify_info:",notify_info)
+            # print("notify_info:",notify_info)
 
             notification_list.append(notify_info)
        
