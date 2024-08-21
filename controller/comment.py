@@ -8,7 +8,8 @@ from db.update_counts import *
 from service.security import security_get_current_user
 
 
-async def create_comments(content_data : CommentReq ,  
+async def create_comments(content_data : CommentReq , 
+                        account_id: str, 
                         post_id : str ,
                         current_user : dict = Depends(security_get_current_user),
                         ) -> JSONResponse :
@@ -28,7 +29,7 @@ async def create_comments(content_data : CommentReq ,
             return response
 
         member_id = current_user["account_id"]    
-        result = db_create_comment_data(content_data , post_id , member_id)
+        result = db_create_comment_data(content_data , account_id , post_id , member_id)
         
         count_res = db_update_relpy_counts(post_id)
 

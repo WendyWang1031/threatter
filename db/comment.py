@@ -3,10 +3,11 @@ from typing import Optional
 from model.model import *
 from db.connection_pool import get_db_connection_pool
 from db.re_post_data import *
+from db.notification import *
 from service.common import *
 
 
-def db_create_comment_data(comment_data : CommentReq , post_id : str , member_id : str) -> bool :
+def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -35,6 +36,9 @@ def db_create_comment_data(comment_data : CommentReq , post_id : str , member_id
                               comment_data.visibility, content, image_url, video_url, audio_url) )
         
         connection.commit()
+
+        if account_id != member_id:
+            db_update_notification(member_id, account_id, post_id, content_id, 'Reply')
         
         return True
     
