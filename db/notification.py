@@ -40,7 +40,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
     
         cursor.execute(select_sql, (member_id , member_id , limit+1, offset))
         notification_data = cursor.fetchall()
-        print("notification_data:",notification_data)
+        # print("notification_data:",notification_data)
 
         
         has_more_data = len(notification_data) > limit
@@ -64,7 +64,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
             )
             
             event_data_dict = json.loads(data['event_data'])
-            print("event_data_dict:",event_data_dict)
+            # print("event_data_dict:",event_data_dict)
 
             created_at = data['created_at']
             if isinstance(created_at, str):
@@ -89,7 +89,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                         )
                     )
                 )
-                print("event_data:",event_data)
+                # print("event_data:",event_data)
             
             elif data['event_type'] == 'Reply':
                 event_data = ContentReplyNotify(
@@ -156,7 +156,13 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
 
 
 
-def db_update_notification(member_id: str, account_id: str, post_id: str, content_id: str, content_type: str):
+def db_update_notification(
+        member_id: str, 
+        account_id: str, 
+        post_id: str, 
+        content_id: str, 
+        content_type: str,
+        parent_id: Optional[str] = None):
     # 如果對自己的操作，不需紀錄
     if member_id == account_id:
         return
@@ -184,14 +190,21 @@ def db_update_notification(member_id: str, account_id: str, post_id: str, conten
         
 
         if content_type == 'Reply':
+            # 如果有提供 parent_id 表示是回覆留言，如果沒有就是回覆貼文
+            parent_id = parent_id or post_id
             
             parent_sql = """
-                SELECT text, image, video, audio
+                SELECT member_id , text, image, video, audio
                 FROM content
                 WHERE content_id = %s
             """
-            cursor.execute(parent_sql, (post_id,))
+            cursor.execute(parent_sql, (parent_id,))
             parent_content_data = cursor.fetchone()
+            # print("parent_content_data:",parent_content_data)
+            
+            # 如果母內容和子內容的人是相同，跳過
+            if parent_content_data and parent_content_data['member_id'] == member_id:
+                return
 
             child_sql = """
                 SELECT text, image, video, audio
@@ -200,6 +213,8 @@ def db_update_notification(member_id: str, account_id: str, post_id: str, conten
             """
             cursor.execute(child_sql, (content_id,))
             child_content_data = cursor.fetchone()
+            # print("child_content_data:",child_content_data)
+            
 
             event_data_obj = ContentReplyNotify(
                 parent=NotifyContent(

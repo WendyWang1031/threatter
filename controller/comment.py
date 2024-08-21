@@ -56,7 +56,9 @@ async def create_comments(content_data : CommentReq ,
         return response
     
 
-async def create_replies(content_data : CommentReq ,  
+async def create_replies(content_data : CommentReq , 
+                        account_id: str,
+                        post_id : str ,  
                         comment_id : str ,
                         current_user : dict = Depends(security_get_current_user),
                         ) -> JSONResponse :
@@ -76,7 +78,7 @@ async def create_replies(content_data : CommentReq ,
             return response
 
         member_id = current_user["account_id"]    
-        result = db_create_reply_data(content_data , comment_id , member_id)
+        result = db_create_reply_data(content_data , account_id , post_id , comment_id , member_id)
         
         count_res = db_update_relpy_counts(comment_id)
 

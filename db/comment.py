@@ -40,6 +40,7 @@ def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id
         if account_id != member_id:
             db_update_notification(member_id, account_id, post_id, content_id, 'Reply')
         
+
         return True
     
     except Exception as e:
@@ -50,7 +51,7 @@ def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id
         cursor.close()
         connection.close()
 
-def db_create_reply_data(comment_data : CommentReq , comment_id : str , member_id : str) -> bool :
+def db_create_reply_data(comment_data : CommentReq , account_id: str , post_id : str , comment_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -83,8 +84,12 @@ def db_create_reply_data(comment_data : CommentReq , comment_id : str , member_i
         """
         cursor.execute(sql , (member_id , comment_id, content_id, 'Reply', 
                               comment_data.visibility, content, image_url, video_url, audio_url) )
-        
         connection.commit()
+        
+        if account_id != member_id:
+            db_update_notification(
+                member_id, account_id, post_id, content_id, 'Reply' , comment_id)
+
         
         return True
     

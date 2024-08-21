@@ -53,10 +53,11 @@ async def fetch_post_comments_like(
 async def fetch_post_comment_relpy(
     content_req:CommentReq,
     account_id: str = Path(..., description="該會員的帳號"),
+    post_id : str = Path(..., description="該貼文的id"),
     comment_id: str = Path(..., description="該留言的id"),
     current_user: Optional[dict] = Depends(security_get_current_user),
     ) -> JSONResponse :
-    return await create_replies(content_req , comment_id , current_user)
+    return await create_replies(content_req , account_id , post_id ,comment_id , current_user)
 
 @comment_router.delete("/api/member/{account_id}/post/{post_id}/comment/{comment_id}/reply",
         tags= ["Comment"],
