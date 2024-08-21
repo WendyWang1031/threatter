@@ -98,6 +98,13 @@ def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_
         cursor.execute(update_target_sql, (member_id, account_id, target_relation_state, target_relation_state))
            
         connection.commit()
+        
+        if followAns.accept:
+            db_update_notification(
+                    member_id, account_id , None , None , 'Follow')
+            db_update_notification(
+                account_id, member_id, None, None, 'Follow')
+        
         return relation_state , True
     
     except Exception as e:
