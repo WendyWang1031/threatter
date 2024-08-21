@@ -63,7 +63,12 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                 follow_state = data['follow_state']
             )
             
-            event_data_dict = json.loads(data['event_data'])
+            event_data = None
+            event_data_dict = None
+            
+            if data['event_data']:
+                event_data_dict = json.loads(data['event_data'])
+
             # print("event_data_dict:",event_data_dict)
 
             created_at = data['created_at']
@@ -72,7 +77,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
             else:
                 created_at = created_at.strftime('%Y-%m-%d %H:%M:%S')
 
-            event_data = None
+            
 
             
             
@@ -116,7 +121,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                 )
             elif data['event_type'] == 'Follow':
                 event_data = NotifyMember(
-                    follow_type=event_data_dict['follow_type']
+                    follow_type=event_data_dict['follow_type'] if event_data_dict else 'None'
                 )
             # print("event_data:",event_data)
             # print("created_at:",created_at)

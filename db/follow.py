@@ -5,6 +5,7 @@ from model.model import *
 from db.connection_pool import get_db_connection_pool
 from db.check_relation import *
 from db.get_member_data import *
+from db.notification import *
 
 RELATION_STATUS_PENDING = "Pending"
 
@@ -49,6 +50,12 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
         cursor.execute(insert_update_target_relation_sql, (follow.account_id, member_id, target_relation_state))
 
         connection.commit()
+        
+        
+        db_update_notification(
+                member_id, follow.account_id , None , None , 'Follow')
+
+        
         return relation_state ,  True 
     
     except Exception as e:
