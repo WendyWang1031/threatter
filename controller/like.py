@@ -109,7 +109,7 @@ async def post_comment_or_reply_like(comment_like : LikeReq ,
             return response
         
         
-        total_counts = db_like_comment_or_reply(comment_like , comment_id , member_id)
+        total_counts = db_like_comment_or_reply(account_id , post_id , comment_like , comment_id , member_id)
         
         if total_counts is False:
             error_response = ErrorResponse(error=True, message="Failed to update like data")

@@ -37,40 +37,8 @@ def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member
         """
         cursor.execute(update_sql, (total_likes, post_id))
 
-        # 在按讚的狀態是TRUE的條件下，更新 notification 表的資料
-            # 先取出貼文內容資料
-        if new_like_state :
-            content_sql ="""
-                SELECT text , image , video , audio
-                FROM content
-                where member_id = %s and content_id = %s
-            """
-            cursor.execute(content_sql, (account_id, post_id))
-            post_content_data = cursor.fetchone()
-
-            media_data = Media(
-                images = post_content_data.get('image'),
-                videos = post_content_data.get('video'),
-                audios = post_content_data.get('audio')
-            )
-
-            notify_data_obj = NotifyContent(
-                post_url = f"/member/{account_id}/post/{post_id}" ,
-                content_id = post_id ,
-                text = post_content_data['text'] ,
-                media = media_data
-            )
-            event_data_json = notify_data_obj.model_dump_json()
-
-            update_notification_sql ="""
-                INSERT INTO notification(
-                    member_id , target_id , event_type , event_data , is_read
-                )
-                VALUES(
-                    %s , %s , 'Like' , %s , False
-                )
-            """
-            cursor.execute(update_notification_sql, (member_id , account_id , event_data_json))
+        if post_like.like:
+            db_update_notification(member_id, account_id, post_id, post_id, 'Post')
 
         connection.commit()
         
@@ -84,7 +52,7 @@ def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member
         cursor.close()
         connection.close()
 
-def db_like_comment_or_reply(comment_like : LikeReq , comment_id : str , member_id : str) -> bool :
+def db_like_comment_or_reply(account_id : str , post_id : str , comment_like : LikeReq , comment_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -124,6 +92,10 @@ def db_like_comment_or_reply(comment_like : LikeReq , comment_id : str , member_
         """
         cursor.execute(update_sql, (total_likes, comment_id, content_type))
 
+        if comment_like.like:
+            db_update_notification(member_id, account_id, post_id, comment_id, content_type)
+
+
         connection.commit()
 
         return total_likes
@@ -136,3 +108,56 @@ def db_like_comment_or_reply(comment_like : LikeReq , comment_id : str , member_
         cursor.close()
         connection.close()
 
+def db_update_notification(member_id: str, account_id: str, post_id: str, content_id: str, content_type: str):
+    # 如果對自己的操作，不需紀錄
+    if member_id == account_id:
+        return
+    
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        # 在按讚的狀態是TRUE的條件下，更新 notification 表的資料
+            # 先取出貼文內容資料
+        
+        content_sql = """
+            SELECT text, image, video, audio
+            FROM content
+            WHERE member_id = %s AND content_id = %s
+        """
+        cursor.execute(content_sql, (account_id, post_id))
+        post_content_data = cursor.fetchone()
+
+        media_data = Media(
+            images=post_content_data.get('image'),
+            videos=post_content_data.get('video'),
+            audios=post_content_data.get('audio')
+        )
+
+        notify_data_obj = NotifyContent(
+            post_url=f"/member/{account_id}/post/{post_id}",
+            content_id=content_id,
+            text=post_content_data['text'],
+            media=media_data
+        )
+        event_data_json = notify_data_obj.model_dump_json()
+
+        # 插入通知
+        update_notification_sql = """
+            INSERT INTO notification(
+                member_id, target_id, event_type, event_data, is_read
+            )
+            VALUES(
+                %s, %s, 'Like', %s, False
+            )
+        """
+        cursor.execute(update_notification_sql, (member_id, account_id, event_data_json))
+
+        connection.commit()
+    
+    except Exception as e:
+        print(f"Error updating notification: {e}")
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
