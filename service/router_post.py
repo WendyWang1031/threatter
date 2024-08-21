@@ -176,5 +176,5 @@ async def fetch_post_comment(content_req: CommentReq ,
                             current_user: Optional[dict] = Depends(security_get_current_user),
                             
                              ) -> JSONResponse :
-    return await create_comments(content_req , post_id , current_user)
+    return await create_comments(content_req , account_id , post_id , current_user)
 
