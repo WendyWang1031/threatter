@@ -41,7 +41,7 @@ async def post_post_like(post_like : LikeReq ,
             return response
 
 
-        total_counts = db_like_post(post_like , post_id , member_id)
+        total_counts = db_like_post(account_id , post_like , post_id , member_id)
         
         if total_counts is False:
             error_response = ErrorResponse(error=True, message="Failed to update like data")

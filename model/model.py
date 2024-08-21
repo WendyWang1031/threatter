@@ -226,9 +226,9 @@ class NotifyInfo(BaseModel):
     user: FollowMember
     event_type: str = Field(... , example="Follow, Reply, Like")
     is_read: bool = Field(default=False , example="未已讀")
-    created_at: datetime = Field(... , example="2024/07/28:00:15:43:56")
+    created_at: str = Field(... , example="2024/07/28:00:15:43:56")
     event_data: Union['NotifyMember' , 'ContentReplyNotify' , 'LikeNotify']
-
+    
 
 
  
