@@ -117,6 +117,22 @@ def db_update_notification(member_id: str, account_id: str, post_id: str, conten
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
     try:
+        # 先檢查是否已經存在未讀的相同通知
+        check_notification_sql = """
+            SELECT id FROM notification
+            WHERE member_id = %s 
+            AND target_id = %s 
+            AND event_type = 'Like' 
+            AND JSON_UNQUOTE(JSON_EXTRACT(event_data, '$.content_id')) = %s 
+            AND is_read = FALSE
+        """
+        cursor.execute(check_notification_sql, (member_id, account_id, content_id))
+        existing_notification = cursor.fetchone()
+        
+        # 如果已經存在就不插入通知進去表
+        if existing_notification:
+            return
+        
         # 在按讚的狀態是TRUE的條件下，更新 notification 表的資料
             # 先取出貼文內容資料
         
