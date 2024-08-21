@@ -18,14 +18,18 @@ async def stream_notification(current_user: dict = Depends(security_get_current_
                     status_code=status.HTTP_403_FORBIDDEN, 
                     content=error_response.dict())
             return response
-    member_id = current_user["account_id"]   
+      
     
     async def event_generator():
+        last_notification_id = None
         while True :
-            notifications = []
-            if notifications:
-                for notification in notifications :
-                    pass
+            notification_res = await get_notification(current_user, page=0)
+            
+            if notification_res and notification_res.data:
+                for notification in notification_res.data:
+                        if last_notification_id is None or notification.id > last_notification_id:
+                            last_notification_id = notification.id
+                            yield f"data: {notification.model_dump_json()}\n\n"
             await asyncio.sleep(1)
 
     return StreamingResponse(event_generator() , media_type="text/event-stream")
