@@ -21,25 +21,32 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
         select_sql = """
             SELECT 
                 notification.* , 
-                target_member.name AS target_name, target_member.account_id AS target_account_id, target_member.avatar AS target_avatar,
-                COALESCE(relation.relation_state, 'None') AS follow_state
+
+                target_member.name AS target_name, 
+                target_member.account_id AS target_account_id, 
+                target_member.avatar AS target_avatar,
+
+                COALESCE(relation_state, 'None') AS follow_state
             FROM notification
-            LEFT JOIN member AS target_member ON notification.member_id = target_member.account_id
-            LEFT JOIN member_relation AS relation 
-                ON relation.member_id = notification.target_id 
-                AND relation.target_id = notification.member_id
-            WHERE notification.target_id = %s 
+            LEFT JOIN member AS target_member 
+                ON notification.member_id = target_member.account_id
+            LEFT JOIN member_relation 
+                ON notification.member_id = member_relation.target_id 
+                AND member_relation.member_id = %s
+            WHERE notification.target_id = %s
+            ORDER BY created_at DESC  
             LIMIT %s OFFSET %s
         """
     
-        cursor.execute(select_sql, (member_id , limit+1, offset))
+        cursor.execute(select_sql, (member_id , member_id , limit+1, offset))
         notification_data = cursor.fetchall()
 
+        
         has_more_data = len(notification_data) > limit
         
         if has_more_data:
             notification_data.pop()
-        print("notification_data:",notification_data)
+        # print("notification_data:",notification_data)
 
         notification_list = []
         for data in notification_data:
@@ -96,8 +103,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
             print("notify_info:",notify_info)
 
             notification_list.append(notify_info)
-        
-        
+       
         
         next_page = page + 1 if has_more_data else None
 
@@ -105,11 +111,8 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
             next_page = next_page, 
             data = notification_list
         )
-    
 
         connection.commit()
-
-
 
         return notification_result
     

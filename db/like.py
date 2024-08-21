@@ -4,7 +4,7 @@ from model.model import *
 from db.connection_pool import get_db_connection_pool
 
 
-def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool :
+def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -36,6 +36,41 @@ def db_like_post(post_like : LikeReq , post_id : str , member_id : str) -> bool 
             WHERE content_id = %s AND content_type = 'Post'
         """
         cursor.execute(update_sql, (total_likes, post_id))
+
+        # 在按讚的狀態是TRUE的條件下，更新 notification 表的資料
+            # 先取出貼文內容資料
+        if new_like_state :
+            content_sql ="""
+                SELECT text , image , video , audio
+                FROM content
+                where member_id = %s and content_id = %s
+            """
+            cursor.execute(content_sql, (account_id, post_id))
+            post_content_data = cursor.fetchone()
+
+            media_data = Media(
+                images = post_content_data.get('image'),
+                videos = post_content_data.get('video'),
+                audios = post_content_data.get('audio')
+            )
+
+            notify_data_obj = NotifyContent(
+                post_url = f"/member/{account_id}/post/{post_id}" ,
+                content_id = post_id ,
+                text = post_content_data['text'] ,
+                media = media_data
+            )
+            event_data_json = notify_data_obj.model_dump_json()
+
+            update_notification_sql ="""
+                INSERT INTO notification(
+                    member_id , target_id , event_type , event_data , is_read
+                )
+                VALUES(
+                    %s , %s , 'Like' , %s , False
+                )
+            """
+            cursor.execute(update_notification_sql, (member_id , account_id , event_data_json))
 
         connection.commit()
         
