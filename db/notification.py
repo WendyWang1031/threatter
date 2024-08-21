@@ -40,13 +40,14 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
     
         cursor.execute(select_sql, (member_id , member_id , limit+1, offset))
         notification_data = cursor.fetchall()
+        print("notification_data:",notification_data)
 
         
         has_more_data = len(notification_data) > limit
         
         if has_more_data:
             notification_data.pop()
-        # print("notification_data:",notification_data)
+
 
         notification_list = []
         for data in notification_data:
@@ -61,10 +62,9 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                 user = target_info,
                 follow_state = data['follow_state']
             )
-
             
             event_data_dict = json.loads(data['event_data'])
-            # print("event_data_dict:",event_data_dict)
+            print("event_data_dict:",event_data_dict)
 
             created_at = data['created_at']
             if isinstance(created_at, str):
@@ -73,23 +73,50 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                 created_at = created_at.strftime('%Y-%m-%d %H:%M:%S')
 
             event_data = None
+
             
-            media_data = Media(
-                images = event_data_dict.get('image'),
-                videos = event_data_dict.get('video'),
-                audios = event_data_dict.get('audio')
-            )
-
-            notify_content = NotifyContent(
-                post_url = event_data_dict['post_url'] ,
-                content_id = event_data_dict['content_id'] ,
-                text = event_data_dict['text'] ,
-                media = media_data
-            )
-
+            
             if data['event_type'] == 'Like':
                 event_data = LikeNotify(
-                    parent = notify_content
+                    parent=NotifyContent(
+                        post_url=event_data_dict['post_url'],
+                        content_id=event_data_dict['content_id'],
+                        text=event_data_dict.get('text'),
+                        media=Media(
+                            images=event_data_dict.get('image'),
+                            videos=event_data_dict.get('video'),
+                            audios=event_data_dict.get('audio')
+                        )
+                    )
+                )
+                print("event_data:",event_data)
+            
+            elif data['event_type'] == 'Reply':
+                event_data = ContentReplyNotify(
+                    parent=NotifyContent(
+                        post_url=event_data_dict['parent']['post_url'],
+                        content_id=event_data_dict['parent']['content_id'],
+                        text=event_data_dict['parent'].get('text'),
+                        media=Media(
+                            images=event_data_dict['parent'].get('image'),
+                            videos=event_data_dict['parent'].get('video'),
+                            audios=event_data_dict['parent'].get('audio')
+                        )
+                    ),
+                    children=NotifyContent(
+                        post_url=event_data_dict['children']['post_url'],
+                        content_id=event_data_dict['children']['content_id'],
+                        text=event_data_dict['children'].get('text'),
+                        media=Media(
+                            images=event_data_dict['children'].get('image'),
+                            videos=event_data_dict['children'].get('video'),
+                            audios=event_data_dict['children'].get('audio')
+                        )
+                    )
+                )
+            elif data['event_type'] == 'Follow':
+                event_data = NotifyMember(
+                    follow_type=event_data_dict['follow_type']
                 )
             # print("event_data:",event_data)
             # print("created_at:",created_at)
@@ -129,3 +156,119 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
 
 
 
+def db_update_notification(member_id: str, account_id: str, post_id: str, content_id: str, content_type: str):
+    # 如果對自己的操作，不需紀錄
+    if member_id == account_id:
+        return
+    
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        # 先檢查是否已經存在未讀的相同通知
+        check_notification_sql = """
+            SELECT id FROM notification
+            WHERE member_id = %s 
+            AND target_id = %s 
+            AND event_type = %s 
+            AND JSON_UNQUOTE(JSON_EXTRACT(event_data, '$.content_id')) = %s 
+            AND is_read = FALSE
+        """
+        cursor.execute(check_notification_sql, 
+                       (member_id, account_id, content_type , content_id))
+        existing_notification = cursor.fetchone()
+        
+        # 如果已經存在就不插入通知進去表
+        if existing_notification:
+            return
+        
+
+        if content_type == 'Reply':
+            
+            parent_sql = """
+                SELECT text, image, video, audio
+                FROM content
+                WHERE content_id = %s
+            """
+            cursor.execute(parent_sql, (post_id,))
+            parent_content_data = cursor.fetchone()
+
+            child_sql = """
+                SELECT text, image, video, audio
+                FROM content
+                WHERE content_id = %s
+            """
+            cursor.execute(child_sql, (content_id,))
+            child_content_data = cursor.fetchone()
+
+            event_data_obj = ContentReplyNotify(
+                parent=NotifyContent(
+                    post_url=f"/member/{account_id}/post/{post_id}",
+                    content_id=post_id,
+                    text=parent_content_data['text'] if parent_content_data else None,
+                    media=Media(
+                        images=parent_content_data.get('image') if parent_content_data else None,
+                        videos=parent_content_data.get('video') if parent_content_data else None,
+                        audios=parent_content_data.get('audio') if parent_content_data else None
+                    )
+                ),
+                children=NotifyContent(
+                    post_url=f"/member/{account_id}/post/{post_id}",
+                    content_id=content_id,
+                    text=child_content_data['text'] if child_content_data else None,
+                    media=Media(
+                        images=child_content_data.get('image') if child_content_data else None,
+                        videos=child_content_data.get('video') if child_content_data else None,
+                        audios=child_content_data.get('audio') if child_content_data else None
+                    )
+                )
+            )
+            event_data_json = event_data_obj.model_dump_json()
+        
+        elif content_type == 'Like':
+            
+            content_sql = """
+                SELECT text, image, video, audio
+                FROM content
+                WHERE content_id = %s
+            """
+            cursor.execute(content_sql, (content_id,))
+            content_data = cursor.fetchone()
+
+            
+            event_data_obj = LikeNotify(
+                parent=NotifyContent(
+                    post_url=f"/member/{account_id}/post/{post_id}",
+                    content_id=content_id,
+                    text=content_data['text'] if content_data else None,
+                    media=Media(
+                        images=content_data.get('image') if content_data else None,
+                        videos=content_data.get('video') if content_data else None,
+                        audios=content_data.get('audio') if content_data else None
+                    )
+                )
+            )
+            event_data_json = event_data_obj.model_dump_json()
+        
+        elif content_type == 'Follow':
+            event_data_json = None
+
+        # 插入通知
+        update_notification_sql = """
+            INSERT INTO notification(
+                member_id, target_id, event_type, event_data, is_read
+            )
+            VALUES(
+                %s, %s, %s, %s, False
+            )
+        """
+        cursor.execute(update_notification_sql, (member_id, account_id, content_type, event_data_json))
+
+        connection.commit()
+    
+    except Exception as e:
+        print(f"Error updating notification: {e}")
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
