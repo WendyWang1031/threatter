@@ -112,6 +112,13 @@ create_notification_table_sql = """
         );
 """
 
+alter_member_relation_table_sql = """
+        ALTER TABLE notification 
+        MODIFY COLUMN event_data JSON NULL
+        ;
+
+"""
+
 
 
 try:
@@ -122,6 +129,7 @@ try:
         cursor.execute(create_content_table_sql)
         cursor.execute(create_likes_table_sql)
         cursor.execute(create_notification_table_sql)
+        cursor.execute(alter_member_relation_table_sql)
 
         db.commit()
 except Exception as e :
