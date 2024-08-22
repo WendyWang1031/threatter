@@ -49,3 +49,22 @@ def security_get_current_user(
     except Exception as e:
         print(f"Token verification failed: {e}")
         return None 
+    
+def security_get_SSE_current_user(
+          token: Optional[HTTPAuthorizationCredentials] = Security(security)) -> Optional[dict] | None:
+    # print("security_get_current_user called")
+    # if token:
+    #     print(f"Token: {token}")
+    # else:
+    #     print("No token provided")
+
+    if token is None:
+        return None
+    try:
+        
+        user_info = security_decode_access_token(token)
+        
+        return user_info
+    except Exception as e:
+        print(f"Token verification failed: {e}")
+        return None 
