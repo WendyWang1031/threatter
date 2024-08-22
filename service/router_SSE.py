@@ -6,14 +6,18 @@ from typing import Optional
 from model.model import *
 from controller.notification import *
 import asyncio
+from service.redis import publish_notification_to_redis ,subscribe_to_notifications
 
 notification_router = APIRouter()
 
-@notification_router.get("/api/notification/stream" , tags=["Notification"])
+@notification_router.get("/api/notification/stream" , 
+                         tags=["Notification"],
+                         summary = "執行 SSE 通知進 Redis",
+                        description= "執行 SSE 通知進 Redis")
 async def stream_notification(token: str = Query(...),
                               ):
     user = security_get_SSE_current_user(token)
-    # print("user:", user)
+    print("user:", user)
     
     if not user :
             error_response = ErrorResponse(error=True, message="User not authenticated")
@@ -23,23 +27,33 @@ async def stream_notification(token: str = Query(...),
                     content=error_response.dict())
             return response
    
+    pubsub = subscribe_to_notifications()
     
     async def event_generator():
         last_created_at = None
         while True :
-            notification_response: JSONResponse = await get_notification(user, page=0)
-            if notification_response.status_code == 200:
-                notification_res = json.loads(notification_response.body.decode('utf-8'))
-                notifications = notification_res.get('data', [])
-                # print("notifications:",notifications)
-                
-                if notifications:
-                    for notification in notifications:
-                        created_at = notification.get('created_at')
-                        
-                        if last_created_at is None or (created_at and created_at > last_created_at):
-                            last_created_at = created_at
-                            yield f"data: {json.dumps(notification)}\n\n"
+
+            message = pubsub.get_message(timeout=5.0)  
+            if message and message['type'] == 'message':
+                notification_data = json.loads(message['data'])
+                yield f"data: {json.dumps(notification_data)}\n\n"
+
+            else:    
+                notification_response: JSONResponse = await get_notification(user, page=0)
+                if notification_response.status_code == 200:
+                    notification_res = json.loads(notification_response.body.decode('utf-8'))
+                    notifications = notification_res.get('data', [])
+                    # print("notifications:",notifications)
+                    
+                    if notifications:
+                        for notification in notifications:
+                            created_at = notification.get('created_at')
+                            
+                            if last_created_at is None or (created_at and created_at > last_created_at):
+                                last_created_at = created_at
+                                yield f"data: {json.dumps(notification)}\n\n"
+                                # 將消息發送到 Redis
+                                publish_notification_to_redis(notification)
             await asyncio.sleep(1)
 
     return StreamingResponse(event_generator() , media_type="text/event-stream")
