@@ -1,5 +1,6 @@
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayFollowerItem } from "./view/view_notification.js";
+import { markAllNotificationsAsRead } from "./controller/controller_notification.js";
 
 // import //   setupIntersectionObserver,
 // "./controller/controller_notification.js";
@@ -9,7 +10,35 @@ document.addEventListener("DOMContentLoaded", async function () {
   setupTabSwitching();
 
   //   setupIntersectionObserver();
+  SSE_test();
+  markAllNotificationsAsRead();
 });
+
+function SSE_test() {
+  const token = localStorage.getItem("userToken");
+
+  if (!token) {
+    console.error("Token not found in localStorage");
+    return;
+  }
+
+  const eventSource = new EventSource(
+    `http://127.0.0.1:8000/api/notification/stream?token=${token}`,
+    {
+      withCredentials: true,
+    }
+  );
+
+  eventSource.onmessage = function (event) {
+    console.log("New notification:", event.data);
+    console.log("EventSource state:", eventSource.readyState);
+  };
+
+  eventSource.onerror = function (event) {
+    console.error("EventSource failed:", event);
+    console.log("EventSource state:", eventSource.readyState);
+  };
+}
 
 let currentPage = 0;
 let hasNextPage = true;
