@@ -6,6 +6,7 @@ import json
 from db.connection_pool import get_db_connection_pool
 from db.check_relation import *
 from db.get_member_data import *
+from service.redis import *
 
 
 
@@ -285,10 +286,21 @@ def db_update_notification(
         cursor.execute(update_notification_sql, (member_id, account_id, content_type, event_data_json))
 
         connection.commit()
-    
+
+        # 將通知發佈到redis
+        notification_res = db_get_notification(account_id, page=0)
+        if notification_res:
+            for notification in notification_res.data:
+                # print("notification:",notification)
+                publish_notification(notification, account_id)
+
+
+
     except Exception as e:
         print(f"Error updating notification: {e}")
         connection.rollback()
     finally:
         cursor.close()
         connection.close()
+
+

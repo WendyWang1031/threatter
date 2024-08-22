@@ -32,7 +32,6 @@ async def stream_notification(token: str = Query(...),
     pubsub = subscribe_notification(member_id)
     
     async def event_generator():
-        last_created_at = None
         while True :
 
             message = pubsub.get_message(timeout=5.0)  
@@ -40,33 +39,6 @@ async def stream_notification(token: str = Query(...),
                 notification_data = json.loads(message['data'])
                 yield f"data: {json.dumps(notification_data)}\n\n"
 
-            else:    
-                notification_response: JSONResponse = await get_notification(user, page=0)
-                if notification_response.status_code == 200:
-                    notification_res = json.loads(notification_response.body.decode('utf-8'))
-                    notifications = notification_res.get('data', [])
-                    # print("notifications:",notifications)
-                    
-                    new_notifications = []
-                    if notifications:
-                        latest_created_at = None
-                        for notification in notifications:
-                            created_at = notification.get('created_at')
-                            
-                            if last_created_at is None or (created_at and created_at > last_created_at):
-                                new_notifications.append(notification)
-                        
-                        if new_notifications:
-                            for notification in new_notifications:
-                                notification_created_at = notification['created_at']  
-                                if latest_created_at is None or notification_created_at > latest_created_at:
-                                    latest_created_at = notification_created_at  
-                            last_created_at = latest_created_at
-                        
-                            for notification in new_notifications:
-                                yield f"data: {json.dumps(notification)}\n\n"
-                                publish_notification(notification, member_id)       
-                                
             await asyncio.sleep(1)
 
     return StreamingResponse(event_generator() , media_type="text/event-stream")
