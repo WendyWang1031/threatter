@@ -464,6 +464,25 @@ section.main-sider-area {
         &:active {
           transform: scale(1.2);
         }
+        i {
+          display: inline-flex;
+
+          justify-content: center;
+          &.has-notifications {
+            position: relative;
+            .notification-dot {
+              display: inline-block;
+              width: 10px;
+              height: 10px;
+              background-color: red;
+              border-radius: 50%;
+
+              position: absolute;
+              top: -5px;
+              right: -10px;
+            }
+          }
+        }
       }
     }
   }

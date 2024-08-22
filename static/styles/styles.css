@@ -416,6 +416,23 @@ section.main-sider-area div.main-sider .sidebar .icon:hover {
 section.main-sider-area div.main-sider .sidebar .icon:active {
   transform: scale(1.2);
 }
+section.main-sider-area div.main-sider .sidebar .icon i {
+  display: inline-flex;
+  justify-content: center;
+}
+section.main-sider-area div.main-sider .sidebar .icon i.has-notifications {
+  position: relative;
+}
+section.main-sider-area div.main-sider .sidebar .icon i.has-notifications .notification-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  top: -5px;
+  right: -10px;
+}
 
 .create-post-btn {
   position: fixed;
