@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   SSE();
 });
 
-function SSE() {
+async function SSE() {
   const token = localStorage.getItem("userToken");
 
   if (!token) {
