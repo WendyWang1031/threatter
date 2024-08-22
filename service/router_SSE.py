@@ -6,7 +6,7 @@ from typing import Optional
 from model.model import *
 from controller.notification import *
 import asyncio
-from service.redis import publish_notification_to_redis ,subscribe_to_notifications
+from service.redis import publish_notification ,subscribe_notification
 
 notification_router = APIRouter()
 
@@ -19,6 +19,7 @@ async def stream_notification(token: str = Query(...),
     user = security_get_SSE_current_user(token)
     print("user:", user)
     
+    
     if not user :
             error_response = ErrorResponse(error=True, message="User not authenticated")
             print("User not authenticated or authentication failed.")
@@ -27,7 +28,8 @@ async def stream_notification(token: str = Query(...),
                     content=error_response.dict())
             return response
    
-    pubsub = subscribe_to_notifications()
+    member_id = user["account_id"]
+    pubsub = subscribe_notification(member_id)
     
     async def event_generator():
         last_created_at = None
@@ -45,15 +47,26 @@ async def stream_notification(token: str = Query(...),
                     notifications = notification_res.get('data', [])
                     # print("notifications:",notifications)
                     
+                    new_notifications = []
                     if notifications:
+                        latest_created_at = None
                         for notification in notifications:
                             created_at = notification.get('created_at')
                             
                             if last_created_at is None or (created_at and created_at > last_created_at):
-                                last_created_at = created_at
+                                new_notifications.append(notification)
+                        
+                        if new_notifications:
+                            for notification in new_notifications:
+                                notification_created_at = notification['created_at']  
+                                if latest_created_at is None or notification_created_at > latest_created_at:
+                                    latest_created_at = notification_created_at  
+                            last_created_at = latest_created_at
+                        
+                            for notification in new_notifications:
                                 yield f"data: {json.dumps(notification)}\n\n"
-                                # 將消息發送到 Redis
-                                publish_notification_to_redis(notification)
+                                publish_notification(notification, member_id)       
+                                
             await asyncio.sleep(1)
 
     return StreamingResponse(event_generator() , media_type="text/event-stream")
