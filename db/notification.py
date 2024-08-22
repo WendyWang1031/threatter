@@ -304,3 +304,24 @@ def db_update_notification(
         connection.close()
 
 
+def db_post_read_notification(member_id: str, current_time: datetime):
+    connection = get_db_connection_pool()
+    cursor = connection.cursor()
+    try:
+        print("db current_time:",current_time)
+        print("db current_user:",member_id)
+
+        update_sql = """
+            UPDATE notification 
+            SET is_read = TRUE
+            WHERE member_id = %s AND created_at <= %s AND is_read = FALSE
+        """
+        cursor.execute(update_sql, (member_id, current_time))
+        connection.commit()
+        return {"message": "All notifications marked as read."}
+    except Exception as e:
+        print(f"Error updating READED notification: {e}")
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()

@@ -231,4 +231,5 @@ class NotifyInfo(BaseModel):
     
 
 
- 
+class NotificationReadRequest(BaseModel):
+    current_time: datetime

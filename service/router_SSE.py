@@ -5,6 +5,7 @@ from service.security import security_get_current_user , security_get_SSE_curren
 from typing import Optional
 from model.model import *
 from controller.notification import *
+from datetime import datetime
 import asyncio
 from service.redis import publish_notification ,subscribe_notification
 
@@ -63,3 +64,17 @@ async def fetch_get_notification(
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")
     ) -> JSONResponse :
     return await get_notification(current_user , page)
+
+
+@notification_router.post("/api/notification/mark_all_read",
+        tags= ["Notification"],
+        summary = "已讀所有最新通知",
+        )
+async def fetch_post_read_notification(
+    request: NotificationReadRequest,
+    current_user :  dict = Depends(security_get_current_user)
+    ) -> JSONResponse :
+    print("request:",request)
+    current_time = request.current_time
+    print("current_time:",current_time)
+    return await post_read_notification(current_time , current_user)
