@@ -5,36 +5,39 @@ import {
 } from "./view/view_notification.js";
 import { markAllNotificationsAsRead } from "./controller/controller_notification.js";
 
-// import //   setupIntersectionObserver,
-// "./controller/controller_notification.js";
-
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
   setupTabSwitching();
 
-  //   setupIntersectionObserver();
+  createObserver();
 
   markAllNotificationsAsRead();
 });
 
+let observerReq;
+let observerAni;
 let currentPage = 0;
 let hasNextPage = true;
 let isWaitingForData = false;
 
-const observer = new IntersectionObserver(
-  (entries) => {
-    const firstEntry = entries[0];
-
-    if (firstEntry.isIntersecting && hasNextPage && !isWaitingForData) {
-      //調用fetch函式的時候使用非同步加載
-      const targetList = document.querySelector(".notify-req-list.active");
-      if (targetList) {
-        fetchAndDisplayFollowReq(targetList);
+function createObserver(targetList, fetchFunction) {
+  return new IntersectionObserver(
+    (entries) => {
+      const firstEntry = entries[0];
+      if (firstEntry.isIntersecting && hasNextPage && !isWaitingForData) {
+        fetchFunction(targetList);
       }
-    }
-  },
-  { threshold: 0.5 }
-);
+    },
+    { threshold: 0.5 }
+  );
+}
+
+function removeNoDataMessage(targetList) {
+  const noDataMessage = targetList.querySelector(".no-data-message");
+  if (noDataMessage) {
+    noDataMessage.remove();
+  }
+}
 
 export function setupTabSwitching() {
   const tabs = document.querySelectorAll(".nav-button");
@@ -61,9 +64,17 @@ export function setupTabSwitching() {
       targetList.style.display = "block";
       targetList.classList.add("active");
 
+      // 取消之前的觀察
+      if (observerReq) observerReq.disconnect();
+      if (observerAni) observerAni.disconnect();
+
+      removeNoDataMessage(targetList);
+
       if (targetListClass === "notify-req-list") {
+        observerReq = createObserver(targetList, fetchAndDisplayFollowReq);
         await fetchAndDisplayFollowReq(targetList);
       } else if (targetListClass === "notify-ani-list") {
+        observerAni = createObserver(targetList, fetchAndDisplayNotification);
         await fetchAndDisplayNotification(targetList);
       }
     });
@@ -75,12 +86,7 @@ async function fetchAndDisplayFollowReq(targetList) {
 
   try {
     isWaitingForData = true;
-    // const response = await fetch(
-    //     `/api/member/${urlAccountId}/follow/fans?page=${currentPage}`,
-    //     {
-    //       headers: headers,
-    //     }
-    //   );
+
     const response = await fetch(
       `/api/follow/member/follow?page=${currentPage}`,
       {
@@ -106,11 +112,11 @@ async function fetchAndDisplayFollowReq(targetList) {
       });
 
       let newItem = document.querySelector(".list-item:last-child");
-      if (lastItem) observer.unobserve(lastItem);
-      if (hasNextPage) {
-        if (newItem) observer.observe(newItem);
+      if (lastItem && observerReq) observerReq.unobserve(lastItem);
+      if (hasNextPage && newItem && observerReq) {
+        observerReq.observe(newItem);
       }
-    } else {
+    } else if (currentPage === 0) {
       hasNextPage = false;
       const noDataMessage = document.createElement("div");
       noDataMessage.className = "no-data-message";
@@ -142,9 +148,9 @@ async function fetchAndDisplayNotification(targetList) {
     const notifyData = await response.json();
     console.log("notifyData:", notifyData);
 
-    targetList.innerHTML = "";
+    // targetList.innerHTML = "";
 
-    let lastItem = document.querySelector(".list-item:last-child");
+    let lastItem = document.querySelector(".like indivisual-list:last-child");
     if (notifyData.data && notifyData.data.length > 0) {
       currentPage++;
       hasNextPage = notifyData.next_page != null;
@@ -154,11 +160,17 @@ async function fetchAndDisplayNotification(targetList) {
         targetList.appendChild(notifyItem);
       });
 
-      let newItem = document.querySelector(".list-item:last-child");
+      let newItem = document.querySelector(".like.indivisual-list:last-child");
       if (lastItem) observer.unobserve(lastItem);
-      if (hasNextPage) {
-        if (newItem) observer.observe(newItem);
+      if (hasNextPage && newItem) {
+        observer.observe(newItem);
       }
+    } else if (currentPage === 0) {
+      hasNextPage = false;
+      const noDataMessage = document.createElement("div");
+      noDataMessage.className = "no-data-message";
+      noDataMessage.textContent = "目前尚無動態通知";
+      targetList.appendChild(noDataMessage);
     }
 
     targetList.style.display = "block";
