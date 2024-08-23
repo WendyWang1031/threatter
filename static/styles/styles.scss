@@ -1948,7 +1948,23 @@ section.notify-area {
           .header-area {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+
+            .hint_area {
+              color: #888;
+
+              i {
+                margin-right: 10px;
+              }
+              i.fa-user-plus {
+                color: #888888;
+              }
+              i.fa-heart {
+                color: #ff0000;
+              }
+              i.fa-reply {
+                color: rgb(0, 79, 159);
+              }
+            }
 
             .profile-pic {
               width: 40px;
@@ -1976,6 +1992,8 @@ section.notify-area {
             .created_at {
               font-size: 12px;
               color: #999;
+              width: 10%;
+              text-align: center;
             }
 
             .list-follow-btn {
@@ -1995,23 +2013,6 @@ section.notify-area {
           .content_area {
             margin-top: 10px;
             margin-left: 50px;
-
-            .hint_area {
-              color: #888;
-              margin-bottom: 5px;
-              i {
-                margin-right: 10px;
-              }
-              i.fa-user-plus {
-                color: #888888;
-              }
-              i.fa-heart {
-                color: #ff0000;
-              }
-              i.fa-reply {
-                color: rgb(0, 79, 159);
-              }
-            }
 
             .content {
               margin-bottom: 5px;

@@ -1748,7 +1748,21 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+}
+.notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area {
+  color: #888;
+}
+.notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area i {
+  margin-right: 10px;
+}
+.notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area i.fa-user-plus {
+  color: #888888;
+}
+.notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area i.fa-heart {
+  color: #ff0000;
+}
+.notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area i.fa-reply {
+  color: rgb(0, 79, 159);
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .profile-pic {
   width: 40px;
@@ -1772,6 +1786,8 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .created_at {
   font-size: 12px;
   color: #999;
+  width: 10%;
+  text-align: center;
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .list-follow-btn {
   background: #fff;
@@ -1787,22 +1803,6 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area {
   margin-top: 10px;
   margin-left: 50px;
-}
-.notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area .hint_area {
-  color: #888;
-  margin-bottom: 5px;
-}
-.notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area .hint_area i {
-  margin-right: 10px;
-}
-.notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area .hint_area i.fa-user-plus {
-  color: #888888;
-}
-.notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area .hint_area i.fa-heart {
-  color: #ff0000;
-}
-.notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area .hint_area i.fa-reply {
-  color: rgb(0, 79, 159);
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .content_area .content {
   margin-bottom: 5px;
