@@ -85,13 +85,13 @@ section.postsContainer {
         "stats";
 
       background-color: $bg-color;
-      border: 1px solid $border-color;
+      border: 0.01px solid $border-color;
       // border-radius: 0 0 10px 10px;
 
       width: 600px;
 
       padding: 20px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 
       .post-header {
         display: flex;
@@ -540,13 +540,13 @@ section.postsContainer {
         "stats";
 
       background-color: $bg-color;
-      border: 1px solid $border-color;
+      border: 0.01px solid $border-color;
       border-radius: 0;
 
       width: 600px;
 
       padding: 20px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 
       .post-header {
         display: flex;
@@ -1240,13 +1240,13 @@ section.single-postsContainer {
         "stats";
 
       background-color: $bg-color;
-      border: 1px solid $border-color;
+      border: 0.01px solid $border-color;
       border-radius: 10px 10px 0 0;
 
       width: 600px;
 
       padding: 20px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 
       .post-header {
         display: flex;
@@ -1397,11 +1397,11 @@ section.reply-header {
     .reply {
       width: 600px;
       background-color: $bg-color;
-      border: 1px solid $border-color;
+      border: 0.01px solid $border-color;
       // border-radius: 10px 10px 0 0;
 
       padding: 20px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
     }
   }
 }
@@ -1420,13 +1420,13 @@ section.single-CommentContainer {
         "stats";
 
       background-color: $bg-color;
-      border: 1px solid $border-color;
+      border: 0.01px solid $border-color;
       border-radius: 0;
 
       width: 600px;
 
       padding: 20px;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 
       .post-header,
       .reply-area-header {
@@ -1555,9 +1555,9 @@ section.single-CommentContainer {
     }
     .reply-area {
       // padding: 10px;
-      border-left: 2px solid #e1e1e1;
+      border-left: 1px solid #e1e1e1;
       margin-left: 20px;
-      padding-left: 20px;
+      padding-left: 30px;
       // background-color: #f9f9f9;
 
       .reply-arear-header .user-info-reply .reply-account_id {

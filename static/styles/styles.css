@@ -67,10 +67,10 @@ section.postsContainer .indivisial-area .post {
   grid-template-columns: 1fr;
   grid-template-areas: "header" "content" "stats";
   background-color: #fff;
-  border: 1px solid #e1e4e8;
+  border: 0.01px solid #e1e4e8;
   width: 600px;
   padding: 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 }
 section.postsContainer .indivisial-area .post .post-header {
   display: flex;
@@ -479,11 +479,11 @@ section.postsContainer .indivisial-area .post {
   grid-template-columns: 1fr;
   grid-template-areas: "header" "content" "stats";
   background-color: #fff;
-  border: 1px solid #e1e4e8;
+  border: 0.01px solid #e1e4e8;
   border-radius: 0;
   width: 600px;
   padding: 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 }
 section.postsContainer .indivisial-area .post .post-header {
   display: flex;
@@ -1101,11 +1101,11 @@ section.single-postsContainer .indivisial-area .post {
   grid-template-columns: 1fr;
   grid-template-areas: "header" "content" "stats";
   background-color: #fff;
-  border: 1px solid #e1e4e8;
+  border: 0.01px solid #e1e4e8;
   border-radius: 10px 10px 0 0;
   width: 600px;
   padding: 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 }
 section.single-postsContainer .indivisial-area .post .post-header {
   display: flex;
@@ -1243,9 +1243,9 @@ section.reply-header .reply-title .no-data .no-data-message {
 section.reply-header .reply-title .reply {
   width: 600px;
   background-color: #fff;
-  border: 1px solid #e1e4e8;
+  border: 0.01px solid #e1e4e8;
   padding: 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 }
 
 section.single-CommentContainer .indivisial-area {
@@ -1257,11 +1257,11 @@ section.single-CommentContainer .indivisial-area .post {
   grid-template-columns: 1fr;
   grid-template-areas: "header" "content" "stats";
   background-color: #fff;
-  border: 1px solid #e1e4e8;
+  border: 0.01px solid #e1e4e8;
   border-radius: 0;
   width: 600px;
   padding: 20px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.01px 0.01px rgba(0, 0, 0, 0.1);
 }
 section.single-CommentContainer .indivisial-area .post .post-header,
 section.single-CommentContainer .indivisial-area .post .reply-area-header {
@@ -1409,9 +1409,9 @@ section.single-CommentContainer .indivisial-area .post .reply-stats .stat span {
   font-size: 14px;
 }
 section.single-CommentContainer .indivisial-area .reply-area {
-  border-left: 2px solid #e1e1e1;
+  border-left: 1px solid #e1e1e1;
   margin-left: 20px;
-  padding-left: 20px;
+  padding-left: 30px;
 }
 section.single-CommentContainer .indivisial-area .reply-area .reply-arear-header .user-info-reply .reply-account_id {
   color: #cbcbcb;
