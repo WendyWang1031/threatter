@@ -39,7 +39,7 @@ def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member
         cursor.execute(update_sql, (total_likes, post_id))
 
         if post_like.like:
-            db_update_notification(member_id, account_id, post_id, post_id, 'Post')
+            db_update_notification(member_id, account_id, post_id, post_id, 'Like')
 
         connection.commit()
         

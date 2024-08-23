@@ -85,17 +85,17 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
             if data['event_type'] == 'Like':
                 event_data = LikeNotify(
                     parent=NotifyContent(
-                        post_url=event_data_dict['post_url'],
-                        content_id=event_data_dict['content_id'],
-                        text=event_data_dict.get('text'),
+                        post_url=event_data_dict['parent']['post_url'],
+                        content_id=event_data_dict['parent']['content_id'],
+                        text=event_data_dict['parent'].get('text'),
                         media=Media(
-                            images=event_data_dict.get('image'),
-                            videos=event_data_dict.get('video'),
-                            audios=event_data_dict.get('audio')
+                            images=event_data_dict['parent'].get('image'),
+                            videos=event_data_dict['parent'].get('video'),
+                            audios=event_data_dict['parent'].get('audio')
                         )
                     )
                 )
-                # print("event_data:",event_data)
+                print("event_data:",event_data)
             
             elif data['event_type'] == 'Reply':
                 event_data = ContentReplyNotify(
@@ -169,6 +169,8 @@ def db_update_notification(
         content_id: str, 
         content_type: str,
         parent_id: Optional[str] = None):
+    
+
     # 如果對自己的操作，不需紀錄
     if member_id == account_id:
         return
@@ -256,21 +258,25 @@ def db_update_notification(
             cursor.execute(content_sql, (content_id,))
             content_data = cursor.fetchone()
 
-            
-            event_data_obj = LikeNotify(
-                parent=NotifyContent(
-                    post_url=f"/member/{account_id}/post/{post_id}",
-                    content_id=content_id,
-                    text=content_data['text'] if content_data else None,
-                    media=Media(
-                        images=content_data.get('image') if content_data else None,
-                        videos=content_data.get('video') if content_data else None,
-                        audios=content_data.get('audio') if content_data else None
+            if content_data:
+                event_data_obj = LikeNotify(
+                    parent=NotifyContent(
+                        post_url=f"/member/{account_id}/post/{post_id}",
+                        content_id=content_id,
+                        text=content_data['text'] if content_data else None,
+                        media=Media(
+                            images=content_data.get('image') if content_data else None,
+                            videos=content_data.get('video') if content_data else None,
+                            audios=content_data.get('audio') if content_data else None
+                        )
                     )
                 )
-            )
-            event_data_json = event_data_obj.model_dump_json()
+                event_data_json = event_data_obj.model_dump_json()
+            else:
+                event_data_json = None
         
+            # print("event_data_json:",event_data_json)
+
         elif content_type == 'Follow':
             event_data_json = None
 
