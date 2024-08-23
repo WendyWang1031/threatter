@@ -699,9 +699,12 @@ section.postsContainer {
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
       .decorator-bar {
-        height: 10px;
-        background: linear-gradient(270deg, #a8a8a8 0%, #c2c2c2 100%);
-        border-radius: 6px 6px 0px 0px;
+        height: 80px;
+        // background: linear-gradient(270deg, #a8a8a8 0%, #c2c2c2 100%);
+        background-image: url("../images/image/threatter.png");
+        background-position: center;
+        background-size: 120%;
+        border-radius: 6px 6px 0 0;
         margin-bottom: 20px;
       }
 
@@ -822,8 +825,11 @@ section.postsContainer {
       width: 100%;
 
       .decorator-bar {
-        height: 10px;
-        background: linear-gradient(270deg, #a8a8a8 0%, #c2c2c2 100%);
+        height: 80px;
+        // background: linear-gradient(270deg, #a8a8a8 0%, #c2c2c2 100%);
+        background-image: url("../images/image/threatter.png");
+        background-position: center;
+        background-size: 120%;
         border-radius: 6px 6px 0 0;
         margin-bottom: 20px;
       }
