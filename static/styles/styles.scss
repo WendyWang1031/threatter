@@ -1951,7 +1951,7 @@ section.notify-area {
 
             .hint_area {
               color: #888;
-
+              text-align: center;
               i {
                 margin-right: 10px;
               }
@@ -2001,7 +2001,7 @@ section.notify-area {
               border: 1px solid #ddd;
               padding: 8px 15px;
               border-radius: 5px;
-              margin-right: 10px;
+              margin-right: 20px;
               cursor: pointer;
 
               &:hover {

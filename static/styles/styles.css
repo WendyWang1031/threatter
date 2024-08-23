@@ -1751,6 +1751,7 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area {
   color: #888;
+  text-align: center;
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .hint_area i {
   margin-right: 10px;
@@ -1794,7 +1795,7 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
   border: 1px solid #ddd;
   padding: 8px 15px;
   border-radius: 5px;
-  margin-right: 10px;
+  margin-right: 20px;
   cursor: pointer;
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .list-follow-btn:hover {
