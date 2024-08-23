@@ -91,6 +91,8 @@ export function setupEventListeners() {
           "signup-email",
           "signup-password"
         );
+        View.setElementDisplay(".signup-mask", "none");
+        View.setElementDisplay(".signin-mask", "flex");
       } else {
         View.updateMessage(".hint-signup-message", result.message, false);
         View.clearInputs(
