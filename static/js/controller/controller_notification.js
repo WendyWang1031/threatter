@@ -16,9 +16,8 @@ export function setupIntersectionObserver() {
 export async function markAllNotificationsAsRead() {
   const token = localStorage.getItem("userToken");
   const currentTime = new Date().toISOString();
-  console.log("currentTime:", currentTime);
+
   const requestBody = { current_time: currentTime };
-  console.log("requestBody:", requestBody);
 
   const response = await fetch("/api/notification/mark_all_read", {
     method: "POST",
@@ -28,7 +27,6 @@ export async function markAllNotificationsAsRead() {
     },
     body: JSON.stringify(requestBody),
   });
-  console.log("response:", response);
 
   if (response.ok) {
     console.log("All notifications marked as read.");

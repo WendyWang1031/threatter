@@ -37,7 +37,6 @@ const observer = new IntersectionObserver(
 );
 
 export function setupTabSwitching() {
-  console.log("here");
   const tabs = document.querySelectorAll(".nav-button");
   const notifyLists = {
     notifyReq: document.querySelector(".notify-req-list"),
