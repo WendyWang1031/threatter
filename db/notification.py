@@ -95,7 +95,7 @@ def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
                         )
                     )
                 )
-                print("event_data:",event_data)
+                # print("event_data:",event_data)
             
             elif data['event_type'] == 'Reply':
                 event_data = ContentReplyNotify(
@@ -314,8 +314,8 @@ def db_post_read_notification(member_id: str, current_time: datetime):
     connection = get_db_connection_pool()
     cursor = connection.cursor()
     try:
-        print("db current_time:",current_time)
-        print("db current_user:",member_id)
+        # print("db current_time:",current_time)
+        # print("db current_user:",member_id)
 
         update_sql = """
             UPDATE notification 

@@ -373,17 +373,15 @@ function generateFollowButton(data) {
 // 格式化時間
 
 function formatTimeToTaipeiTime(utcTime) {
-  console.log("utcTime:", utcTime);
   // 將時間轉乘Date對象
   const createdAtDate = new Date(utcTime + "Z");
-  console.log("createdAtDate (UTC):", createdAtDate);
+
   // 換成台北時間
   const taipeiOffset = 8 * 60; // 台北時間時間差
-  const localOffset = createdAtDate.getTimezoneOffset();
   const taipeiTime = new Date(
     createdAtDate.getTime() + taipeiOffset * 60 * 1000
   );
-  console.log("taipeiTime:", taipeiTime);
+
   // 計算差異
   const now = new Date();
   const diffInMs = now - taipeiTime;

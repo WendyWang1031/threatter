@@ -74,7 +74,6 @@ async def fetch_post_read_notification(
     request: NotificationReadRequest,
     current_user :  dict = Depends(security_get_current_user)
     ) -> JSONResponse :
-    print("request:",request)
+    # print("request:",request)
     current_time = request.current_time
-    print("current_time:",current_time)
     return await post_read_notification(current_time , current_user)
