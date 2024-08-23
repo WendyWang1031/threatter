@@ -1,5 +1,8 @@
 import { PermissionAllIcon } from "./view/view_icon.js";
-import { displayFollowerItem } from "./view/view_notification.js";
+import {
+  displayFollowerItem,
+  displayNotificationItem,
+} from "./view/view_notification.js";
 import { markAllNotificationsAsRead } from "./controller/controller_notification.js";
 
 // import //   setupIntersectionObserver,
@@ -61,8 +64,8 @@ export function setupTabSwitching() {
 
       if (targetListClass === "notify-req-list") {
         await fetchAndDisplayFollowReq(targetList);
-        //   } else if (targetListClass === "notify-ani-list") {
-        //     await fetchAndDisplayFollowAni(targetList);
+      } else if (targetListClass === "notify-ani-list") {
+        await fetchAndDisplayNotification(targetList);
       }
     });
   });
@@ -120,6 +123,49 @@ async function fetchAndDisplayFollowReq(targetList) {
     isWaitingForData = false;
   } catch (error) {
     console.error("Error fetching follower Request:", error);
+    isWaitingForData = false;
+  } finally {
+  }
+}
+
+async function fetchAndDisplayNotification(targetList) {
+  const token = localStorage.getItem("userToken");
+
+  try {
+    isWaitingForData = true;
+
+    const response = await fetch(`/api/notification?page=${currentPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const notifyData = await response.json();
+    console.log("notifyData:", notifyData);
+
+    targetList.innerHTML = "";
+
+    let lastItem = document.querySelector(".list-item:last-child");
+    if (notifyData.data && notifyData.data.length > 0) {
+      currentPage++;
+      hasNextPage = notifyData.next_page != null;
+
+      notifyData.data.forEach((notification) => {
+        const notifyItem = displayNotificationItem(notification);
+        targetList.appendChild(notifyItem);
+      });
+
+      let newItem = document.querySelector(".list-item:last-child");
+      if (lastItem) observer.unobserve(lastItem);
+      if (hasNextPage) {
+        if (newItem) observer.observe(newItem);
+      }
+    }
+
+    targetList.style.display = "block";
+    isWaitingForData = false;
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
     isWaitingForData = false;
   } finally {
   }
