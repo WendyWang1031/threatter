@@ -49,8 +49,7 @@ async def post_read_notification(current_time: datetime ,
                             current_user: dict 
                         ) -> JSONResponse :
     try:
-        print("con current_time:",current_time)
-        print("con current_user:",current_user)
+        
     
         member_id = current_user["account_id"] if current_user else None
         if member_id is None :

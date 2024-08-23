@@ -192,6 +192,7 @@ def db_update_notification(
                        (member_id, account_id, content_type , content_id))
         existing_notification = cursor.fetchone()
         
+        
         # 如果已經存在就不插入通知進去表
         if existing_notification:
             return
@@ -320,9 +321,10 @@ def db_post_read_notification(member_id: str, current_time: datetime):
         update_sql = """
             UPDATE notification 
             SET is_read = TRUE
-            WHERE member_id = %s AND created_at <= %s AND is_read = FALSE
+            WHERE target_id = %s AND created_at <= %s AND is_read = FALSE
         """
         cursor.execute(update_sql, (member_id, current_time))
+
         connection.commit()
         return {"message": "All notifications marked as read."}
     except Exception as e:
