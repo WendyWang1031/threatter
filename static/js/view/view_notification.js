@@ -223,7 +223,9 @@ export function displayNotificationItem(data) {
             <div class="list-user-fullname">${data.user.user.name}</div>
           </div>
           <div class="hint_area">${getHintAreaContent(data)}</div>
-          <div class="created_at">${formatTime(data.created_at)}</div>
+          <div class="created_at">${formatTimeToTaipeiTime(
+            data.created_at
+          )}</div>
         </div>
         ${getContentArea(data)}
       `;
@@ -369,7 +371,43 @@ function generateFollowButton(data) {
 }
 
 // 格式化時間
-function formatTime(isoString) {
-  const date = new Date(isoString);
-  return `${date.getHours()}小時前`;
+
+function formatTimeToTaipeiTime(utcTime) {
+  console.log("utcTime:", utcTime);
+  // 將時間轉乘Date對象
+  const createdAtDate = new Date(utcTime + "Z");
+  console.log("createdAtDate (UTC):", createdAtDate);
+  // 換成台北時間
+  const taipeiOffset = 8 * 60; // 台北時間時間差
+  const localOffset = createdAtDate.getTimezoneOffset();
+  const taipeiTime = new Date(
+    createdAtDate.getTime() + taipeiOffset * 60 * 1000
+  );
+  console.log("taipeiTime:", taipeiTime);
+  // 計算差異
+  const now = new Date();
+  const diffInMs = now - taipeiTime;
+  const diffInSeconds = Math.floor(diffInMs / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInSeconds < 60) {
+    return "剛剛";
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} 分鐘前`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours} 小時前`;
+  } else if (diffInDays < 7) {
+    return `${diffInDays} 天前`;
+  } else {
+    // 超過七天
+    return taipeiTime.toLocaleDateString("zh-TW", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 }
