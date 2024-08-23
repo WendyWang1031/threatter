@@ -78,13 +78,13 @@ export function displayContentElement(post) {
               <div class="media">${mediaHtml}</div>
             </div>
             <div class="post-stats">
-            <div class="stat">
+            <div class="stat like-status">
             <i class="fa fa-heart ${post.like_state ? "liked" : ""}"></i>
             <span>${post.counts.like_counts || 0}</span></div>
-            <div class="stat"><i class="fa fa-comment"></i> <span>${
+            <div class="stat comment-status"><i class="fa fa-comment"></i> <span>${
               post.counts.reply_counts || 0
             }</span></div>
-            <div class="stat"><i class="fa fa-share"></i> <span>${
+            <div class="stat like-share"><i class="fa fa-share"></i> <span>${
               post.counts.forward_counts || 0
             }</span></div>
             </div>`;
@@ -160,10 +160,10 @@ export function displayCommentElement(comment) {
       <div class="media">${mediaHtml}</div>
     </div>
     <div class="post-stats">
-      <div class="stat">
+      <div class="stat like-status">
       <i class="fa fa-heart ${comment.comment.like_state ? "liked" : ""}"></i>
       <span>${counts.like_counts || 0}</span></div>
-      <div class="stat"><i class="fa fa-comment"></i> <span>${
+      <div class="stat comment-status"><i class="fa fa-comment"></i> <span>${
         counts.reply_counts || 0
       }</span></div>
       `;
@@ -231,7 +231,7 @@ function displayReplyElement(reply) {
               }</div>
             </div>
             <div class="reply-stats">
-              <div class="stat">
+              <div class="stat like-status">
               <i class="fa fa-heart ${reply.like_state ? "liked" : ""}"></i>
               <span>${reply.counts.like_counts || 0}</span></div>
             </div>

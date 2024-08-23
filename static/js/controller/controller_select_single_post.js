@@ -11,7 +11,8 @@ export function selectSinglePost() {
       const share = event.target.closest(".fa-share");
 
       const heart = event.target.closest(".fa-heart");
-      if (heart) {
+      const like_count_status = event.target.closest(".like-status");
+      if (heart || like_count_status) {
         return; // 直接返回，不進行後續處理
       }
 

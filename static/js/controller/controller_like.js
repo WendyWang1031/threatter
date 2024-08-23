@@ -6,9 +6,10 @@ export function likePost() {
       if (!token) {
         return;
       }
-      const likeIcon = event.target.closest(".fa-heart");
 
-      if (likeIcon) {
+      const likeStatus = event.target.closest(".like-status");
+
+      if (likeStatus) {
         // console.log("Post clicked via delegation:", like_post);
         event.preventDefault(); // 阻止默認行為
 
@@ -22,6 +23,8 @@ export function likePost() {
           const postId = postIdElement.textContent.trim();
 
           // 檢查當前是否已經點讚（通過檢查圖標顏色或狀態）
+          const likeIcon = likeStatus.querySelector(".fa-heart");
+
           const isLiked = likeIcon.classList.contains("liked");
 
           // 立即更新圖標狀態
@@ -101,12 +104,13 @@ export function likeCommentAndReply() {
         return;
       }
       const likeIcon = event.target.closest(".fa-heart");
+      const like_count_status = event.target.closest(".like-status");
 
-      if (!likeIcon) {
+      if (!likeIcon || !like_count_status) {
         return;
       }
 
-      if (likeIcon) {
+      if (likeIcon || like_count_status) {
         // console.log("Post clicked via delegation:", like_post);
         event.preventDefault(); // 阻止默認行為
 
