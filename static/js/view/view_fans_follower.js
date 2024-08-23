@@ -15,9 +15,15 @@ export function displayOrCloseFansAndFollow() {
   }
 }
 
-export function displayFollowerItem(data) {
+export function displayFollowerItem(data, type) {
   const item = document.createElement("div");
-  item.className = "list-item";
+  if (type === "fans") {
+    item.className = "list-item fans";
+  } else if (type === "followers") {
+    item.className = "list-item followers";
+  } else {
+    item.className = "list-item";
+  }
 
   // 生成頭像的 HTML
   let avatarHtml;

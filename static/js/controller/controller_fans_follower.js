@@ -28,8 +28,22 @@ export function setupIntersectionObserverFansAndFollow(
     }
   });
 
-  observer.observe(fansListContainer);
-  observer.observe(followListContainer);
+  const lastFanItem = fansListContainer.querySelector(
+    ".list-item fans:last-child"
+  );
+  const lastFollowItem = followListContainer.querySelector(
+    ".list-item followers:last-child"
+  );
+
+  if (lastFanItem) observer.observe(lastFanItem);
+  if (lastFollowItem) observer.observe(lastFollowItem);
+}
+
+function removeNoDataMessage(targetList) {
+  const noDataMessage = targetList.querySelector(".no-data");
+  if (noDataMessage) {
+    noDataMessage.remove();
+  }
 }
 
 export async function fetchAndDisplayFans(targetList) {
@@ -44,27 +58,26 @@ export async function fetchAndDisplayFans(targetList) {
   isWaitingForDataFans = true;
 
   try {
-    // const response = await fetch(
-    //     `/api/member/${urlAccountId}/follow/fans?page=${currentPage}`,
-    //     {
-    //       headers: headers,
-    //     }
-    //   );
-    const response = await fetch(`/api/member/${urlAccountId}/follow/fans`, {
-      headers: headers,
-    });
+    const response = await fetch(
+      `/api/member/${urlAccountId}/follow/fans?page=${currentPageFans}`,
+      {
+        headers: headers,
+      }
+    );
     const result = await response.json();
+
+    removeNoDataMessage(targetList);
 
     if (result.data && result.data.length > 0) {
       currentPageFans++;
       hasNextPageFans = result.next_page != null;
 
       result.data.forEach((fan) => {
-        const fanItem = displayFollowerItem(fan);
+        const fanItem = displayFollowerItem(fan, "fans");
         targetList.appendChild(fanItem);
       });
 
-      let newItem = document.querySelector(".list-item:last-child");
+      let newItem = document.querySelector(".list-item fans:last-child");
       if (newItem && hasNextPageFans) observer.observe(newItem);
     } else {
       hasNextPageFans = false;
@@ -97,21 +110,26 @@ export async function fetchAndDisplayFollowers(targetList) {
   isWaitingForDataFollow = true;
 
   try {
-    const response = await fetch(`/api/member/${urlAccountId}/follow/target`, {
-      headers: headers,
-    });
+    const response = await fetch(
+      `/api/member/${urlAccountId}/follow/target?page=${currentPageFollow}`,
+      {
+        headers: headers,
+      }
+    );
     const result = await response.json();
+
+    removeNoDataMessage(targetList);
 
     if (result.data && result.data.length > 0) {
       currentPageFollow++;
       hasNextPageFollow = result.next_page != null;
 
       result.data.forEach((follower) => {
-        const followerItem = displayFollowerItem(follower);
+        const followerItem = displayFollowerItem(follower, "followers");
         targetList.appendChild(followerItem);
       });
 
-      let newItem = document.querySelector(".list-item:last-child");
+      let newItem = document.querySelector(".list-item followers:last-child");
       if (newItem && hasNextPageFollow) observer.observe(newItem);
     } else {
       hasNextPageFollow = false;
