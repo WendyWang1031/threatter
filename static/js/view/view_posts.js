@@ -339,7 +339,10 @@ export function displayMenuBtn() {
         const postId = postIdElement.textContent.trim();
         const accountId = accountIdElement.textContent.trim();
 
-        const postLink = `/member/${accountId}/post/${postId}`;
+        // 抓取當前頁面的前綴的URL並組裝
+        const prefixUrl = window.location.origin;
+        const postLink = `${prefixUrl}/member/${accountId}/post/${postId}`;
+
         navigator.clipboard
           .writeText(postLink)
           .then(() => {
