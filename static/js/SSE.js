@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function () {
   // SSE();
-  initializeSSE();
+  // initializeSSE();
   checkNotifications();
 });
 
