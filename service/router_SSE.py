@@ -7,9 +7,12 @@ from model.model import *
 from controller.notification import *
 from datetime import datetime
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from service.redis import publish_notification ,subscribe_notification
 
 notification_router = APIRouter()
+
+executor = ThreadPoolExecutor(max_workers=10)
 
 @notification_router.get("/api/notification/stream" , 
                          tags=["Notification"],
@@ -31,16 +34,23 @@ async def stream_notification(token: str = Query(...),
    
     member_id = user["account_id"]
     pubsub = subscribe_notification(member_id)
-    
+
+
     async def event_generator():
+        count = 1
         while True :
 
             message = pubsub.get_message(timeout=5.0)  
             if message and message['type'] == 'message':
                 notification_data = json.loads(message['data'])
                 yield f"data: {json.dumps(notification_data)}\n\n"
-
+            print(count)
+            count = count + 1
             await asyncio.sleep(1)
+
+    
+    loop = asyncio.get_event_loop()
+    response = await loop.run_in_executor(executor, event_generator)
 
     return StreamingResponse(event_generator() , media_type="text/event-stream")
 

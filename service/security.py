@@ -44,7 +44,9 @@ def security_get_current_user(
     if token is None:
         return None
     try:  
+        # print(f"start security: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         user_info = security_decode_access_token(token.credentials)
+        # print(f"end security: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         return user_info
     except Exception as e:
         print(f"Token verification failed: {e}")
