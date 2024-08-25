@@ -1,7 +1,10 @@
 from fastapi import *
 from fastapi import Request
+from typing import List
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse ,RedirectResponse
+import asyncio
+import json
 
 ##
 from service.router_search import search_router
@@ -12,6 +15,7 @@ from service.router_follow import follow_router
 from service.router_comment import comment_router
 from service.router_SSE import notification_router
 from service.router_presigned_url import presigned_router
+
 
 
 app = FastAPI()
@@ -25,6 +29,46 @@ app.include_router(follow_router)
 app.include_router(comment_router)
 app.include_router(notification_router)
 app.include_router(presigned_router)
+
+# class ConnectionManager:
+#     def __init__(self):
+#         self.active_connections: List[WebSocket] = []
+
+#     async def connect(self, websocket: WebSocket):
+#         await websocket.accept()
+#         self.active_connections.append(websocket)
+
+#     def disconnect(self, websocket: WebSocket):
+#         self.active_connections.remove(websocket)
+
+#     async def send_personal_message(self, message: str, websocket: WebSocket):
+#         await websocket.send_text(message)
+
+#     async def broadcast(self, message: str):
+#         for connection in self.active_connections:
+#             await connection.send_text(message)
+
+# manager = ConnectionManager()
+
+# @app.websocket("/ws/notification/{user_id}")
+# async def websocket_endpoint(websocket: WebSocket, user_id: str):
+#     await manager.connect(websocket)
+#     pubsub = subscribe_notification(user_id)
+
+#     try:
+#         while True:
+#             try:
+#                 message = pubsub.get_message(timeout=5.0)
+#                 if message and message['type'] == 'message':
+#                     notification_data = json.loads(message['data'])
+#                     await manager.send_personal_message(json.dumps(notification_data), websocket)
+#             except Exception as e:
+#                 print(f"Error processing message: {e}")
+
+#             await asyncio.sleep(1)
+#     except WebSocketDisconnect:
+#         manager.disconnect(websocket)
+#         print(f"User {user_id} disconnected")
 
 # ----------------------------------------------------------
 

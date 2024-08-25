@@ -21,7 +21,7 @@ async def get_notification(current_user: dict ,
             return response
 
         
-        result = db_get_notification(member_id , page)
+        result = db_get_notification(member_id , page, 15)
         if result is None:
             error_response = ErrorResponse(error=True, message="該用戶並無權限調閱")
             response = JSONResponse (

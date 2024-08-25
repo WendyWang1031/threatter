@@ -2,7 +2,7 @@ from model.model import *
 import pymysql.cursors
 from typing import Any
 from db.connection_pool import get_db_connection_pool
-
+from datetime import datetime
 
 def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | None:
     connection = get_db_connection_pool()

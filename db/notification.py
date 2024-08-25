@@ -10,13 +10,11 @@ from service.redis import *
 
 
 
-def db_get_notification(member_id : str , page : int) -> NotificationRes | None:
+def db_get_notification(member_id : str , page : int, limit : int ) -> NotificationRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
-        
-        limit = 15 
         offset = page * limit
      
         select_sql = """
@@ -295,7 +293,7 @@ def db_update_notification(
         connection.commit()
 
         # 將通知發佈到redis
-        notification_res = db_get_notification(account_id, page=0)
+        notification_res = db_get_notification(account_id, page=0, limit=1)
         if notification_res:
             for notification in notification_res.data:
                 # print("notification:",notification)

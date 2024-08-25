@@ -8,7 +8,7 @@ from db.check_relation import *
 from db.check_post import *
 from db.update_counts import *
 from service.security import security_get_current_user
-
+from datetime import datetime
 
 async def create_post_data(post_data : PostCreateReq , current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
     try:
@@ -56,9 +56,11 @@ async def create_post_data(post_data : PostCreateReq , current_user : dict = Dep
     
 async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse :
     try:
+        # print(f"start post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         member_id = current_user["account_id"] if current_user else None
         post_data = db_get_home_post_data(member_id , page)
-        
+        # print(f"end post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+
         if post_data :
             
             response = JSONResponse(

@@ -87,9 +87,9 @@ async def update_member_data(
 async def get_member_data(current_user: Optional[dict] , account_id : str ) -> JSONResponse :
     try:
         member_id = current_user["account_id"] if current_user else None
-       
+        # print(f"start member: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         member_detail = db_get_member_data(member_id , account_id)
-
+        # print(f"end member: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         if member_detail is not None:
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
