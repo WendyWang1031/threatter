@@ -302,6 +302,26 @@ section.create-poster-card .create-poster-container .post-form .form-actions .ac
 section.create-poster-card .create-poster-container .post-form .form-actions .submit-btn i:hover {
   color: #676767;
 }
+section.create-poster-card .create-poster-container .post-form .privacy-select {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding-left: 60px;
+}
+section.create-poster-card .create-poster-container .post-form .privacy-select .privacy-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  color: #9d9d9d;
+}
+section.create-poster-card .create-poster-container .post-form .privacy-select .privacy-options {
+  color: #9d9d9d;
+  width: 70%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+}
 section.create-poster-card .create-poster-container .post-form .create-submit {
   position: absolute;
   right: 20px;
