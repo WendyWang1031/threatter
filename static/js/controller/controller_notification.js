@@ -30,6 +30,10 @@ export async function markAllNotificationsAsRead() {
 
   if (response.ok) {
     console.log("All notifications marked as read.");
+    const notificationDot = document.querySelector(".notification-dot");
+    if (notificationDot) {
+      notificationDot.style.display = "none";
+    }
   } else {
     console.error("Failed to mark notifications as read.");
   }
