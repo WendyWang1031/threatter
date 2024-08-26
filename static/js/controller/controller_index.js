@@ -14,6 +14,7 @@ import {
 } from "../view/view_post_detail.js";
 
 const postHomeURL = "/api/post/home";
+const postHomeRecommendationURL = "/api/post/home/recommendation";
 
 let currentPage = 0;
 let hasNextPage = true;
@@ -51,10 +52,33 @@ async function fetchGetPost() {
     const token = localStorage.getItem("userToken");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    const response = await fetch(`${postHomeURL}?page=${currentPage}`, {
+    //關係推薦貼文
+    let recommendationResponse, recommendationResult;
+    if (token) {
+      recommendationResponse = await fetch(
+        `${postHomeRecommendationURL}?page=${currentPage}`,
+        {
+          headers: headers,
+        }
+      );
+      recommendationResult = await recommendationResponse.json();
+    }
+
+    const postResponse = await fetch(`${postHomeURL}?page=${currentPage}`, {
       headers: headers,
     });
-    const result = await response.json();
+    const postResult = await postResponse.json();
+
+    const result = {
+      data: [],
+      next_page: postResult.next_page,
+    };
+
+    if (recommendationResult && recommendationResult.data.length > 0) {
+      result.data = [...recommendationResult.data, ...postResult.data];
+    } else {
+      result.data = postResult.data;
+    }
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
     if (result && result.data.length > 0) {
