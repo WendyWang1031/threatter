@@ -53,7 +53,9 @@ async function fetchGetPost() {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     //關係推薦貼文
-    let recommendationResponse, recommendationResult;
+    let recommendationResponse,
+      recommendationResult,
+      recommendationDataAvailable = false;
     if (token) {
       recommendationResponse = await fetch(
         `${postHomeRecommendationURL}?page=${currentPage}`,
@@ -62,6 +64,15 @@ async function fetchGetPost() {
         }
       );
       recommendationResult = await recommendationResponse.json();
+      // 檢查推薦貼文的結果是否有誤
+      if (recommendationResult.error) {
+        console.log(recommendationResult.message);
+      } else if (
+        recommendationResult.data &&
+        recommendationResult.data.length > 0
+      ) {
+        recommendationDataAvailable = true;
+      }
     }
 
     const postResponse = await fetch(`${postHomeURL}?page=${currentPage}`, {
@@ -74,7 +85,7 @@ async function fetchGetPost() {
       next_page: postResult.next_page,
     };
 
-    if (recommendationResult && recommendationResult.data.length > 0) {
+    if (recommendationDataAvailable) {
       result.data = [...recommendationResult.data, ...postResult.data];
     } else {
       result.data = postResult.data;
