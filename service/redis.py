@@ -45,6 +45,15 @@ class RedisManager:
         if cls._redis_instance is None:
             raise RuntimeError("Redis instance is not initialized")
         return cls._redis_instance
+    
+    @classmethod
+    async def publish_notification(cls, notification_data: NotifyInfo, member_id: str) -> None:
+        if cls._redis_instance is None:
+            raise RuntimeError("Redis instance is not initialized")
+        
+        redis_channel = f'notifications_channel_{member_id}'
+        notification_dict = notification_data.dict()
+        await cls._redis_instance.publish(redis_channel, json.dumps(notification_dict))
 
     @classmethod
     async def close_redis(cls) -> None:

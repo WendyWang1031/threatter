@@ -40,24 +40,30 @@ async def stream_notification(token: str = Query(...)):
 
 
     async def event_generator():
+        try:
         # count = 1
-        while True :
+            while True :
 
-            # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
-            # message = pubsub.get_message(timeout=5.0)
-            # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
-        
-            # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
-            message = await pubsub.get_message(timeout=5.0)
-            # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
-        
-            if message and message['type'] == 'message':
-                notification_data = json.loads(message['data'])
-                yield f"data: {json.dumps(notification_data)}\n\n"
-            # print(count)
-            # count = count + 1
-            await asyncio.sleep(1)
-
+                # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+                # message = pubsub.get_message(timeout=5.0)
+                # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+            
+                # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+                message = await pubsub.get_message(timeout=5.0)
+                # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+            
+                if message and message['type'] == 'message':
+                    notification_data = json.loads(message['data'])
+                    yield f"data: {json.dumps(notification_data)}\n\n"
+                # print(count)
+                # count = count + 1
+                await asyncio.sleep(1)
+        except Exception as e:
+            print(f"Error in event_generator: {e}")
+        finally:
+            # Clean up: unsubscribe and close pubsub
+            await pubsub.unsubscribe(redis_channel)
+            await pubsub.close()
     
     # loop = asyncio.get_event_loop()
     # response = await loop.run_in_executor(executor, event_generator)
