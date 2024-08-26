@@ -30,8 +30,12 @@ function buildUrl({ accountId, postId, commentId, type }) {
 export function validateForm(type, accountId, postId, commentId) {
   const content = document.querySelector(".post-input").value;
 
-  const privacySelect = document.getElementById("privacy-options");
-  const visibility = privacySelect.value;
+  // 根據 type 設置 visibility
+  let visibility = "public";
+  if (type === "post") {
+    const privacySelect = document.getElementById("privacy-options");
+    visibility = privacySelect.value;
+  }
 
   // 初始媒體類型的值
   let imageFile = null;
