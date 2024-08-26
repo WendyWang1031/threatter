@@ -6,7 +6,7 @@ import json
 from db.connection_pool import get_db_connection_pool
 from db.check_relation import *
 from db.get_member_data import *
-from service.redis import *
+from service.redis import RedisManager
 
 
 
@@ -160,7 +160,7 @@ def db_get_notification(member_id : str , page : int, limit : int ) -> Notificat
 
 
 
-def db_update_notification(
+async def db_update_notification(
         member_id: str, 
         account_id: str, 
         post_id: str, 
@@ -297,7 +297,7 @@ def db_update_notification(
         if notification_res:
             for notification in notification_res.data:
                 # print("notification:",notification)
-                publish_notification(notification, account_id)
+                await RedisManager.publish_notification(notification, account_id)
 
 
 

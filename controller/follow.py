@@ -32,7 +32,7 @@ async def post_follow_target(follow : FollowReq ,
             return response
        
        
-        relation_state , insert_result = db_follow_target(follow , member_id)
+        relation_state , insert_result = await db_follow_target(follow , member_id)
         if insert_result is False:
             error_response = ErrorResponse(error=True, message="Failed to insert private follower's data")
             response = JSONResponse (
@@ -90,7 +90,7 @@ async def post_private_user_res_follow(followAns : FollowAns ,
             return response
           
         # db change relation state
-        relation_state , insert_result = db_private_user_res_follow(followAns , followAns.account_id , member_id)
+        relation_state , insert_result = await db_private_user_res_follow(followAns , followAns.account_id , member_id)
         # check success or fail
         if insert_result is False:
             error_response = ErrorResponse(error=True, message="Failed to insert private follower's data")

@@ -7,7 +7,7 @@ from db.notification import *
 from service.common import *
 
 
-def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id : str , member_id : str) -> bool :
+async def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -38,7 +38,7 @@ def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id
         connection.commit()
 
         if account_id != member_id:
-            db_update_notification(member_id, account_id, post_id, content_id, 'Reply')
+            await db_update_notification(member_id, account_id, post_id, content_id, 'Reply')
         
 
         return True
@@ -51,7 +51,7 @@ def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id
         cursor.close()
         connection.close()
 
-def db_create_reply_data(comment_data : CommentReq , account_id: str , post_id : str , comment_id : str , member_id : str) -> bool :
+async def db_create_reply_data(comment_data : CommentReq , account_id: str , post_id : str , comment_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -87,7 +87,7 @@ def db_create_reply_data(comment_data : CommentReq , account_id: str , post_id :
         connection.commit()
         
         if account_id != member_id:
-            db_update_notification(
+            await db_update_notification(
                 member_id, account_id, post_id, content_id, 'Reply' , comment_id)
 
         

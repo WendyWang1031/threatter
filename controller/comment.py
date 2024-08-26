@@ -29,7 +29,7 @@ async def create_comments(content_data : CommentReq ,
             return response
 
         member_id = current_user["account_id"]    
-        result = db_create_comment_data(content_data , account_id , post_id , member_id)
+        result =await db_create_comment_data(content_data , account_id , post_id , member_id)
         
         count_res = db_update_relpy_counts(post_id)
 
@@ -78,7 +78,7 @@ async def create_replies(content_data : CommentReq ,
             return response
 
         member_id = current_user["account_id"]    
-        result = db_create_reply_data(content_data , account_id , post_id , comment_id , member_id)
+        result =await db_create_reply_data(content_data , account_id , post_id , comment_id , member_id)
         
         count_res = db_update_relpy_counts(comment_id)
 

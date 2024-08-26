@@ -9,7 +9,7 @@ from db.notification import *
 
 RELATION_STATUS_PENDING = "Pending"
 
-def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
+async def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -52,7 +52,7 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
         connection.commit()
         
         
-        db_update_notification(
+        await db_update_notification(
                 member_id, follow.account_id , None , None , 'Follow')
 
         
@@ -66,7 +66,7 @@ def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
         cursor.close()
         connection.close()
 
-def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_id : str) -> FollowMember :
+async def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_id : str) -> FollowMember :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -100,9 +100,9 @@ def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_
         connection.commit()
         
         if followAns.accept:
-            db_update_notification(
+            await db_update_notification(
                     member_id, account_id , None , None , 'Follow')
-            db_update_notification(
+            await db_update_notification(
                 account_id, member_id, None, None, 'Follow')
         
         return relation_state , True
