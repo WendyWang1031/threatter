@@ -8,8 +8,8 @@ from controller.notification import *
 from datetime import datetime
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-from service.redis import publish_notification ,subscribe_notification
-
+# from service.redis import publish_notification ,subscribe_notification
+from service.redis import RedisManager
 notification_router = APIRouter()
 
 executor = ThreadPoolExecutor(max_workers=10)
@@ -18,8 +18,7 @@ executor = ThreadPoolExecutor(max_workers=10)
                          tags=["Notification"],
                          summary = "執行 SSE 通知進 Redis",
                         description= "執行 SSE 通知進 Redis")
-async def stream_notification(token: str = Query(...),
-                              ):
+async def stream_notification(token: str = Query(...)):
     user = security_get_SSE_current_user(token)
     print("user:", user)
     
@@ -31,26 +30,37 @@ async def stream_notification(token: str = Query(...),
                     status_code=status.HTTP_403_FORBIDDEN, 
                     content=error_response.dict())
             return response
-   
-    member_id = user["account_id"]
-    pubsub = subscribe_notification(member_id)
+    
+    redis_channel = f'notifications_channel_{user["account_id"]}'
+    pubsub = RedisManager.get_redis().pubsub()
+    await pubsub.subscribe(redis_channel)
+
+    # member_id = user["account_id"]
+    # pubsub = subscribe_notification(member_id)
 
 
     async def event_generator():
-        count = 1
+        # count = 1
         while True :
 
-            message = pubsub.get_message(timeout=5.0)  
+            # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+            # message = pubsub.get_message(timeout=5.0)
+            # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+        
+            # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+            message = await pubsub.get_message(timeout=5.0)
+            # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
+        
             if message and message['type'] == 'message':
                 notification_data = json.loads(message['data'])
                 yield f"data: {json.dumps(notification_data)}\n\n"
-            print(count)
-            count = count + 1
+            # print(count)
+            # count = count + 1
             await asyncio.sleep(1)
 
     
-    loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(executor, event_generator)
+    # loop = asyncio.get_event_loop()
+    # response = await loop.run_in_executor(executor, event_generator)
 
     return StreamingResponse(event_generator() , media_type="text/event-stream")
 

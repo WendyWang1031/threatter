@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function () {
   // SSE();
-  // initializeSSE();
+  initializeSSE();
   checkNotifications();
 });
 
@@ -61,6 +61,7 @@ async function initializeSSE() {
         sseUrl: "/api/notification/stream",
       });
 
+      //console.log("api/notification/stream");
       sseWorker.onmessage = function (event) {
         const { type, data } = event.data;
 

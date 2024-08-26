@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse ,RedirectResponse
 import asyncio
 import json
+from contextlib import asynccontextmanager
 
 ##
 from service.router_search import search_router
@@ -15,10 +16,17 @@ from service.router_follow import follow_router
 from service.router_comment import comment_router
 from service.router_SSE import notification_router
 from service.router_presigned_url import presigned_router
+from service.redis import RedisManager
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
 
+    # 初始化邏輯
+    await RedisManager.init_redis()
 
-app = FastAPI()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(user_router)
