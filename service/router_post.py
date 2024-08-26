@@ -54,11 +54,11 @@ async def fetch_delete_post(
 @post_router.get("/api/post/home",
         tags= ["Post"],
         response_model = PostListRes , 
-        summary = "顯示首頁貼文",
+        summary = "顯示首頁熱門貼文",
         responses = {
             200:{
                 "model" : PostListRes,
-                "description" : "成功顯示首頁貼文"
+                "description" : "成功顯示首頁熱門貼文"
             },
             500:{
                 "model" : ErrorResponse,
@@ -69,6 +69,25 @@ async def fetch_get_home_post(
     current_user: Optional[dict] = Depends(security_get_current_user),
     page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
     return await get_post_home(current_user , page)
+
+@post_router.get("/api/post/home/recommendation",
+        tags= ["Post"],
+        response_model = PostListRes , 
+        summary = "顯示首頁個人化與追蹤對象貼文",
+        responses = {
+            200:{
+                "model" : PostListRes,
+                "description" : "成功顯示首頁個人化與追蹤對象貼文"
+            },
+            500:{
+                "model" : ErrorResponse,
+                "description" : "伺服器內部錯誤"
+            }
+         })
+async def fetch_get_home_popular_post(
+    current_user: dict = Depends(security_get_current_user),
+    page: int = Query(0, description="下一頁的頁面，如果沒有更多頁為None")) -> JSONResponse :
+    return await get_post_home_personalized_recommendations(current_user , page)
 
 @post_router.get("/api/member/{account_id}/posts",
         tags= ["Post"],
