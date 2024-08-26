@@ -30,6 +30,9 @@ function buildUrl({ accountId, postId, commentId, type }) {
 export function validateForm(type, accountId, postId, commentId) {
   const content = document.querySelector(".post-input").value;
 
+  const privacySelect = document.getElementById("privacy-options");
+  const visibility = privacySelect.value;
+
   // 初始媒體類型的值
   let imageFile = null;
   let videoFile = null;
@@ -56,7 +59,7 @@ export function validateForm(type, accountId, postId, commentId) {
     return false;
   }
   const url = buildUrl({ type, accountId, postId, commentId });
-  submitData(content, imageFile, videoFile, audioFile, url, postId);
+  submitData(content, imageFile, videoFile, audioFile, url, postId, visibility);
   return true;
 }
 
@@ -66,7 +69,8 @@ async function submitData(
   videoFile,
   audioFile,
   url,
-  postId
+  postId,
+  visibility
 ) {
   document.getElementById("loading").classList.remove("hidden");
 
@@ -79,7 +83,7 @@ async function submitData(
         audios: null,
       },
     },
-    visibility: "public",
+    visibility: visibility,
   };
 
   // 如果是新增貼文，設定 post_parent_id
