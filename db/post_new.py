@@ -57,6 +57,137 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
         cursor.close()
         connection.close()
 
+def db_get_personalized_recommendations(
+                        member_id: str,
+                        page : int) -> Optional[PostListRes] | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+        limit = 15
+        offset = page * limit
+
+        
+        
+        sql = """
+            SELECT content.*, 
+                member.name, member.account_id, member.avatar,  
+                likes.like_state,
+                member.visibility, member_relation.relation_state,
+                (content.like_counts * 2 + content.reply_counts * 1) AS popularity_score,
+                CASE 
+                    WHEN member.visibility = 'Private' AND content.visibility = 'Private' THEN 4
+                    WHEN member.visibility = 'Private' AND content.visibility = 'Public' THEN 3
+                    WHEN member.visibility = 'Public' AND content.visibility = 'Private' THEN 2
+                    ELSE 1
+                END AS priority_score
+            FROM content
+            LEFT JOIN member ON content.member_id = member.account_id
+            LEFT JOIN (
+                    SELECT m1.target_id
+                    FROM member_relation m1
+                    INNER JOIN member_relation m2 ON m1.target_id = m2.member_id 
+                        AND m1.member_id = m2.target_id
+                    WHERE m1.member_id = %s AND m1.relation_state = 'Following' 
+                        AND m2.relation_state = 'Following'
+                UNION
+                SELECT m1.target_id
+                    FROM member_relation m1
+                    WHERE m1.member_id = %s 
+                    AND m1.relation_state = 'Following'
+            ) AS mutual_relations ON content.member_id = mutual_relations.target_id
+            LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
+            LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
+            
+            WHERE content.content_type = 'Post'
+            AND content.member_id = mutual_relations.target_id
+            AND content.created_at >= NOW() - INTERVAL %s DAY
+            ORDER BY priority_score DESC, popularity_score DESC, created_at DESC 
+            LIMIT %s OFFSET %s
+        """
+        params = (member_id, member_id, limit+1, offset)
+
+        return db_get_post_data( sql, params, multiple=True)
+
+        
+        
+    except Exception as e:
+        print(f"Error getting home post data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def db_get_popular_posts(member_id: Optional[str],
+                        time_frame: int,
+                        page : int) -> Optional[PostListRes] | None:
+    connection = get_db_connection_pool()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+    try:
+        connection.begin()
+        limit = 15
+        offset = page * limit
+
+        if member_id is None:
+            sql = """
+                SELECT content.*, 
+                    member.name, member.account_id, member.avatar,  
+                    FALSE AS like_state,
+                    (content.like_counts * 2 + content.reply_counts * 1) AS popularity_score
+                FROM content
+                LEFT JOIN member ON content.member_id = member.account_id
+                
+                
+                WHERE content.content_type = 'Post'
+                AND content.visibility = 'Public'
+                AND content.created_at >= NOW() - INTERVAL %s DAY
+                ORDER BY popularity_score DESC, created_at DESC 
+                LIMIT %s OFFSET %s
+            """
+            params = (time_frame, limit+1, offset)
+
+        else:
+            sql = """
+                SELECT content.*, 
+                    member.name, member.account_id, member.avatar,  
+                    likes.like_state,
+                    member.visibility, member_relation.relation_state,
+                    IF(liked_authors.content_id IS NOT NULL, 1, 0) AS liked_author_priority,
+                    (content.like_counts * 2 + content.reply_counts * 1 + IF(liked_authors.content_id IS NOT NULL, 10, 0)) 
+                    AS popularity_score
+                FROM content
+                LEFT JOIN member ON content.member_id = member.account_id
+                LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
+                LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
+                LEFT JOIN (
+                    SELECT DISTINCT likes.content_id
+                    FROM likes
+                    INNER JOIN content ON likes.content_id = content.content_id
+                    WHERE likes.member_id = %s AND content.content_type = 'Post'
+                ) AS liked_authors ON content.member_id = liked_authors.content_id
+                
+                WHERE content.content_type = 'Post'
+                AND content.visibility = 'Public'
+                AND content.created_at >= NOW() - INTERVAL %s DAY
+                ORDER BY popularity_score DESC, created_at DESC 
+                LIMIT %s OFFSET %s
+            """
+            params = (member_id, member_id, member_id, time_frame, limit+1, offset)
+
+        return db_get_post_data( sql, params, multiple=True)
+
+        
+        
+    except Exception as e:
+        print(f"Error getting home post data details: {e}")
+        connection.rollback()
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
 def db_create_post_data(post_data : PostCreateReq , member_id : str ) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
