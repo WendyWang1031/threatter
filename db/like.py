@@ -5,7 +5,7 @@ from db.connection_pool import get_db_connection_pool
 from db.notification import *
 
 
-def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member_id : str) -> bool :
+async def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -39,7 +39,7 @@ def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member
         cursor.execute(update_sql, (total_likes, post_id))
 
         if post_like.like:
-            db_update_notification(member_id, account_id, post_id, post_id, 'Like')
+            await db_update_notification(member_id, account_id, post_id, post_id, 'Like')
 
         connection.commit()
         
@@ -53,7 +53,7 @@ def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member
         cursor.close()
         connection.close()
 
-def db_like_comment_or_reply(account_id : str , post_id : str , comment_like : LikeReq , comment_id : str , member_id : str) -> bool :
+async def db_like_comment_or_reply(account_id : str , post_id : str , comment_like : LikeReq , comment_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
@@ -94,7 +94,7 @@ def db_like_comment_or_reply(account_id : str , post_id : str , comment_like : L
         cursor.execute(update_sql, (total_likes, comment_id, content_type))
 
         if comment_like.like:
-            db_update_notification(member_id, account_id, post_id, comment_id, content_type)
+            await db_update_notification(member_id, account_id, post_id, comment_id, content_type)
 
 
         connection.commit()
