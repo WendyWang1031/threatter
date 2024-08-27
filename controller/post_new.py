@@ -58,7 +58,7 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
     try:
         # print(f"start post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         member_id = current_user["account_id"] if current_user else None
-        post_data = db_get_popular_posts(member_id , 30 , page)
+        post_data = db_get_popular_posts(member_id , 5 , page)
         # print(f"end post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
 
         if post_data :

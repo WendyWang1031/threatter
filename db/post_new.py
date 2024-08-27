@@ -101,12 +101,12 @@ def db_get_personalized_recommendations(
             
             WHERE content.content_type = 'Post'
             AND content.member_id = mutual_relations.target_id
-            AND content.created_at >= NOW() - INTERVAL 30 DAY
+            AND content.created_at >= NOW() - INTERVAL 5 DAY
             ORDER BY priority_score DESC, popularity_score DESC, created_at DESC 
             LIMIT %s OFFSET %s
         """
         params = (member_id, member_id, member_id, member_id, limit+1, offset)
-
+    
         return db_get_post_data( sql, params, multiple=True)
 
         
@@ -162,6 +162,20 @@ def db_get_popular_posts(member_id: Optional[str],
                 LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
                 LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
                 LEFT JOIN (
+                    SELECT m1.target_id
+                    FROM member_relation m1
+                    INNER JOIN member_relation m2 ON m1.target_id = m2.member_id 
+                        AND m1.member_id = m2.target_id
+                    WHERE m1.member_id = %s AND m1.relation_state = 'Following' 
+                        AND m2.relation_state = 'Following'
+                    UNION
+                    SELECT m1.target_id
+                    FROM member_relation m1
+                    WHERE m1.member_id = %s 
+                    AND m1.relation_state = 'Following'
+                ) AS mutual_relations ON content.member_id = mutual_relations.target_id
+                
+                LEFT JOIN (
                     SELECT DISTINCT likes.content_id
                     FROM likes
                     INNER JOIN content ON likes.content_id = content.content_id
@@ -169,12 +183,26 @@ def db_get_popular_posts(member_id: Optional[str],
                 ) AS liked_authors ON content.member_id = liked_authors.content_id
                 
                 WHERE content.content_type = 'Post'
-                AND content.visibility = 'Public'
+                AND (content.visibility = 'Public' 
+                     OR (content.visibility = 'Private' AND content.member_id IN (
+                         SELECT target_id FROM (
+                             SELECT m1.target_id
+                             FROM member_relation m1
+                             INNER JOIN member_relation m2 ON m1.target_id = m2.member_id 
+                                AND m1.member_id = m2.target_id
+                             WHERE m1.member_id = %s AND m1.relation_state = 'Following'
+                             UNION
+                             SELECT m1.target_id
+                             FROM member_relation m1
+                             WHERE m1.member_id = %s 
+                             AND m1.relation_state = 'Following'
+                         ) AS subquery
+                     )))
                 AND content.created_at >= NOW() - INTERVAL %s DAY
                 ORDER BY popularity_score DESC, created_at DESC 
                 LIMIT %s OFFSET %s
             """
-            params = (member_id, member_id, member_id, time_frame, limit+1, offset)
+            params = (member_id, member_id, member_id, member_id, member_id, member_id, member_id, time_frame, limit+1, offset)
 
         return db_get_post_data( sql, params, multiple=True)
 
