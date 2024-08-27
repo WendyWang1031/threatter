@@ -100,12 +100,13 @@ def db_get_personalized_recommendations(
             LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
             
             WHERE content.content_type = 'Post'
-            AND content.member_id = mutual_relations.target_id
+            AND (content.member_id = %s
+            OR content.member_id = mutual_relations.target_id)
             AND content.created_at >= NOW() - INTERVAL 5 DAY
             ORDER BY priority_score DESC, popularity_score DESC, created_at DESC 
             LIMIT %s OFFSET %s
         """
-        params = (member_id, member_id, member_id, member_id, limit+1, offset)
+        params = (member_id, member_id, member_id, member_id, member_id, limit+1, offset)
     
         return db_get_post_data( sql, params, multiple=True)
 
