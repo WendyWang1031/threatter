@@ -47,6 +47,42 @@ class RedisManager:
         return cls._redis_instance
     
     @classmethod
+    async def cache_popular_posts(cls,  page: int, posts: List[dict], expiration: int = 600) -> None:
+        redis_key = f"popular_posts:page_{page}"
+        
+        if cls._redis_instance is None:
+            raise RuntimeError("Redis instance is not initialized")
+        
+        async with cls._redis_instance.pipeline() as pipe:
+            for post in posts['data']:
+                post_id = post["post_id"]
+                post_data = json.dumps(post)
+                pipe.hset(redis_key, post_id, post_data)
+            pipe.expire(redis_key, expiration)  
+            await pipe.execute()
+
+    @classmethod
+    async def get_popular_posts(cls, page: int) -> List[dict]:
+        redis_key = f"popular_posts:page_{page}"
+        
+        if cls._redis_instance is None:
+            raise RuntimeError("Redis instance is not initialized")
+        
+        posts = await cls._redis_instance.hgetall(redis_key)
+        post_list = []
+        if posts:
+            for post_id, post_data in posts.items():
+                post_id = post_id.decode('utf-8')
+                post_data = post_data.decode('utf-8')
+
+                post_dict = json.loads(post_data)
+                post_dict["post_id"] = post_id
+                post_list.append(post_dict)
+
+        return post_list
+
+    
+    @classmethod
     async def publish_notification(cls, notification_data: NotifyInfo, member_id: str) -> None:
         if cls._redis_instance is None:
             raise RuntimeError("Redis instance is not initialized")

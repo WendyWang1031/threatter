@@ -9,6 +9,19 @@ from db.check_post import *
 from db.update_counts import *
 from service.security import security_get_current_user
 from datetime import datetime
+from service.redis import RedisManager
+
+from datetime import datetime
+
+def convert_datetime_to_string(dt: datetime) -> str:
+    return dt.isoformat()
+
+def convert_post_data(post_data):
+    if 'data' in post_data and isinstance(post_data['data'], list):
+        for post in post_data['data']:
+            if 'created_at' in post and isinstance(post['created_at'], datetime):
+                post['created_at'] = convert_datetime_to_string(post['created_at'])
+    return post_data
 
 async def create_post_data(post_data : PostCreateReq , current_user : dict = Depends(security_get_current_user)) -> JSONResponse :
     try:
@@ -58,14 +71,39 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
     try:
         # print(f"start post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         member_id = current_user["account_id"] if current_user else None
-        post_data = db_get_popular_posts(member_id , 5 , page)
+        
         # print(f"end post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
-
+        
+        cached_posts = await RedisManager.get_popular_posts(page)
+        if cached_posts:
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "cached": True,
+                    "next_page": page + 1 if len(cached_posts) > 15 else None,
+                    "data": cached_posts
+                }
+            )
+        
+        post_data = db_get_popular_posts(member_id , 5 , page)
+        print(f"post_data type: {type(post_data)}, content: {post_data}")
+        
         if post_data :
+            posts_to_cache = post_data.dict() if hasattr(post_data, 'dict') else post_data
+            posts_to_cache = convert_post_data(posts_to_cache)
+
+            await RedisManager.cache_popular_posts(page, posts_to_cache)
+
+            next_page = page + 1 if len(posts_to_cache) > 15 else None
             
+
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
-            content=json.loads(post_data.json())
+            content={
+                    "cached": False,
+                    "next_page": next_page,
+                    "data": posts_to_cache
+                }
             )
             return response
             
