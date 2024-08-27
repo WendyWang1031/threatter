@@ -18,6 +18,7 @@ def convert_datetime_to_string(dt: datetime) -> str:
 
 def convert_post_data(post_data):
     if 'data' in post_data and isinstance(post_data['data'], list):
+        # print("post_data['data']:",post_data['data'])
         for post in post_data['data']:
             if 'created_at' in post and isinstance(post['created_at'], datetime):
                 post['created_at'] = convert_datetime_to_string(post['created_at'])
@@ -90,7 +91,9 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
         
         if post_data :
             posts_to_cache = post_data.dict() if hasattr(post_data, 'dict') else post_data
+            # print(f"posts_to_cache before type: {type(posts_to_cache)}, content: {posts_to_cache}")
             posts_to_cache = convert_post_data(posts_to_cache)
+            # print(f"posts_to_cache after type: {type(posts_to_cache)}, content: {posts_to_cache}")
 
             await RedisManager.cache_popular_posts(page, posts_to_cache)
 
