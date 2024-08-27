@@ -123,7 +123,7 @@ def daily_post_and_interact():
 
 daily_post_and_interact()
 
-if __name__ == "__main__":
+if __name__ == "__app__":
     scheduler = BlockingScheduler()
     
     # 測試腳本的執行時間
