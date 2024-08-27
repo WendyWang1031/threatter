@@ -56,6 +56,7 @@ async function fetchGetPost() {
     let recommendationResponse,
       recommendationResult,
       recommendationDataAvailable = false;
+
     if (token) {
       recommendationResponse = await fetch(
         `${postHomeRecommendationURL}?page=${currentPage}`,
@@ -64,6 +65,7 @@ async function fetchGetPost() {
         }
       );
       recommendationResult = await recommendationResponse.json();
+
       // 檢查推薦貼文的結果是否有誤
       if (recommendationResult.error) {
         console.log(recommendationResult.message);
