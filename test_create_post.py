@@ -3,8 +3,12 @@ import time
 import requests
 from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
+import os
 
-base_url = "http://127.0.0.1:8000"
+environment = os.getenv("ENVIRONMENT", "local")
+base_url = os.getenv("BASE_URL", "http://127.0.0.1:8000")
+
+print(f"Running in {environment} environment with base URL: {base_url}")
 
 users = [
     {"account_id": "p1", "password": "p1"},
@@ -18,24 +22,26 @@ users = [
 ]
 
 post_templates = [
-    "你那裡的天氣如何呢？",
-    "我想上來看看看有沒有新消息！",
-    "一個字毀掉一部電影",
-    "這裡講政治，會發生什麼事情？",
-    "推薦一部你看過最喜歡的電影",
-    "一句話，遇到已讀不回怎麼辦？",
-    "一句話，遇到不讀不回怎麼辦？",
-    "不懂就問，後端工程師平常在幹嘛？",
-    "不懂就問，前端工程師平常在幹嘛？",
-    "不懂就問，nginx是什麼？",
-    "麥當勞最好吃非薯餅、雞塊莫屬",
-    "有誰沒被摩絲漢堡雞塊燙過？",
-    "這裡有誰是轉職成工程師的呢？",
-    "真是太神奇了～傑克！",
-    "據說這裡可以看人吵架，我要的血流成河在哪",
-    "聽說ikea甜甜圈燈很難買，有誰成功購買到？",
-    "江蕙復出！？",
-    "I人？E人？都幾？",
+    "1你那裡的天氣如何呢？",
+    "2我想上來看看看有沒有新消息！",
+    "3一個字毀掉一部電影",
+    "4這裡講政治，會發生什麼事情？",
+    "5推薦一部你看過最喜歡的電影",
+    "6推薦一本你看過最喜歡的書",
+    "7一句話，遇到已讀不回怎麼辦？",
+    "8一句話，遇到不讀不回怎麼辦？",
+    "9不懂就問，後端工程師平常在幹嘛？",
+    "10不懂就問，前端工程師平常在幹嘛？",
+    "11不懂就問，nginx是什麼？",
+    "12麥當勞最好吃的是非薯餅、雞塊莫屬",
+    "13有誰沒被摩絲漢堡的雞塊燙過？",
+    "14這裡有誰是轉職成工程師的呢？",
+    "15真是太神奇了～傑克！",
+    "16據說這裡可以看人吵架，我要的血流成河在哪",
+    "17聽說ikea甜甜圈燈很難買，有誰成功購買到？",
+    "18江蕙復出！？",
+    "19I人？E人？都幾？",
+    "20有推薦的 Podcast 嗎？",
 
 ]
 
@@ -53,10 +59,15 @@ def login(user):
     else:
         print(f"Failed to log in for {user['account_id']}")
 
-def post_content(user):
+def post_content(user, used_templates):
     url = f"{base_url}/api/post"
     headers = {"Authorization": f"Bearer {user['token']}"}
-    content = random.choice(post_templates)
+    
+    # 確保貼文內容不重複
+    content = None
+    while content is None or content in used_templates:
+        content = random.choice(post_templates)
+    used_templates.add(content)
     
     data = {
         "post_parent_id": None,
@@ -87,6 +98,9 @@ def post_content(user):
     
 
 def like_and_post(user, post_id, account_id):
+    if user["account_id"] == account_id:
+        return
+    
     url_like = f"{base_url}/api/member/{account_id}/post/{post_id}/like"
     headers = {"Authorization": f"Bearer {user['token']}"}
     payload = {"like": True}
@@ -102,6 +116,7 @@ def like_and_post(user, post_id, account_id):
 
 def daily_post_and_interact():
     post_ids = []
+    used_templates = set()
 
     # 登入每個用戶
     for user in users:
@@ -109,7 +124,7 @@ def daily_post_and_interact():
 
     # 每個用戶發文
     for user in users:
-        post_id = post_content(user)
+        post_id = post_content(user , used_templates)
         if post_id:
             post_ids.append(post_id)
         time.sleep(random.randint(1, 5))  # 發文間隔
@@ -121,13 +136,13 @@ def daily_post_and_interact():
                 like_and_post(user, post_id, post_account_id)
                 time.sleep(random.randint(1, 3))  # 按讚間隔
 
-daily_post_and_interact()
+# daily_post_and_interact()
 
-if __name__ == "__app__":
+if __name__ == "__main__":
     scheduler = BlockingScheduler()
     
     # 測試腳本的執行時間
-    scheduler.add_job(daily_post_and_interact, 'cron', hour=6, minute=0)
+    scheduler.add_job(daily_post_and_interact, 'cron', hour=23, minute=59)
     
     print("Starting scheduled tasks...")
     scheduler.start()
