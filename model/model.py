@@ -31,6 +31,7 @@ class ServiceError(BaseModel):
 # 共用
 class SuccessfulRes(BaseModel):
     success : bool = Field(..., description = "成功")
+    post_id : str = Field(..., description = "P-deg12312")
     
 
 # Member 會員

@@ -27,15 +27,15 @@ async def create_post_data(post_data : PostCreateReq , current_user : dict = Dep
             return response
 
         member_id = current_user["account_id"]    
-        result = db_create_post_data(post_data , member_id)
+        result , post_id = db_create_post_data(post_data , member_id)
     
         count_res = db_update_forward_counts(post_data.post_parent_id)
 
         if result is True and count_res is True:
-            success_response = SuccessfulRes(success=True)
+            success_response = SuccessfulRes(success=True, post_id = post_id)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
-            content=success_response.dict()
+            content=success_response.dict() 
             )
             return response
         else:

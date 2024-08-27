@@ -210,7 +210,7 @@ def db_create_post_data(post_data : PostCreateReq , member_id : str ) -> bool :
         
         connection.commit()
         
-        return True
+        return True , content_id
     
     except Exception as e:
         print(f"Error inserting post Data: {e}")
