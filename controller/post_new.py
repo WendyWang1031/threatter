@@ -218,7 +218,7 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
             return response
         
         elif relation is True:
-            post_data = db_get_member_post_data(account_id , page)
+            post_data = db_get_member_post_data(member_id , account_id , page)
             if post_data: 
                 response = JSONResponse(
                     status_code = status.HTTP_200_OK,

@@ -278,7 +278,7 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
         cursor.close()
         connection.close()
 
-def db_get_member_post_data(account_id : str , page : int) -> Optional[PostListRes] | None:
+def db_get_member_post_data(member_id : str , account_id : str , page : int) -> Optional[PostListRes] | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -288,19 +288,41 @@ def db_get_member_post_data(account_id : str , page : int) -> Optional[PostListR
 
         limit = 15 
         offset = page * limit
+        
+        if member_id == account_id:
 
-        
-        sql = """select content.* ,
-            member.name , member.account_id , member.avatar,  
-            likes.like_state
-        FROM content
-        
-        Left Join member on content.member_id = member.account_id
-        Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
-        WHERE content.member_id = %s AND content.content_type = 'Post'
-        ORDER BY created_at DESC LIMIT %s OFFSET %s
+            sql = """
+            select content.* ,
+                member.name , member.account_id , member.avatar,  
+                likes.like_state
+            FROM content
+            
+            Left Join member on content.member_id = member.account_id
+            Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+            WHERE content.member_id = %s AND content.content_type = 'Post'
+            ORDER BY created_at DESC LIMIT %s OFFSET %s
         """
-        params = (account_id, account_id, limit+1, offset)
+            params = (account_id, account_id, limit+1, offset)
+        
+        else:
+            sql = """
+            select content.* ,
+                member.name , member.account_id , member.avatar,  
+                likes.like_state
+            FROM content
+            
+            LEFT JOIN member on content.member_id = member.account_id
+            LEFT JOIN likes on content.content_id = likes.content_id AND likes.member_id = %s
+            LEFT JOIN member_relation ON content.member_id = member_relation.member_id AND member_relation.target_id = %s
+            WHERE content.member_id = %s 
+                AND content.content_type = 'Post'
+                AND (content.visibility = 'Public' 
+                    OR (content.visibility = 'Private' AND 
+                        (member_relation.relation_state = 'Following')))
+            ORDER BY created_at DESC LIMIT %s OFFSET %s
+            """
+            params = (account_id, member_id, account_id, limit+1, offset)
+        
         return db_get_post_data(sql, params, multiple=True)
 
     
