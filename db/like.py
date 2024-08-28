@@ -94,7 +94,9 @@ async def db_like_comment_or_reply(account_id : str , post_id : str , comment_li
         cursor.execute(update_sql, (total_likes, comment_id, content_type))
 
         if comment_like.like:
-            await db_update_notification(member_id, account_id, post_id, comment_id, content_type)
+            print("member_id:",member_id)
+            print("account_id:",account_id)
+            await db_update_notification(member_id, account_id, post_id, comment_id, "Like")
 
 
         connection.commit()
