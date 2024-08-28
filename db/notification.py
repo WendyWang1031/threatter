@@ -171,13 +171,14 @@ async def db_update_notification(
         is_private_accept: Optional[bool] = False,
         follow_status: Optional[str] = "Pending"):
     
-
     # 如果對自己的操作，不需紀錄
     if member_id == account_id:
         return
     
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    event_data_json = None
 
     try:
         # 先檢查是否已經存在未讀的相同通知
@@ -290,6 +291,14 @@ async def db_update_notification(
                 event_data_obj = {
                     "status": follow_status,
                 }
+            event_data_json = json.dumps(event_data_obj)
+
+        if event_data_obj is None:
+            raise ValueError(f"Failed to create event_data_obj for {content_type}")
+
+        if hasattr(event_data_obj, 'model_dump_json'):
+            event_data_json = event_data_obj.model_dump_json()
+        else:
             event_data_json = json.dumps(event_data_obj)
 
         # 插入通知

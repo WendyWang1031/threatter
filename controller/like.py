@@ -84,30 +84,50 @@ async def post_comment_or_reply_like(comment_like : LikeReq ,
 
         member_id = current_user["account_id"] 
 
-        target_exist_result = db_check_target_exist_or_not(account_id)
-        if target_exist_result is False:
+        # target_exist_result = db_check_target_exist_or_not(account_id)
+        # if target_exist_result is False:
+        #     error_response = ErrorResponse(error=True, message="資料庫並不存在該用戶資料")
+        #     response = JSONResponse (
+        #         status_code=status.HTTP_404_NOT_FOUND, 
+        #         content=error_response.dict())
+        #     return response
+        
+        # post_exist_result = db_check_post_exist_or_not(account_id , post_id)
+        # if post_exist_result is False:
+        #     error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文資料")
+        #     response = JSONResponse (
+        #         status_code=status.HTTP_404_NOT_FOUND, 
+        #         content=error_response.dict())
+        #     return response
+        
+        # comment_exist_result = db_check_comment_exist_or_not(post_id , comment_id)
+        # if comment_exist_result is False:
+        #     error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文底下留言資料")
+        #     response = JSONResponse (
+        #         status_code=status.HTTP_404_NOT_FOUND, 
+        #         content=error_response.dict())
+        #     return response
+
+        check_results = db_check_existence_and_relations(account_id, post_id, comment_id, member_id)
+        if not check_results.get("user_exists"):
             error_response = ErrorResponse(error=True, message="資料庫並不存在該用戶資料")
             response = JSONResponse (
                 status_code=status.HTTP_404_NOT_FOUND, 
                 content=error_response.dict())
             return response
-        
-        post_exist_result = db_check_post_exist_or_not(account_id , post_id)
-        if post_exist_result is False:
+        if post_id and not check_results.get("post_exists"):
             error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文資料")
             response = JSONResponse (
                 status_code=status.HTTP_404_NOT_FOUND, 
                 content=error_response.dict())
             return response
-        
-        comment_exist_result = db_check_comment_exist_or_not(post_id , comment_id)
-        if comment_exist_result is False:
+        if comment_id and not check_results.get("comment_exists") and not check_results.get("reply_exists"):
             error_response = ErrorResponse(error=True, message="資料庫並不存在該貼文底下留言資料")
             response = JSONResponse (
                 status_code=status.HTTP_404_NOT_FOUND, 
                 content=error_response.dict())
             return response
-        
+
         
         total_counts =await db_like_comment_or_reply(account_id , post_id , comment_like , comment_id , member_id)
         
