@@ -269,11 +269,26 @@ function getContentArea(data) {
       parentText = "[多媒體內容]";
     }
   }
+
   if (data.event_type === "Follow") {
+    let followText = "";
+    switch (data.event_data.status) {
+      case "Pending":
+        followText = "提出追蹤請求";
+        break;
+      case "Following":
+        followText = "已追蹤您";
+        break;
+      case "Accepted":
+        followText = "已接受您的追蹤請求";
+        break;
+      default:
+        followText = "已追蹤您";
+    }
     return `
-      <div class="content_area">
-        <div class="content">已追蹤您</div>
-      </div>
+    <div class="content_area">
+      <div class="content">${followText}</div>
+    </div>
       `;
   } else if (data.event_type === "Like" || data.event_type === "Reply") {
     return `
