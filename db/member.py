@@ -88,7 +88,7 @@ def db_update_member_data(member_id : str  , member_data : MemberUpdateReq ) -> 
                 avatar = COALESCE(NULLIF(%s, ''), avatar)
             where account_id = %s
         """
-        cursor.execute(sql , ( data_tuple ))
+        cursor.execute(sql ,  data_tuple )
     
         connection.commit()
         
