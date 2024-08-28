@@ -93,11 +93,15 @@ async def db_like_comment_or_reply(account_id : str , post_id : str , comment_li
         """
         cursor.execute(update_sql, (total_likes, comment_id, content_type))
 
-        if comment_like.like:
-            print("member_id:",member_id)
-            print("account_id:",account_id)
-            await db_update_notification(member_id, account_id, post_id, comment_id, "Like")
+        # 確認該留言是否是自己
+        comment_owner_sql = """
+            SELECT member_id FROM content WHERE content_id = %s
+        """
+        cursor.execute(comment_owner_sql, (comment_id,))
+        comment_owner = cursor.fetchone()
 
+        if comment_like.like and comment_owner['member_id'] != member_id:
+            await db_update_notification(member_id, account_id, post_id, comment_id, "Like")
 
         connection.commit()
 
