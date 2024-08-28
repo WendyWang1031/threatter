@@ -3,6 +3,12 @@ FROM python:3.10
 # 設定工作目錄
 WORKDIR /threatter
 
+# 安装 ImageMagick 和 FFmpeg
+RUN apt-get update && apt-get install -y \
+    imagemagick \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
 # 複製 requirements.txt 到容器中
 COPY requirements.txt .
 
