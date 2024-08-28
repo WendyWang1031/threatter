@@ -16,6 +16,7 @@ class PostGetResponse(BaseModel):
 class PresignedUrlRequest(BaseModel):
     file_name: str
     file_type: str
+    file_key: Optional[str]
 
 # error
 class ErrorResponse(BaseModel):
