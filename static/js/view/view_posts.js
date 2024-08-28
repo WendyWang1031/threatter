@@ -23,7 +23,7 @@ export function displayContentElement(post) {
   // 文字內容
   const textContent =
     post.content && post.content.text
-      ? post.content.text.replace(/\n/g, "<br>")
+      ? convertUrlsToLinks(post.content.text)
       : "";
 
   // 媒體內容
@@ -39,10 +39,10 @@ export function displayContentElement(post) {
 
   // 影片
   if (media.videos) {
-    mediaHtml += `<video controls>
-                      <source src="${media.videos}" type="video/mp4">
-                      Your browser does not support the video tag.
-                    </video>`;
+    mediaHtml += `<video controls autoplay muted loop>
+                    <source src="${media.videos}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>`;
   }
 
   // 音軌
@@ -119,14 +119,17 @@ export function displayCommentElement(comment) {
     ? `<img src="${avatar}" alt="${account_id}'s avatar" class="profile-pic">`
     : `<i class="fa-regular fa-circle-user profile-pic"></i>`;
 
-  const textContent = text.replace(/\n/g, "<br>");
+  const textContent = convertUrlsToLinks(text);
 
   // 媒體內容
   let mediaHtml = "";
   if (media?.images)
     mediaHtml += `<img src="${media.images}" alt="Post Image" />`;
   if (media?.videos)
-    mediaHtml += `<video controls><source src="${media.videos}" type="video/mp4">Your browser does not support the video tag.</video>`;
+    mediaHtml += `<video controls autoplay muted loop>
+                    <source src="${media.videos}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>`;
   if (media?.audios)
     mediaHtml += `<audio controls><source src="${media.audios}" type="audio/mpeg">Your browser does not support the audio element.</audio>`;
 
@@ -199,8 +202,20 @@ function displayReplyElement(reply) {
   // 文字內容
   const textContent =
     reply.content && reply.content.text
-      ? reply.content.text.replace(/\n/g, "<br>")
+      ? convertUrlsToLinks(reply.content.text)
       : "";
+
+  // 媒體內容
+  let mediaHtml = "";
+  if (reply.content.media?.images)
+    mediaHtml += `<img src="${reply.content.media.images}" alt="Post Image" />`;
+  if (reply.content.media?.videos)
+    mediaHtml += `<video controls autoplay muted loop>
+                    <source src="${reply.content.media.videos}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>`;
+  if (reply.content.media?.audios)
+    mediaHtml += `<audio controls><source src="${media.audios}" type="audio/mpeg">Your browser does not support the audio element.</audio>`;
 
   replyElement.innerHTML = `
             <div class="reply-area-header">
@@ -226,6 +241,7 @@ function displayReplyElement(reply) {
             </div>
             <div class="reply-content">
               <div class="text">${textContent}</div>
+              <div class="media">${mediaHtml}</div>
               <div class="post_id reply_id" style="display: none">${
                 reply.comment_id
               }</div>
@@ -376,4 +392,13 @@ function formatTimeToTaipeiTime(utcTime) {
   } else {
     return `${diffInDays} 天前`;
   }
+}
+
+function convertUrlsToLinks(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text
+    .replace(urlRegex, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    })
+    .replace(/\n/g, "<br>");
 }
