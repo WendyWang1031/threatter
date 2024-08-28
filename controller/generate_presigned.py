@@ -6,6 +6,8 @@ from db.post_new import *
 from botocore.config import Config
 from dotenv import load_dotenv
 import os
+import subprocess
+
 
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')  
@@ -63,3 +65,12 @@ async def generate_presigned_url(file_name: str , file_type: str):
         return {"presigned_url": presigned_url, "cdn_url": cdn_url}
     else:
         raise HTTPException(status_code=500, detail="Failed to generate URLs")
+
+
+def process_image_with_imagemagick(input_path: str, output_path: str, width: int, height: int):
+    try:
+        command = f"convert {input_path} -resize {width}x{height} {output_path}"
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"ImageMagick processing failed: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Image processing failed.")
