@@ -107,7 +107,7 @@ async def db_private_user_res_follow(followAns : FollowAns , account_id: str , m
             await db_update_notification(
                 account_id, member_id, None, None, 'Follow', None, True, 'Following')
         
-        return relation_state , True
+        return target_relation_state , True
     
     except Exception as e:
         print(f"Error update private follow: {e}")
