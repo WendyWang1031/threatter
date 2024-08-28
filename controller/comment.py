@@ -31,7 +31,7 @@ async def create_comments(content_data : CommentReq ,
         member_id = current_user["account_id"]    
         result =await db_create_comment_data(content_data , account_id , post_id , member_id)
         
-        count_res = db_update_reply_counts(post_id)
+        count_res = db_update_total_comment_count(post_id , None)
 
         if result is True and count_res is True:
             success_response = SuccessfulRes(success=True)
