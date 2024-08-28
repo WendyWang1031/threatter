@@ -26,9 +26,11 @@ async def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember
             if target_visibility == "Private":
                 relation_state = RELATION_STATUS_PENDING
                 target_relation_state = "PendingBeingFollow"
+                follow_status = "Pending"
             else:
                 relation_state = "Following"
                 target_relation_state = "BeingFollow"
+                follow_status = "Following"
         else:
             relation_state = "None"
             target_relation_state = "None"
@@ -51,9 +53,9 @@ async def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember
 
         connection.commit()
         
-        
-        await db_update_notification(
-                member_id, follow.account_id , None , None , 'Follow')
+        if follow.follow:
+            await db_update_notification(
+                    member_id, follow.account_id , None , None , 'Follow' , None , False , follow_status)
 
         
         return relation_state ,  True 
@@ -101,9 +103,9 @@ async def db_private_user_res_follow(followAns : FollowAns , account_id: str , m
         
         if followAns.accept:
             await db_update_notification(
-                    member_id, account_id , None , None , 'Follow')
+                member_id, account_id, None, None, 'Follow', None, True, 'Accepted')
             await db_update_notification(
-                account_id, member_id, None, None, 'Follow')
+                account_id, member_id, None, None, 'Follow', None, True, 'Following')
         
         return relation_state , True
     

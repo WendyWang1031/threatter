@@ -207,7 +207,8 @@ class NotifyContent(BaseModel):
 
  ## 對象
 class NotifyMember(BaseModel): 
-    follow_type: str = Field(..., example="privateAllow, followYou") 
+    follow_type: str = Field(..., example="privateAllow, followYou")
+    status: str = Field(..., example="privateAllow, followYou")
     
  ## 回覆
 class ContentReplyNotify(BaseModel):
