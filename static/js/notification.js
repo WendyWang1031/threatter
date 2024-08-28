@@ -12,19 +12,32 @@ document.addEventListener("DOMContentLoaded", async function () {
   createObserver();
 
   markAllNotificationsAsRead();
+
+  const defaultTab = document.querySelector(".nav-button.active");
+  if (defaultTab) {
+    defaultTab.click();
+  }
 });
+
+let currentPageReq = 0;
+let currentPageAni = 0;
+let hasNextPageReq = true;
+let hasNextPageAni = true;
+let isWaitingForDataReq = false;
+let isWaitingForDataAni = false;
 
 let observerReq;
 let observerAni;
-let currentPage = 0;
-let hasNextPage = true;
-let isWaitingForData = false;
 
 function createObserver(targetList, fetchFunction) {
   return new IntersectionObserver(
     (entries) => {
       const firstEntry = entries[0];
-      if (firstEntry.isIntersecting && hasNextPage && !isWaitingForData) {
+      if (
+        firstEntry.isIntersecting &&
+        !isWaitingForDataReq &&
+        !isWaitingForDataAni
+      ) {
         fetchFunction(targetList);
       }
     },
@@ -85,10 +98,10 @@ async function fetchAndDisplayFollowReq(targetList) {
   const token = localStorage.getItem("userToken");
 
   try {
-    isWaitingForData = true;
+    isWaitingForDataReq = true;
 
     const response = await fetch(
-      `/api/follow/member/follow?page=${currentPage}`,
+      `/api/follow/member/follow?page=${currentPageReq}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -103,8 +116,8 @@ async function fetchAndDisplayFollowReq(targetList) {
 
     let lastItem = document.querySelector(".list-item:last-child");
     if (followReqData.data && followReqData.data.length > 0) {
-      currentPage++;
-      hasNextPage = followReqData.next_page != null;
+      currentPageReq++;
+      hasNextPageReq = followReqData.next_page != null;
 
       followReqData.data.forEach((followerReq) => {
         const fanItem = displayFollowerItem(followerReq);
@@ -113,11 +126,11 @@ async function fetchAndDisplayFollowReq(targetList) {
 
       let newItem = document.querySelector(".list-item:last-child");
       if (lastItem && observerReq) observerReq.unobserve(lastItem);
-      if (hasNextPage && newItem && observerReq) {
+      if (hasNextPageReq && newItem && observerReq) {
         observerReq.observe(newItem);
       }
-    } else if (currentPage === 0) {
-      hasNextPage = false;
+    } else if (currentPageReq === 0) {
+      hasNextPageReq = false;
       const noDataMessage = document.createElement("div");
       noDataMessage.className = "no-data-message";
       noDataMessage.textContent = "目前尚無要求追蹤的對象清單";
@@ -125,10 +138,10 @@ async function fetchAndDisplayFollowReq(targetList) {
     }
 
     targetList.style.display = "block";
-    isWaitingForData = false;
+    isWaitingForDataReq = false;
   } catch (error) {
     console.error("Error fetching follower Request:", error);
-    isWaitingForData = false;
+    isWaitingForDataReq = false;
   } finally {
   }
 }
@@ -137,9 +150,9 @@ async function fetchAndDisplayNotification(targetList) {
   const token = localStorage.getItem("userToken");
 
   try {
-    isWaitingForData = true;
+    isWaitingForDataAni = true;
 
-    const response = await fetch(`/api/notification?page=${currentPage}`, {
+    const response = await fetch(`/api/notification?page=${currentPageAni}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -152,8 +165,8 @@ async function fetchAndDisplayNotification(targetList) {
 
     let lastItem = document.querySelector(".like indivisual-list:last-child");
     if (notifyData.data && notifyData.data.length > 0) {
-      currentPage++;
-      hasNextPage = notifyData.next_page != null;
+      currentPageAni++;
+      hasNextPageAni = notifyData.next_page != null;
 
       notifyData.data.forEach((notification) => {
         const notifyItem = displayNotificationItem(notification);
@@ -161,12 +174,12 @@ async function fetchAndDisplayNotification(targetList) {
       });
 
       let newItem = document.querySelector(".like.indivisual-list:last-child");
-      if (lastItem) observer.unobserve(lastItem);
-      if (hasNextPage && newItem) {
-        observer.observe(newItem);
+      if (lastItem) observerAni.unobserve(lastItem);
+      if (hasNextPageAni && newItem) {
+        observerAni.observe(newItem);
       }
     } else if (currentPage === 0) {
-      hasNextPage = false;
+      hasNextPageAni = false;
       const noDataMessage = document.createElement("div");
       noDataMessage.className = "no-data-message";
       noDataMessage.textContent = "目前尚無動態通知";
@@ -174,10 +187,10 @@ async function fetchAndDisplayNotification(targetList) {
     }
 
     targetList.style.display = "block";
-    isWaitingForData = false;
+    isWaitingForDataAni = false;
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    isWaitingForData = false;
+    isWaitingForDataAni = false;
   } finally {
   }
 }
