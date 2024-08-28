@@ -1758,9 +1758,9 @@ section.fans-follow {
 
 section.notify-area {
   display: flex;
-  align-items: center;
+  // align-items: center;
   justify-content: center;
-  width: 100%;
+  // width: 100%;
 
   .notify-header {
     display: flex;
@@ -1935,10 +1935,6 @@ section.notify-area {
 }
 
 .notify-area {
-  margin-left: 100px;
-  padding: 20px;
-  width: calc(100% - 120px);
-
   .notify-header {
     width: 100%;
     background-color: #f9f9f9;

@@ -1588,9 +1588,7 @@ section.fans-follow .follower-container .follower-lists .follower-list .list-ite
 
 section.notify-area {
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: 100%;
 }
 section.notify-area .notify-header {
   display: flex;
@@ -1735,11 +1733,6 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
   transform: scale(1.1);
 }
 
-.notify-area {
-  margin-left: 100px;
-  padding: 20px;
-  width: calc(100% - 120px);
-}
 .notify-area .notify-header {
   width: 100%;
   background-color: #f9f9f9;
