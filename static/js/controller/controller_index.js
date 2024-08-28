@@ -70,7 +70,7 @@ async function fetchGetPost() {
       if (recommendationResult.error) {
         console.log(recommendationResult.message);
       } else if (
-        recommendationResult.data &&
+        Array.isArray(recommendationResult.data) &&
         recommendationResult.data.length > 0
       ) {
         recommendationDataAvailable = true;
@@ -82,16 +82,19 @@ async function fetchGetPost() {
     });
     const postResult = await postResponse.json();
 
+    if (!Array.isArray(postResult.data)) {
+      console.warn(
+        "postResult.data is not an array, defaulting to empty array."
+      );
+      postResult.data = [];
+    }
+
     const result = {
-      data: [],
+      data: recommendationDataAvailable
+        ? [...recommendationResult.data, ...postResult.data]
+        : postResult.data,
       next_page: postResult.next_page,
     };
-
-    if (recommendationDataAvailable) {
-      result.data = [...recommendationResult.data, ...postResult.data];
-    } else {
-      result.data = postResult.data;
-    }
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
     if (result && result.data.length > 0) {
