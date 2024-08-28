@@ -5,7 +5,7 @@ export async function getPresignedUrl(file_name, file_type) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ file_name, file_type }),
+      body: JSON.stringify({ file_name, file_type, file_key: null }),
     });
     if (!response.ok) {
       throw new Error("Network response was not ok.");
@@ -139,12 +139,39 @@ export async function uploadMediaFile(file) {
 
   try {
     const urls = await getPresignedUrl(file.name, file.type);
+    console.log(`File uploaded to S3: ${urls.cdn_url}`);
 
     await uploadFileToS3(urls.presigned_url, file);
 
-    return urls.cdn_url;
+    const processedImageUrl = await processImageOnServer(
+      urls.file_key,
+      file.type
+    );
+    console.log(`Processed file URL: ${processedImageUrl}`);
+
+    return processedImageUrl || urls.cdn_url;
   } catch (error) {
     console.log(`Error uploading ${file.type}: ${error.message}`);
+    return null;
+  }
+}
+
+export async function processImageOnServer(file_key, file_type) {
+  try {
+    const response = await fetch("/api/post/process-and-upload-image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ file_key, file_type }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to process image on server.");
+    }
+    const data = await response.json();
+    return data.cdn_url;
+  } catch (error) {
+    console.error("Error processing image on server:", error);
     return null;
   }
 }
