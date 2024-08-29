@@ -1257,7 +1257,7 @@ section.single-postsContainer .indivisial-area .message {
 }
 
 section.reply-header .reply-title {
-  display: grid;
+  display: flex;
   justify-content: center;
 }
 section.reply-header .reply-title .no-data {
