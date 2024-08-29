@@ -59,8 +59,7 @@ async def stream_notification(token: str = Query(...)):
                 count = count + 1
                 # 每 15 秒發送一次心跳
                 if count >= 15:
-                    a = {"type":"other"}
-                    yield f"data: {json.dumps(a)}\n\n" 
+                    yield f": ping\n\n" 
                     count = 0  # 重置計數器
                 await asyncio.sleep(1)
         except Exception as e:
