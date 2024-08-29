@@ -25,7 +25,7 @@ def db_get_post_data(query_sql: str, params: tuple, multiple: bool = True) -> Op
 
         if multiple:
             limit = params[-2]  # 請看傳進來的參數為筆數上限
-            page = int((params[-1])/limit) # 請看傳進來的參數為頁數
+            page = int((params[-1])/(limit-1)) # 請看傳進來的參數為頁數
             return _generate_post_list(post_data, limit, page)
         else:
             return _generate_single_post(post_data)
