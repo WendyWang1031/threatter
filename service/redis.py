@@ -53,12 +53,20 @@ class RedisManager:
         if cls._redis_instance is None:
             raise RuntimeError("Redis instance is not initialized")
         
+        next_page = posts.get("next_page")
+        # print(f"Caching next_page: {next_page}")  
+        data_to_cache = posts.get("data", [])
+
+        # print(f"Caching page {page} with next_page {next_page} and data length {len(data_to_cache)}")
+        
         async with cls._redis_instance.pipeline() as pipe:
-            for post in posts['data']:
+            for post in data_to_cache:
                 post_id = post["post_id"]
                 post_data = json.dumps(post)
                 pipe.hset(redis_key, post_id, post_data)
+        
             pipe.expire(redis_key, expiration)  
+            pipe.set(f"{redis_key}:next_page", str(next_page) if next_page is not None else "null", ex=expiration)
             await pipe.execute()
 
     @classmethod
@@ -70,6 +78,8 @@ class RedisManager:
         
         posts = await cls._redis_instance.hgetall(redis_key)
         post_list = []
+        next_page = None
+
         if posts:
             for post_id, post_data in posts.items():
                 post_id = post_id.decode('utf-8')
@@ -78,8 +88,15 @@ class RedisManager:
                 post_dict = json.loads(post_data)
                 post_dict["post_id"] = post_id
                 post_list.append(post_dict)
-
-        return post_list
+            
+            next_page_raw = await cls._redis_instance.get(f"{redis_key}:next_page")
+            # print(f"Retrieved next_page from cache: {next_page_raw.decode('utf-8') if next_page_raw else 'None'}")
+            if next_page_raw is not None and next_page_raw.decode('utf-8') != "null":
+                next_page = int(next_page_raw.decode('utf-8'))
+        
+        # print(f"Retrieving page {page} with next_page {next_page} and data length {len(post_list)}")
+        
+        return post_list, next_page
 
     
     @classmethod

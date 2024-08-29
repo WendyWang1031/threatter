@@ -75,19 +75,20 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
         
         # print(f"end post: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
         
-        cached_posts = await RedisManager.get_popular_posts(page)
+        cached_posts, cached_next_page = await RedisManager.get_popular_posts(page)
+        # print("posts_to_cache:",cached_posts)
         if cached_posts:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content={
                     "cached": True,
-                    "next_page": page + 1 if len(cached_posts) > 15 else None,
+                    "next_page": cached_next_page,
                     "data": cached_posts
                 }
             )
         
-        post_data = db_get_popular_posts(member_id , 5 , page)
-        print(f"post_data type: {type(post_data)}, content: {post_data}")
+        post_data = db_get_popular_posts(member_id , 60 , page)
+        # print(f"post_data type: {type(post_data)}, content: {post_data}")
         
         if post_data :
             posts_to_cache = post_data.dict() if hasattr(post_data, 'dict') else post_data
@@ -97,9 +98,9 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
 
             await RedisManager.cache_popular_posts(page, posts_to_cache)
 
-            next_page = page + 1 if len(posts_to_cache) > 15 else None
+            next_page = posts_to_cache.get("next_page")
             
-
+            # print("without cache posts_to_cache:",posts_to_cache)
             response = JSONResponse(
             status_code = status.HTTP_200_OK,
             content={
@@ -108,6 +109,7 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
                     "data": posts_to_cache
                 }
             )
+            
             return response
             
         else:
