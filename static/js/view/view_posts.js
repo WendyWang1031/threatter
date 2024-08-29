@@ -84,9 +84,7 @@ export function displayContentElement(post) {
             <div class="stat comment-status"><i class="fa fa-comment"></i> <span>${
               post.counts.reply_counts || 0
             }</span></div>
-            <div class="stat like-share"><i class="fa fa-share"></i> <span>${
-              post.counts.forward_counts || 0
-            }</span></div>
+            
             </div>`;
 
   indivisial_postElement.appendChild(postElement);
