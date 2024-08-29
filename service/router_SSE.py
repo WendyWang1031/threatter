@@ -41,7 +41,7 @@ async def stream_notification(token: str = Query(...)):
 
     async def event_generator():
         try:
-        # count = 1
+            count = 1
             while True :
 
                 # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
@@ -55,8 +55,12 @@ async def stream_notification(token: str = Query(...)):
                 if message and message['type'] == 'message':
                     notification_data = json.loads(message['data'])
                     yield f"data: {json.dumps(notification_data)}\n\n"
-                # print(count)
-                # count = count + 1
+                
+                count = count + 1
+                # 每 15 秒發送一次心跳
+                if count >= 15:
+                    yield f": ping\n\n"  
+                    count = 0  # 重置計數器
                 await asyncio.sleep(1)
         except Exception as e:
             print(f"Error in event_generator: {e}")
