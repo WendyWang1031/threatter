@@ -47,7 +47,7 @@ class RedisManager:
         return cls._redis_instance
     
     @classmethod
-    async def cache_popular_posts(cls,  page: int, posts: List[dict], expiration: int = 600) -> None:
+    async def cache_popular_posts(cls,  page: int, posts: dict, expiration: int = 600) -> None:
         redis_key = f"popular_posts:page_{page}"
         
         if cls._redis_instance is None:
@@ -70,7 +70,7 @@ class RedisManager:
             await pipe.execute()
 
     @classmethod
-    async def get_popular_posts(cls, page: int) -> List[dict]:
+    async def get_popular_posts(cls, page: int):
         redis_key = f"popular_posts:page_{page}"
         
         if cls._redis_instance is None:
