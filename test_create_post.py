@@ -150,7 +150,7 @@ def daily_post_and_interact():
                 like_and_post(user, post_id, post_account_id)
                 time.sleep(random.randint(1, 3))  # 按讚間隔
 
-# daily_post_and_interact()
+daily_post_and_interact()
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler()
