@@ -395,10 +395,46 @@ function formatTimeToTaipeiTime(utcTime) {
 }
 
 function convertUrlsToLinks(text) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text
-    .replace(urlRegex, (url) => {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    })
-    .replace(/\n/g, "<br>");
+  const urlRegex = /https?:\/\/[^\s]+/g;
+
+  return text.replace(urlRegex, function (url) {
+    // 檢查是否為 YouTube 連結
+    if (url.includes("youtube.com/watch?v=") || url.includes("youtu.be/")) {
+      return generateYouTubeEmbed(url);
+    }
+
+    // 如果不是 YouTube 連結，直接轉換為可點擊的超連結
+    return `<a href="${url}" target="_blank">${url}</a>`;
+  });
+}
+
+function generateYouTubeEmbed(url) {
+  let videoId = null;
+
+  // 檢查是否為標準 YouTube 連結
+  if (url.includes("youtube.com/watch?v=")) {
+    const urlParams = new URLSearchParams(new URL(url).search);
+    videoId = urlParams.get("v");
+  }
+  // 檢查是否為 YouTube 短網址
+  else if (url.includes("youtu.be/")) {
+    const urlObject = new URL(url);
+    videoId = urlObject.pathname.split("/")[1];
+  }
+
+  if (videoId) {
+    return `
+      <div class="youtube-container">
+        <iframe 
+          width="560" 
+          height="315" 
+          src="https://www.youtube.com/embed/${videoId}" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>`;
+  }
+
+  return url;
 }
