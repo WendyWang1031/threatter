@@ -11,11 +11,13 @@ export function displayCreatePostAccount() {
 }
 
 export function displayMemberDetail(data) {
-  const accountIdSpan = document.querySelector(".account_id");
+  const accountIdSpan = document.querySelector(".create_content_account_id");
 
   accountIdSpan.textContent = data.account_id;
   if (data.avatar) {
-    const avatarCreatePost = document.querySelector(".profile-pic-create-post");
+    const avatarCreatePost = document.querySelector(
+      ".profile-pic-create-content"
+    );
     if (avatarCreatePost) {
       const imgCreatePost = document.createElement("img");
       imgCreatePost.src = data.avatar;
