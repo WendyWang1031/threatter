@@ -49,7 +49,7 @@ async def stream_notification(token: str = Query(...)):
                 # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
             
                 # print(f"start get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
-                message = await pubsub.get_message(timeout=5.0)
+                message = await pubsub.get_message()
                 # print(f"end get_message: {datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}")
             
                 if message and message['type'] == 'message':
@@ -59,7 +59,8 @@ async def stream_notification(token: str = Query(...)):
                 count = count + 1
                 # 每 15 秒發送一次心跳
                 if count >= 15:
-                    yield f": ping\n\n"  
+                    a = {"type":"other"}
+                    yield f"data: {json.dumps(a)}\n\n" 
                     count = 0  # 重置計數器
                 await asyncio.sleep(1)
         except Exception as e:
