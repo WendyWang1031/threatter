@@ -12,6 +12,7 @@ DB_HAVE_NO_COMMENT_DATA_ERROR = "No COMMENT data have been found"
 DB_HAVE_NO_NOTIFICATION_DATA_ERROR = "No Notification data have been found"
 
 FAILED_UPDATE_DATA_ERROR = "FAILED to update data"
+FAILED_GET_DATA_ERROR = "FAILED to get data"
 
 
 def bad_request_error_response(message :str):
