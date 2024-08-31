@@ -12,7 +12,6 @@ async def get_notification(current_user: dict ,
                             page : int ,
                         ) -> JSONResponse :
     try:
-    
         member_id = current_user["account_id"] if current_user else None
         if member_id is None :
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
@@ -34,8 +33,6 @@ async def post_read_notification(current_time: datetime ,
                             current_user: dict 
                         ) -> JSONResponse :
     try:
-        
-    
         member_id = current_user["account_id"] if current_user else None
         if member_id is None :
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
