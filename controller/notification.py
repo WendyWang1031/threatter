@@ -19,7 +19,7 @@ async def get_notification(current_user: dict ,
                                             
         result = db_get_notification(member_id , page, 15)
         if result is None:
-            return data_not_found_error_response(USER_HAVE_NO_DATA_ERROR)
+            return data_not_found_error_response(DB_HAVE_NO_NOTIFICATION_DATA_ERROR)
         
         response = JSONResponse(
         status_code = status.HTTP_200_OK,
@@ -43,7 +43,7 @@ async def post_read_notification(current_time: datetime ,
         
         result = db_post_read_notification(member_id , current_time)
         if result is None:
-            return data_not_found_error_response(USER_HAVE_NO_DATA_ERROR)
+            return data_not_found_error_response(DB_HAVE_NO_NOTIFICATION_DATA_ERROR)
 
         response = JSONResponse(
         status_code = status.HTTP_200_OK,

@@ -5,7 +5,18 @@ from model.model import *
 
 
 USER_NOT_AUTHENTICATED_ERROR = "User not authenticated"
-USER_HAVE_NO_DATA_ERROR = "No data have been found"
+
+DB_HAVE_NO_USER_DATA_ERROR = "No USER data have been found"
+DB_HAVE_NO_POST_DATA_ERROR = "No POST data have been found"
+DB_HAVE_NO_NOTIFICATION_DATA_ERROR = "No Notification data have been found"
+
+
+def bad_request_error_response(message :str):
+    error_response = ErrorResponse(error=True, message=message)
+    response = JSONResponse (
+        status_code=status.HTTP_400_BAD_REQUEST, 
+        content=error_response.dict())
+    return response
 
 def forbidden_error_response(message :str):
     error_response = ErrorResponse(error=True, message=message)
