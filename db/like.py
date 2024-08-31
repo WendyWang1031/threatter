@@ -37,12 +37,12 @@ async def db_like_post(account_id : str , post_like : LikeReq , post_id : str , 
             WHERE content_id = %s AND content_type = 'Post'
         """
         cursor.execute(update_sql, (total_likes, post_id))
-
+        
+        connection.commit()
+        
         if post_like.like:
             await db_update_notification(member_id, account_id, post_id, post_id, 'Like')
 
-        connection.commit()
-        
         return total_likes
     
     except Exception as e:
