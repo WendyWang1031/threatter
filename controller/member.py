@@ -49,8 +49,6 @@ async def update_member_data(
 async def get_member_data(current_user: Optional[dict] , account_id : str ) -> JSONResponse :
     try:
         member_id = current_user["account_id"] if current_user else None
-        if member_id is None :
-            return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
 
         member_detail = db_get_member_data(member_id , account_id)
         
