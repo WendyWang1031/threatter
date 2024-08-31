@@ -13,6 +13,7 @@ DB_HAVE_NO_NOTIFICATION_DATA_ERROR = "No Notification data have been found"
 
 FAILED_UPDATE_DATA_ERROR = "FAILED to update data"
 FAILED_GET_DATA_ERROR = "FAILED to get data"
+FAILED_UPDATE_MEMBER_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
 
 
 def bad_request_error_response(message :str):
