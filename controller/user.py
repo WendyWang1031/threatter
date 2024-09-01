@@ -1,6 +1,7 @@
 from model.model import *
 from fastapi.responses import JSONResponse
 from starlette import status
+from util.error_response import *
 import bcrypt
 
 from db.user import *
@@ -13,35 +14,18 @@ async def register_user(user_request : UserRegisterReq) -> JSONResponse :
             account_id = user_request.account_id , 
             email = user_request.email)
         if db_check_user_accountId_email_exists(check_exist) :
-            error_response = ErrorResponse(error=True, message="Email already exists")
-            response = JSONResponse (
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                content=error_response.dict())
-            return response
+            return bad_request_error_response(FAILED_REGISTER_USER_DATA_ERROR) 
 
         # hashed_password = bcrypt.hashpw(user_request.password.encode('utf-8'), bcrypt.gensalt())
         # user_request.password = hashed_password
 
         if db_insert_new_user(user_request) is True :
-            success_response = SuccessfulResponseForRegister(success=True)
-            response = JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content=success_response.dict()
-            )
-            return response
+            return successful_response_register()
         else:
-            error_response = ErrorResponse(error=True, message="Failed to create user due to a server error")
-            response = JSONResponse (
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                content=error_response.dict())
-            return response
+            return bad_request_error_response(FAILED_UPDATE_USER_DATA_ERROR)
     
     except Exception as e :
-        error_response = ErrorResponse(error=True, message=str(e))
-        response = JSONResponse (
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            content=error_response.dict())
-        return response
+        return interanal_server_error_response(str(e))
     
 async def authenticate_user(user_login_req : UserPutReq) -> JSONResponse :
     
@@ -61,18 +45,10 @@ async def authenticate_user(user_login_req : UserPutReq) -> JSONResponse :
             return response
         
         else:
-            error_response = ErrorResponse(error=True, message="Invalid email or password")
-            response = JSONResponse (
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                content=error_response.dict())
-            return response
+            return bad_request_error_response(FAILED_LOGIN_USER_DATA_ERROR)
     
     except Exception as e :
-        error_response = ErrorResponse(error=True, message=str(e))
-        response = JSONResponse (
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            content=error_response.dict())
-        return response
+        return interanal_server_error_response(str(e))
     
 async def get_user_details(user: UserGetCheck) -> JSONResponse :
     try:
@@ -101,16 +77,7 @@ async def get_user_details(user: UserGetCheck) -> JSONResponse :
             return response
 
     except KeyError :
-        error_response = ErrorResponse(error=True, message="User not authenticated")
-        response = JSONResponse (
-            status_code=status.HTTP_403_FORBIDDEN, 
-            content=error_response.dict())
-        return response       
-
-    
+        return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)       
+ 
     except Exception as e :
-        error_response = ErrorResponse(error=True, message=str(e))
-        response = JSONResponse (
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            content=error_response.dict())
-        return response
+        return interanal_server_error_response(str(e))
