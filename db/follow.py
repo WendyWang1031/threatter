@@ -22,7 +22,10 @@ async def db_follow_target(follow : FollowReq , member_id : str) -> str :
         cursor.execute(check_existing_relation_sql, (member_id, follow.account_id))
         existing_relation = cursor.fetchone()
         relation_status = get_relation_status(existing_relation)
-        if relation_status != RELATION_STATUS_NONE:
+        if follow.follow is True and relation_status != RELATION_STATUS_NONE:
+            return "", False
+        
+        if follow.follow is False and relation_status != RELATION_STATUS_FOLLOWING:
             return "", False
         
         visibility_sql = """
