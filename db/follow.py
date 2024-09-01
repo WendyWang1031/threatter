@@ -97,15 +97,23 @@ async def db_private_user_res_follow(followAns : FollowAns , account_id: str , m
         """
         cursor.execute(update_sql , (follow_status , account_id , member_id ,))
     
-        connection.commit()
+        check_existing_relation_sql = """
+            SELECT relation_state FROM member_relation 
+            WHERE member_id = %s AND target_id = %s
+        """
+        cursor.execute(check_existing_relation_sql, (member_id, followAns.account_id))
+        existing_relation = cursor.fetchone()
+        relation_status = get_relation_status(existing_relation)
         
+        connection.commit()
+
         if followAns.accept:
             await db_update_notification(
                 member_id, account_id, None, None, 'Follow', None, 'Accepted')
             await db_update_notification(
                 account_id, member_id, None, None, 'Follow', None, 'Following')
         
-        return follow_status , True
+        return relation_status , True
     
     except Exception as e:
         print(f"Error update private follow: {e}")
