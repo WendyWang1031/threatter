@@ -6,34 +6,39 @@ from db.connection_pool import get_db_connection_pool
 from db.check_relation import *
 from db.get_member_data import *
 from db.notification import *
+from util.follow_util import *
 
-RELATION_STATUS_PENDING = "Pending"
-
-async def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember :
+async def db_follow_target(follow : FollowReq , member_id : str) -> str :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
         connection.begin()
 
+        check_existing_relation_sql = """
+            SELECT relation_state FROM member_relation 
+            WHERE member_id = %s AND target_id = %s
+        """
+        cursor.execute(check_existing_relation_sql, (member_id, follow.account_id))
+        existing_relation = cursor.fetchone()
+        relation_status = get_relation_status(existing_relation)
+        if relation_status != RELATION_STATUS_NONE:
+            return "", False
+        
         visibility_sql = """
             SELECT visibility FROM member WHERE account_id = %s
         """
         cursor.execute(visibility_sql, (follow.account_id,))
         target_visibility = cursor.fetchone()["visibility"]
-
-        if follow.follow == True :
-            if target_visibility == "Private":
-                relation_state = RELATION_STATUS_PENDING
-                target_relation_state = "PendingBeingFollow"
-                follow_status = "Pending"
+   
+        follow_status = RELATION_STATUS_NONE
+        if follow.follow is True :
+            if target_visibility == VISIBILITY_PRIVATE:
+                follow_status = RELATION_STATUS_PENDING
             else:
-                relation_state = "Following"
-                target_relation_state = "BeingFollow"
-                follow_status = "Following"
+                follow_status = RELATION_STATUS_FOLLOWING
         else:
-            relation_state = "None"
-            target_relation_state = "None"
+            follow_status = RELATION_STATUS_NONE
 
         # 插入或更新當前用戶和目標用戶的關係
         insert_update_relation_sql = """
@@ -41,89 +46,78 @@ async def db_follow_target(follow : FollowReq , member_id : str) -> FollowMember
             VALUES (%s, %s, %s)
             ON DUPLICATE KEY UPDATE relation_state = VALUES(relation_state)
         """
-        cursor.execute(insert_update_relation_sql, (member_id, follow.account_id, relation_state))
-
-        # 插入或更新目標用戶和當前用戶的關係
-        insert_update_target_relation_sql = """
-            INSERT INTO member_relation (member_id, target_id, relation_state)
-            VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE relation_state = VALUES(relation_state)
-        """
-        cursor.execute(insert_update_target_relation_sql, (follow.account_id, member_id, target_relation_state))
+        cursor.execute(insert_update_relation_sql, (member_id, follow.account_id, follow_status))
 
         connection.commit()
         
         if follow.follow:
             await db_update_notification(
-                    member_id, follow.account_id , None , None , 'Follow' , None , False , follow_status)
+                    member_id, follow.account_id , None , None , 'Follow' , None  , follow_status)
 
-        
-        return relation_state ,  True 
+        return follow_status ,  True 
     
     except Exception as e:
         print(f"Error inserting follow: {e}")
         connection.rollback() 
-        return False
+        return "", False
     finally:
         cursor.close()
         connection.close()
 
-async def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_id : str) -> FollowMember :
+async def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_id : str) :
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
         connection.begin()
 
+        check_existing_relation_sql = """
+            SELECT relation_state FROM member_relation 
+            WHERE member_id = %s AND target_id = %s
+        """
+        cursor.execute(check_existing_relation_sql, (followAns.account_id, member_id))
+        existing_relation = cursor.fetchone()
+        relation_status = get_relation_status(existing_relation)
+        if relation_status != RELATION_STATUS_PENDING:
+            return "", False
+
+        follow_status = RELATION_STATUS_NONE
         if followAns.accept:
-            relation_state = "Following"
-            target_relation_state = "BeingFollow"
+            follow_status = RELATION_STATUS_FOLLOWING
         else:
-            relation_state = "None"
-            target_relation_state = "None"
+            follow_status = RELATION_STATUS_NONE
             
-        # 插入或更新當前用戶和目標用戶的關係
         update_sql = """
             update member_relation 
             SET relation_state = %s
             where member_id = %s AND target_id = %s 
         """
-        cursor.execute(update_sql , (relation_state , account_id , member_id ,))
-      
-
-        # 插入或更新目標用戶和當前用戶的關係
-        update_target_sql = """
-            INSERT INTO member_relation (member_id, target_id, relation_state)
-            VALUES (%s, %s, %s)
-            ON DUPLICATE KEY UPDATE relation_state = %s
-        """
-        cursor.execute(update_target_sql, (member_id, account_id, target_relation_state, target_relation_state))
-           
+        cursor.execute(update_sql , (follow_status , account_id , member_id ,))
+    
         connection.commit()
         
         if followAns.accept:
             await db_update_notification(
-                member_id, account_id, None, None, 'Follow', None, True, 'Accepted')
+                member_id, account_id, None, None, 'Follow', None, 'Accepted')
             await db_update_notification(
-                account_id, member_id, None, None, 'Follow', None, True, 'Following')
+                account_id, member_id, None, None, 'Follow', None, 'Following')
         
-        return target_relation_state , True
+        return follow_status , True
     
     except Exception as e:
         print(f"Error update private follow: {e}")
         connection.rollback() 
-        return False
+        return "", False
     finally:
         cursor.close()
         connection.close()
 
 
-
+# 誰對我提出請求，正在等待我的回應
 def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
-        connection.begin()
         
         limit = 15 
         offset = page * limit
@@ -131,36 +125,31 @@ def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes |
         select_sql = """
             SELECT member.name, member.account_id, member.avatar, member_relation.relation_state
             FROM member_relation
-            JOIN member ON member_relation.target_id = member.account_id
-            WHERE member_relation.member_id = %s 
-            AND member_relation.relation_state = 'PendingBeingFollow'
+            JOIN member ON member_relation.member_id = member.account_id
+            WHERE member_relation.target_id = %s 
+            AND member_relation.relation_state = %s 
             LIMIT %s OFFSET %s
         """
+        cursor.execute(select_sql, (member_id, RELATION_STATUS_PENDING, limit+1, offset))
+        follow_data = cursor.fetchall()
+
         count_sql = """
             SELECT COUNT(*) as total
             FROM member_relation
             WHERE target_id = %s 
-            AND relation_state = 'Pending'
+            AND relation_state = %s
         """
-        cursor.execute(select_sql, (member_id , limit+1, offset))
-        follow_data = cursor.fetchall()
-        # print("follow_data:",follow_data)
-
-        cursor.execute(count_sql, (member_id,))
+        cursor.execute(count_sql, (member_id, RELATION_STATUS_PENDING))
         total_count = cursor.fetchone()['total']
 
         has_more_data = len(follow_data) > limit
-        
         if has_more_data:
             follow_data.pop()
-
-        connection.commit()
 
         return db_get_members_list_data(follow_data, total_count, page , has_more_data)
     
     except Exception as e:
         print(f"Error getting follow data details: {e}")
-        connection.rollback()
         return None
     finally:
         cursor.close()
@@ -172,11 +161,9 @@ def db_get_follow_target(member_id : str ,account_id : str , page : int) -> Foll
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
-        connection.begin()
-        
+
         limit = 15 
         offset = page * limit
-
         
         select_sql = """
             SELECT member.name, member.account_id, member.avatar, 
@@ -189,26 +176,23 @@ def db_get_follow_target(member_id : str ,account_id : str , page : int) -> Foll
             AND relation.member_id = %s
             
             WHERE member_relation.member_id = %s 
-            AND member_relation.relation_state = 'Following'
+            AND member_relation.relation_state = %s
             LIMIT %s OFFSET %s
         """
+        cursor.execute(select_sql, (member_id, account_id, RELATION_STATUS_FOLLOWING , limit+1, offset))
+        follow_data = cursor.fetchall()
+
         count_sql = """
             SELECT COUNT(*) as total
             FROM member_relation
-            WHERE member_id = %s AND relation_state = 'Following'
+            WHERE member_id = %s AND relation_state = %s
         """
-        cursor.execute(select_sql, (member_id , account_id , limit+1, offset))
-        follow_data = cursor.fetchall()
-
-        cursor.execute(count_sql, (account_id,))
+        cursor.execute(count_sql, (account_id, RELATION_STATUS_FOLLOWING))
         total_count = cursor.fetchone()['total']
 
         has_more_data = len(follow_data) > limit
-        
         if has_more_data:
             follow_data.pop()
-
-        connection.commit()
 
         return db_get_members_list_data(follow_data, total_count, page , has_more_data)
     
@@ -226,11 +210,9 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
-        connection.begin()
         
         limit = 15 
         offset = page * limit
-
         
         select_sql = """
                 SELECT member.name, member.account_id, member.avatar, 
@@ -239,31 +221,27 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
                 
                 JOIN member ON member_relation.member_id = member.account_id
                 LEFT JOIN member_relation AS relation 
-                    ON relation.member_id = %s 
-                   AND relation.target_id = member.account_id 
+                ON relation.target_id = member.account_id 
+                AND relation.member_id = %s
                 
                 WHERE member_relation.target_id = %s 
-                AND member_relation.relation_state = 'Following'
+                AND member_relation.relation_state = %s
                 LIMIT %s OFFSET %s
             """
+        cursor.execute(select_sql, (member_id , account_id, RELATION_STATUS_FOLLOWING, limit+1, offset))
+        follow_data = cursor.fetchall()
+
         count_sql = """
             SELECT COUNT(*) as total
             FROM member_relation
-            WHERE target_id = %s AND relation_state = 'Following'
+            WHERE target_id = %s AND relation_state = %s
         """
-        cursor.execute(select_sql, (member_id , account_id, limit+1, offset))
-        follow_data = cursor.fetchall()
-        print("follow_data:",follow_data)
-
-        cursor.execute(count_sql, (account_id,))
+        cursor.execute(count_sql, (account_id, RELATION_STATUS_FOLLOWING))
         total_count = cursor.fetchone()['total']
 
         has_more_data = len(follow_data) > limit
-        
         if has_more_data:
             follow_data.pop()
-
-        connection.commit()
 
         return db_get_members_list_data(follow_data, total_count, page , has_more_data)
     
@@ -274,44 +252,3 @@ def db_get_follow_fans(member_id : str , account_id : str , page : int) -> Follo
     finally:
         cursor.close()
         connection.close()
-
-
-
-
-    # connection = get_db_connection_pool()
-    # cursor = connection.cursor(pymysql.cursors.DictCursor)
-    
-    # try:
-    #     connection.begin()
-
-    #     user_sql = """
-    #         SELECT member.name , member.account_id , member.avatar
-    #         FROM member
-    #         WHERE account_id = %s
-
-    #     """
-    #     cursor.execute(user_sql , (account_id,))
-    #     member = cursor.fetchone()
-
-        
-    #     follow_member = FollowMember(
-    #         user = MemberBase(
-    #                 name = member['name'],
-    #                 account_id = member['account_id'],
-    #                 avatar = member['avatar']
-    #             ),
-    #         follow_state = relation_state
-    #     )
-
-
-    #     connection.commit()
-        
-    #     return follow_member
-    
-    # except Exception as e:
-    #     print(f"Error getting member single data details: {e}")
-    #     connection.rollback() 
-    #     return False
-    # finally:
-    #     cursor.close()
-    #     connection.close()
