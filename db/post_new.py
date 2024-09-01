@@ -367,11 +367,11 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
                 WHERE content.content_type = 'Post' 
                         AND content.content_id = %s
                         AND (content.visibility = 'Public' 
-                        OR (content.visibility = 'Private' AND 
-                            (member_relation.relation_state = 'Following')))
+                        OR (content.visibility = 'Private' AND (member_relation.relation_state = 'Following'))
+                        OR content.member_id = %s)
                 ORDER BY created_at DESC 
             """
-            params = (member_id , account_id , post_id)
+            params = (member_id , account_id , post_id, member_id)
     
         return db_get_post_data(sql, params, multiple=False)
   
