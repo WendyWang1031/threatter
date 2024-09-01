@@ -20,11 +20,11 @@ async def get_notification(current_user: dict ,
         if result is None:
             return data_not_found_error_response(DB_HAVE_NO_NOTIFICATION_DATA_ERROR)
         
-        successful_response = JSONResponse(
+        response = JSONResponse(
         status_code = status.HTTP_200_OK,
         content=result.dict()
         )
-        return successful_response
+        return response
     
     except Exception as e :
         return interanal_server_error_response(str(e))
@@ -37,15 +37,14 @@ async def post_read_notification(current_time: datetime ,
         if member_id is None :
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
 
-        
         result = db_post_read_notification(member_id , current_time)
         if result is None:
             return data_not_found_error_response(DB_HAVE_NO_NOTIFICATION_DATA_ERROR)
 
-        successful_response = JSONResponse(
+        response = JSONResponse(
         status_code = status.HTTP_200_OK,
         content = result)
-        return successful_response
+        return response
     
     except Exception as e :
         return interanal_server_error_response(str(e))

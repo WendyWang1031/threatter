@@ -168,7 +168,6 @@ async def db_update_notification(
         content_id: str, 
         content_type: str,
         parent_id: Optional[str] = None,
-        is_private_accept: Optional[bool] = False,
         follow_status: Optional[str] = "Pending"):
     
     # 如果對自己的操作，不需紀錄
@@ -281,18 +280,13 @@ async def db_update_notification(
             # print("event_data_json:",event_data_json)
 
         elif content_type == 'Follow':
-            if is_private_accept:
-                # 私人用戶接受追蹤請求
-                event_data_obj = {
-                    "status": follow_status 
-                }
-            else:
-                # 普通的追蹤請求
-                event_data_obj = {
+            event_data_obj = {
                     "status": follow_status,
-                }
+            }
             event_data_json = json.dumps(event_data_obj)
 
+
+        
         if event_data_obj is None:
             raise ValueError(f"Failed to create event_data_obj for {content_type}")
 
