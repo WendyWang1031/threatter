@@ -3,28 +3,26 @@ import pymysql.cursors
 from typing import Any
 from db.connection_pool import get_db_connection_pool
 from datetime import datetime
+from util.follow_util import *
 
 def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
-        connection.begin()
-
-        
         sql = """select name , account_id , avatar , self_intro , visibility 
             from member where account_id = %s
         """
         cursor.execute( sql , (account_id ,))
         member_data = cursor.fetchone()
-
+        
         if not member_data:
             return None
         
         count_sql = """select Count(*) AS fans_count
             from member_relation
-            where target_id = %s AND relation_state = 'Following'
+            where target_id = %s AND relation_state = %s
         """
-        cursor.execute( count_sql , (account_id ,))
+        cursor.execute( count_sql , (account_id , RELATION_STATUS_FOLLOWING))
         fans_count_data = cursor.fetchone()
         fans_counts = fans_count_data['fans_count'] if fans_count_data else 0
         
@@ -35,8 +33,7 @@ def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | No
         """
         cursor.execute(relation_sql, (member_id, account_id))
         relation_data = cursor.fetchone()
-        follow_state = relation_data['relation_state'] if relation_data else 'None'
-
+        follow_state = get_relation_status(relation_data)
 
         member_detail = MemberDetail(
             name = member_data['name'] , 
@@ -48,8 +45,6 @@ def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | No
             follow_state = follow_state
         )
         
-        connection.commit()
-        # print("member_detail:",member_detail)
         return member_detail
     
     except Exception as e:
