@@ -22,7 +22,7 @@ FAILED_UPDATE_FOLLOW_PRIVATE_DATA_ERROR = "Failed to insert private follower's d
 
 FAILED_GET_DATA_ERROR = "FAILED to get data"
 FAILED_GET_POST_DATA_ERROR = "FAILED to get data"
-FAILED_GET_MEMBER_POST_DATA_ERROR = "FAILED to get member's posts data"
+FAILED_GET_MEMBER_POST_DATA_ERROR = "FAILED to get member's posts data or have no permission"
 FAILED_GET_COMMENT_DATA_ERROR = "FAILED to get comment data"
 FAILED_GET_FOLLOW_DATA_ERROR = "User is already following the target user"
 
