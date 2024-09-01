@@ -27,24 +27,20 @@ async def post_post_like(post_like : LikeReq ,
         if post_id and not check_results.get("post_exists"):
             return data_not_found_error_response(DB_HAVE_NO_POST_DATA_ERROR)
 
-
-        result = await db_like_post(account_id , post_like , post_id , member_id)
-        
+        result = await db_like_post(account_id , post_like , post_id , member_id)        
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR)
 
-        else:
-            result = (LikeRes(total_likes = result)).dict()
-            successful_response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content = result
-            )
-        return successful_response
+        result = (LikeRes(total_likes = result)).dict()
+        response = JSONResponse(
+        status_code = status.HTTP_200_OK,
+        content = result
+        )
+        return response
 
     except Exception as e :
         return interanal_server_error_response(str(e))
     
-
 async def post_comment_or_reply_like(comment_like : LikeReq ,
                                     account_id : str, 
                                     post_id : str ,  
@@ -56,7 +52,6 @@ async def post_comment_or_reply_like(comment_like : LikeReq ,
         if member_id is None :
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
 
-
         check_results = db_check_existence_and_relations(account_id, post_id, comment_id, member_id)
         if not check_results.get("user_exists"):
             return data_not_found_error_response(DB_HAVE_NO_USER_DATA_ERROR)
@@ -66,22 +61,18 @@ async def post_comment_or_reply_like(comment_like : LikeReq ,
         
         if comment_id and not check_results.get("comment_exists") and not check_results.get("reply_exists"):
             return data_not_found_error_response(DB_HAVE_NO_COMMENT_DATA_ERROR)
-
         
         result = await db_like_comment_or_reply(account_id , post_id , comment_like , comment_id , member_id)
-        
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR)
         
-        else:
-            result = (LikeRes(total_likes = result)).dict()
-            successful_response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content = result
-            )
-        return successful_response
+        result = (LikeRes(total_likes = result)).dict()
+        response = JSONResponse(
+        status_code = status.HTTP_200_OK,
+        content = result
+        )
+        return response
 
-    
     except Exception as e :
         return interanal_server_error_response(str(e))
   
