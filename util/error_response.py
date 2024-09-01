@@ -13,8 +13,12 @@ DB_HAVE_NO_NOTIFICATION_DATA_ERROR = "No Notification data have been found"
 
 FAILED_UPDATE_DATA_ERROR = "FAILED to update data"
 FAILED_DELETE_DATA_ERROR = "FAILED to delete data"
+FAILED_UPDATE_FOLLOW_PRIVATE_DATA_ERROR = "Failed to insert private follower's data"
+
 FAILED_GET_DATA_ERROR = "FAILED to get data"
 FAILED_GET_COMMENT_DATA_ERROR = "FAILED to get comment data"
+FAILED_GET_FOLLOW_DATA_ERROR = "User is already following the target user"
+
 FAILED_UPDATE_MEMBER_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
 FAILED_UPDATE_COMMENT_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
 FAILED_UPDATE_REPLY_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
