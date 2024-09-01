@@ -41,7 +41,6 @@ def db_get_search( search: str , page : int , member_id : str) -> FollowMemberLi
         # print("total_fans:",total_fans)
 
         has_more_data = len(search_member_data) > limit
-        
         if has_more_data:
             search_member_data.pop()
             

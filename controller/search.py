@@ -15,18 +15,14 @@ async def get_search(search : str ,
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
 
         result = db_get_search(search , page , member_id)
-
         if result is None:
             return bad_request_error_response(FAILED_GET_DATA_ERROR)
-        
-        else:
-            response = JSONResponse(
-            status_code = status.HTTP_200_OK,
-            content=result.dict()
-            )
-            return response
+            
+        response = JSONResponse(
+        status_code = status.HTTP_200_OK,
+        content=result.dict()
+        )
+        return response
 
     except Exception as e :
         return interanal_server_error_response(str(e))
-    
-
