@@ -4,20 +4,11 @@ from fastapi.responses import JSONResponse
 from model.model import *
 from model.model_user import *
 
-
-USER_NOT_AUTHENTICATED_ERROR = "User not authenticated"
-
-DB_HAVE_NO_USER_DATA_ERROR = "No USER data have been found"
-DB_HAVE_NO_POST_DATA_ERROR = "No POST data have been found"
-DB_HAVE_NO_COMMENT_DATA_ERROR = "No COMMENT data have been found"
-DB_HAVE_NO_NOTIFICATION_DATA_ERROR = "No Notification data have been found"
-
+# 400
 FAILED_REGISTER_USER_DATA_ERROR = "Email already exists"
 FAILED_LOGIN_USER_DATA_ERROR = "Invalid email or password"
-
 FAILED_UPDATE_DATA_ERROR = "FAILED to update data"
 FAILED_DELETE_DATA_ERROR = "FAILED to delete data"
-FAILED_DELETE_POST_DATA_ERROR = "FAILED to delete data or not your post id"
 FAILED_UPDATE_FOLLOW_PRIVATE_DATA_ERROR = "Failed to insert private follower's data"
 
 FAILED_GET_DATA_ERROR = "FAILED to get data"
@@ -31,6 +22,15 @@ FAILED_UPDATE_MEMBER_DATA_FIELD_EMPTY_ERROR = "At least one field must be update
 FAILED_UPDATE_POST_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
 FAILED_UPDATE_COMMENT_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
 FAILED_UPDATE_REPLY_DATA_FIELD_EMPTY_ERROR = "At least one field must be updated"
+
+# 403
+USER_NOT_AUTHENTICATED_ERROR = "User not authenticated"
+
+# 404
+DB_HAVE_NO_USER_DATA_ERROR = "No USER data have been found"
+DB_HAVE_NO_POST_DATA_ERROR = "No POST data have been found"
+DB_HAVE_NO_COMMENT_DATA_ERROR = "No COMMENT data have been found"
+DB_HAVE_NO_NOTIFICATION_DATA_ERROR = "No Notification data have been found"
 
 def bad_request_error_response(message :str):
     error_response = ErrorResponse(error=True, message=message)
