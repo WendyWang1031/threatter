@@ -175,7 +175,7 @@ async def get_post_single_page(current_user: Optional[dict], account_id: str , p
 
         relation = db_check_member_target_relation(member_id , account_id) 
          
-        if relation is None:
+        if relation is False:
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
         
         post_exist_result = db_check_post_exist_or_not(account_id , post_id)

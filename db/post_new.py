@@ -354,7 +354,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
                 
                 WHERE content.member_id = %s 
                 AND content.content_id = %s
-                AND content.content_type = 'Post'
+                AND content.content_type = 'Post' and content.visibility = 'Public'
             """
             params = (account_id, post_id)
 
@@ -368,7 +368,11 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
                 LEFT JOIN member ON content.member_id = member.account_id
                 LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
                 LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
-                WHERE content.content_type = 'Post' AND content.content_id = %s
+                WHERE content.content_type = 'Post' 
+                        AND content.content_id = %s
+                        AND (content.visibility = 'Public' 
+                        OR (content.visibility = 'Private' AND 
+                            (member_relation.relation_state = 'Following')))
                 ORDER BY created_at DESC 
             """
             params = (member_id , account_id , post_id)
