@@ -85,13 +85,6 @@ def db_get_personalized_recommendations(
             FROM content
             LEFT JOIN member ON content.member_id = member.account_id
             LEFT JOIN (
-                    SELECT m1.target_id
-                    FROM member_relation m1
-                    INNER JOIN member_relation m2 ON m1.target_id = m2.member_id 
-                        AND m1.member_id = m2.target_id
-                    WHERE m1.member_id = %s AND m1.relation_state = 'Following' 
-                        AND m2.relation_state = 'Following'
-                UNION
                 SELECT m1.target_id
                     FROM member_relation m1
                     WHERE m1.member_id = %s 
@@ -109,7 +102,7 @@ def db_get_personalized_recommendations(
             ORDER BY priority_score DESC, popularity_score DESC, created_at DESC 
             LIMIT %s OFFSET %s
         """
-        params = (member_id, member_id, member_id, member_id, member_id, member_id, limit+1, offset)
+        params = (member_id, member_id, member_id, member_id, member_id, limit+1, offset)
     
         return db_get_post_data( sql, params, multiple=True)
 
