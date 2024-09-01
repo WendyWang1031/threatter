@@ -76,7 +76,7 @@ def db_get_personalized_recommendations(
                 member.visibility, member_relation.relation_state,
                 (content.like_counts * 2 + content.reply_counts * 1) AS popularity_score,
                 CASE 
-                    WHEN content.member_id = %s THEN 0
+                    WHEN content.member_id = %s THEN 5
                     WHEN member.visibility = 'Private' AND content.visibility = 'Private' THEN 4
                     WHEN member.visibility = 'Private' AND content.visibility = 'Public' THEN 3
                     WHEN member.visibility = 'Public' AND content.visibility = 'Private' THEN 2
@@ -96,17 +96,20 @@ def db_get_personalized_recommendations(
                     FROM member_relation m1
                     WHERE m1.member_id = %s 
                     AND m1.relation_state = 'Following'
+                UNION
+                SELECT %s AS target_id  
+            
             ) AS mutual_relations ON content.member_id = mutual_relations.target_id
             LEFT JOIN likes ON content.content_id = likes.content_id AND likes.member_id = %s
             LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
             
             WHERE content.content_type = 'Post'
-            OR content.member_id = mutual_relations.target_id)
+            AND ( content.member_id = mutual_relations.target_id )
             AND content.created_at >= NOW() - INTERVAL 5 DAY
             ORDER BY priority_score DESC, popularity_score DESC, created_at DESC 
             LIMIT %s OFFSET %s
         """
-        params = (member_id, member_id, member_id, member_id, limit+1, offset)
+        params = (member_id, member_id, member_id, member_id, member_id, member_id, limit+1, offset)
     
         return db_get_post_data( sql, params, multiple=True)
 
