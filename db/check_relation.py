@@ -2,6 +2,7 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 from db.connection_pool import get_db_connection_pool
+from util.follow_util import *
 
 def db_check_existence_and_relations(account_id: str, 
                                      post_id: Optional[str] = None, 
@@ -119,23 +120,11 @@ def db_check_each_other_relation(member_id: str , account_id : str ):
             """
             cursor.execute(check_relation_sql, (member_id, account_id))
             check_relation = cursor.fetchone()
-            # print("check_relation:",check_relation)
 
-            if check_relation is None or check_relation['relation_state'] == 'None':
-                return None
-            elif check_relation['relation_state'] == 'Pending':
-                return 'Pending'
-            elif check_relation['relation_state'] == 'Following':
-                return 'Following'
-            elif check_relation['relation_state'] == 'PendingBeingFollow':
-                return 'PendingBeingFollow'
-            elif check_relation['relation_state'] == 'BeingFollow':
-                return 'BeingFollow'
-            
+            return get_relation_status(check_relation)
 
         except Exception as e:
             print(f"Error getting each other relationship details: {e}")
-            connection.rollback()
             return False
         finally:
             cursor.close()
@@ -145,6 +134,9 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
         connection = get_db_connection_pool()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         try:
+            if member_id == account_id:
+                 return True
+            
             ## 確認未登入、私人對象用戶與本人的關係
             visibility_sql = """
                 SELECT visibility FROM member WHERE account_id = %s
@@ -155,9 +147,6 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
             if member_id is None and target_visibility == "Private":
                 return False
             
-            if member_id == account_id:
-                 return True
-
             check_relation_sql = """
             SELECT relation_state 
             FROM member_relation
@@ -166,19 +155,11 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
             cursor.execute(check_relation_sql, (member_id, account_id))
             check_relation = cursor.fetchone()
 
-            if check_relation is None:
-                    check_relation_state = "None"
-            else:
-                    check_relation_state = check_relation["relation_state"]
-            
-            if check_relation_state in ["None", "Pending"] and target_visibility == "Private": 
-                    return False
-            
-            return True
+            relation_status = get_relation_status(check_relation)
+            return get_visibility(target_visibility, relation_status)
 
         except Exception as e:
             print(f"Error getting follow and target relationship details: {e}")
-            connection.rollback()
             return False
         finally:
             cursor.close()
