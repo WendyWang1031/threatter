@@ -313,7 +313,7 @@ def db_get_member_post_data(member_id : str , account_id : str , page : int) -> 
             
             LEFT JOIN member on content.member_id = member.account_id
             LEFT JOIN likes on content.content_id = likes.content_id AND likes.member_id = %s
-            LEFT JOIN member_relation ON content.member_id = member_relation.member_id AND member_relation.target_id = %s
+            LEFT JOIN member_relation ON content.member_id = member_relation.target_id AND member_relation.member_id = %s
             WHERE content.member_id = %s 
                 AND content.content_type = 'Post'
                 AND (content.visibility = 'Public' 
