@@ -5,7 +5,7 @@ from db.connection_pool import get_db_connection_pool
 from db.re_post_data import *
 from db.notification import *
 from service.common import *
-
+from util.follow_util import *
 
 async def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id : str , member_id : str) -> bool :
     connection = get_db_connection_pool()
@@ -159,8 +159,8 @@ def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str
             cursor.execute( relation_sql , (member_id , account_id) )
             relation = cursor.fetchone()
             if relation : 
-                relation_state = relation['relation_state']
-                if member_id == account_id or relation_state == 'Following':
+                relation_state = get_relation_status(relation)
+                if member_id == account_id or relation_state == RELATION_STATUS_FOLLOWING:
                     visibility_clause = "(content.visibility = 'Public' OR content.visibility = 'Private')"
                 else:
                     visibility_clause = "content.visibility = 'Public'"

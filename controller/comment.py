@@ -19,17 +19,14 @@ async def create_comments(content_data : CommentReq ,
         if member_id is None :
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
 
-
         if not content_data.content.text and not (content_data.content.media and (content_data.content.media.images or content_data.content.media.videos or content_data.content.media.audios)):
             return bad_request_error_response(FAILED_UPDATE_COMMENT_DATA_FIELD_EMPTY_ERROR) 
-
         
         result = await db_create_comment_data(content_data , account_id , post_id , member_id)
-        
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR) 
-        else :
-            return successful_response()
+        
+        return successful_response()
 
     except Exception as e :
         return interanal_server_error_response(str(e))
@@ -50,11 +47,10 @@ async def create_replies(content_data : CommentReq ,
             return bad_request_error_response(FAILED_UPDATE_REPLY_DATA_FIELD_EMPTY_ERROR) 
  
         result =await db_create_reply_data(content_data , account_id , post_id , comment_id , member_id)
-        
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR)
-        else:
-            return successful_response()
+        
+        return successful_response()
 
     except Exception as e :
         return interanal_server_error_response(str(e))
@@ -67,13 +63,11 @@ async def delete_comment_and_reply(comment_id : str ,
         if member_id is None :
             return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
         
-        delete_post_result = db_delete_comment_and_reply(comment_id , member_id)
-            
+        delete_post_result = db_delete_comment_and_reply(comment_id , member_id)            
         if delete_post_result is False:
             return bad_request_error_response(FAILED_DELETE_DATA_ERROR) 
         
-        else:
-            return successful_response()    
+        return successful_response()    
         
     except Exception as e :
         return interanal_server_error_response(str(e))
