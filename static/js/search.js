@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     "input",
     debounce(function () {
       currentPage = 0;
-      fetchAndDisplaySearch(this.value.trim());
+      currentQuery = this.value.trim();
+      fetchAndDisplaySearch(currentQuery);
     }, 300)
   );
 });
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 let currentPage = 0;
 let hasNextPage = true;
 let isWaitingForData = false;
+let currentQuery = "";
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -29,7 +31,7 @@ const observer = new IntersectionObserver(
     if (firstEntry.isIntersecting && hasNextPage && !isWaitingForData) {
       //調用fetch函式的時候使用非同步加載
 
-      fetchAndDisplaySearch();
+      fetchAndDisplaySearch(currentQuery);
     }
   },
   { threshold: 0.5 }
