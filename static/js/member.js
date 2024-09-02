@@ -107,12 +107,15 @@ async function fetchGetPost() {
 
     let lastItem = document.querySelector(".indivisial-area:last-child");
 
-    if (result.message === "No member's post data found") {
+    if (
+      result.message ===
+      "FAILED to get member's posts data or have no permission"
+    ) {
       noDataMessage.textContent = "尚無任何串文。";
 
       noData.appendChild(noDataMessage);
       postsContainer.appendChild(noData);
-    } else if (result.message === "該用戶並無權限調閱") {
+    } else if (result.message === "User not authenticated") {
       noDataMessage.textContent = "此個人檔案不公開。";
 
       noData.appendChild(noDataMessage);
