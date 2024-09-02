@@ -152,15 +152,18 @@ export async function fetchMemberDetail() {
                 buttonText: followProfileButton.textContent,
               };
 
-              // 決定當前的操作是追蹤還是取消追蹤
-              const followAction =
-                result.follow_state === "None" ||
-                result.follow_state === "Pending";
+              // 根據當前狀態決定要傳遞的 follow 值
+              let followValue;
+              if (result.follow_state === "Following") {
+                followValue = false; // 取消追蹤
+              } else if (result.follow_state === "None") {
+                followValue = true; // 發起追蹤
+              } else if (result.follow_state === "Pending") {
+                followValue = false; // 取消請求
+              }
 
               // 即時更新按鈕狀態
-              followProfileButton.textContent = followAction
-                ? "追蹤中"
-                : "追蹤";
+              followProfileButton.textContent = followValue ? "追蹤中" : "追蹤";
 
               try {
                 const apiEndpoint = "/api/follow";
@@ -173,7 +176,7 @@ export async function fetchMemberDetail() {
                     )}`,
                   },
                   body: JSON.stringify({
-                    follow: followAction,
+                    follow: followValue,
                     account_id: result.account_id,
                   }),
                 });
