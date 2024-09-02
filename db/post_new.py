@@ -371,7 +371,7 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
                         OR content.member_id = %s)
                 ORDER BY created_at DESC 
             """
-            params = (member_id , account_id , post_id, member_id)
+            params = (member_id , member_id , post_id, member_id)
     
         return db_get_post_data(sql, params, multiple=False)
   
