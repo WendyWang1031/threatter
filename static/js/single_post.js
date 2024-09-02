@@ -114,8 +114,10 @@ async function fetchGetCommentAndReply() {
       headers: headers,
     });
     const result = await response.json();
+    console.log("Fetch result:", result);
 
-    if (result.message === "FAILED to get comment data") {
+    if (result.error) {
+      console.log("message test 400");
       const replyContainer = document.querySelector(".reply-title");
       const noData = document.createElement("div");
       noData.className = "no-data";
@@ -125,6 +127,9 @@ async function fetchGetCommentAndReply() {
 
       noData.appendChild(noDataMessage);
       replyContainer.appendChild(noData);
+      console.log("message test 400 bottom");
+    } else {
+      console.error(".reply-title element not found");
     }
 
     let lastItem = document.querySelector(".Comment-Container:last-child");
