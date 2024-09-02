@@ -246,6 +246,9 @@ section.create-poster-card .create-poster-container .post-form .form-header {
   align-items: center;
   padding: 10px;
 }
+section.create-poster-card .create-poster-container .post-form .form-header .profile-pic-create-post,
+section.create-poster-card .create-poster-container .post-form .form-header .profile-pic-create-comment,
+section.create-poster-card .create-poster-container .post-form .form-header .profile-pic-create-content,
 section.create-poster-card .create-poster-container .post-form .form-header .profile-pic {
   font-size: 40px;
   color: #d7d7d7;
