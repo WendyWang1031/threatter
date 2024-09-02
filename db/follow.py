@@ -25,7 +25,7 @@ async def db_follow_target(follow : FollowReq , member_id : str) -> str :
         if follow.follow is True and relation_status != RELATION_STATUS_NONE:
             return "", False
         
-        if follow.follow is False and relation_status != RELATION_STATUS_FOLLOWING:
+        if follow.follow is False and relation_status == RELATION_STATUS_NONE:
             return "", False
         
         visibility_sql = """

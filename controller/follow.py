@@ -22,7 +22,7 @@ async def post_follow_target(followReq : FollowReq ,
             return bad_request_error_response(FAILED_GET_FOLLOW_DATA_ERROR)
        
         relation_state , insert_result = await db_follow_target(followReq , member_id)
-        if insert_result is False:
+        if insert_result is False :
             return bad_request_error_response(FAILED_UPDATE_FOLLOW_PRIVATE_DATA_ERROR)
         
         follow_member_data = db_get_member_single_data(followReq.account_id, relation_state)
