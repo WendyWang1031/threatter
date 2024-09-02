@@ -4,6 +4,7 @@ import {
   displayNotificationItem,
 } from "./view/view_notification.js";
 import { markAllNotificationsAsRead } from "./controller/controller_notification.js";
+import { stringifyObjectValues } from "./controller/controller_convert_to_string.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -109,8 +110,9 @@ async function fetchAndDisplayFollowReq(targetList) {
         },
       }
     );
-    const followReqData = await response.json();
+    let followReqData = await response.json();
     console.log("followReqData:", followReqData);
+    followReqData = stringifyObjectValues(followReqData);
 
     // targetList.innerHTML = "";
 
@@ -158,8 +160,9 @@ async function fetchAndDisplayNotification(targetList) {
         "Content-Type": "application/json",
       },
     });
-    const notifyData = await response.json();
+    let notifyData = await response.json();
     console.log("notifyData:", notifyData);
+    notifyData = stringifyObjectValues(notifyData);
 
     // targetList.innerHTML = "";
 
