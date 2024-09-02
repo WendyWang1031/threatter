@@ -29,13 +29,7 @@ export function displayFollowerItem(data) {
     case "Following":
       buttonText = "追蹤中";
       break;
-    case "BeingFollow":
-      buttonText = "追蹤";
-      break;
     case "Pending":
-      buttonText = "取消請求";
-      break;
-    case "PendingBeingFollow":
       buttonText = "取消請求";
       break;
     default:
@@ -274,7 +268,7 @@ function getContentArea(data) {
     let followText = "";
     switch (data.event_data.status) {
       case "Pending":
-        followText = "提出追蹤請求";
+        followText = "提出要求追蹤";
         break;
       case "Following":
         followText = "已追蹤您";
@@ -308,18 +302,21 @@ function getContentArea(data) {
 
 // 生成追蹤按鈕並添加事件監聽器
 function generateFollowButton(data) {
+  // 如果狀態是 "Pending"，不生成按鈕
+  if (data.event_data.status === "Pending") {
+    return null;
+  }
+
   let buttonText;
 
   switch (data.user.follow_state) {
     case "None":
-    case "BeingFollow":
       buttonText = "追蹤";
       break;
     case "Following":
       buttonText = "追蹤中";
       break;
     case "Pending":
-    case "PendingBeingFollow":
       buttonText = "取消請求";
       break;
     default:
