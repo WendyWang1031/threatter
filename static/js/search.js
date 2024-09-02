@@ -1,5 +1,6 @@
 import { PermissionAllIcon } from "./view/view_icon.js";
 import { displayFollowerItem } from "./view/view_search.js";
+import { stringifyObjectValues } from "./controller/controller_convert_to_string.js";
 
 // import //   setupIntersectionObserver,
 // "./controller/controller_notification.js";
@@ -58,7 +59,8 @@ async function fetchAndDisplaySearch(query) {
         headers: headers,
       }
     );
-    const result = await response.json();
+    let result = await response.json();
+    result = stringifyObjectValues(result);
 
     const targetList = document.querySelector(".search-list");
     if (currentPage === 0) {
