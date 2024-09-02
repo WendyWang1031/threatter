@@ -178,7 +178,7 @@ async function fetchAndDisplayNotification(targetList) {
       if (hasNextPageAni && newItem) {
         observerAni.observe(newItem);
       }
-    } else if (currentPage === 0) {
+    } else if (currentPageAni === 0) {
       hasNextPageAni = false;
       const noDataMessage = document.createElement("div");
       noDataMessage.className = "no-data-message";
