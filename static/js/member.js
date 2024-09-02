@@ -17,6 +17,7 @@ import {
   fetchAndDisplayFollowers,
   setupIntersectionObserverFansAndFollow,
 } from "./controller/controller_fans_follower.js";
+import { stringifyObjectValues } from "./controller/controller_convert_to_string.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -97,7 +98,8 @@ async function fetchGetPost() {
     const response = await fetch(memberPostsUrl, {
       headers: headers,
     });
-    const result = await response.json();
+    let result = await response.json();
+    result = stringifyObjectValues(result);
     const postsContainer = document.querySelector(".postsContainer");
 
     const noData = document.createElement("div");

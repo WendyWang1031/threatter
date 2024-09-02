@@ -1,6 +1,7 @@
 import { displayMemberDetail } from "../view/view_member.js";
 
 import { uploadMediaFile } from "./controller_upload.js";
+import { stringifyObjectValues } from "./controller_convert_to_string.js";
 
 export function editMember(event) {
   event.preventDefault();
@@ -101,9 +102,11 @@ export async function fetchMemberDetail() {
         headers: headers,
       }
     );
-    const result = await response.json();
+    let result = await response.json();
 
     if (result) {
+      result = stringifyObjectValues(result);
+
       displayMemberDetail(result);
       // 顯示或隱藏按鈕
       const followProfileButton =
@@ -236,11 +239,8 @@ export function validateForm() {
     imageFile = imageUploadInput.files[0] || null;
   }
 
-  console.log("imageFile:", imageFile);
-
   const privacyInput = document.getElementById("privacy");
   const visibility = privacyInput.checked ? "Private" : "Public";
-  console.log("visibility:", visibility);
 
   if (content === "" && !imageFile && !userName_input && !visibility) {
     error_hint.textContent = "請至少更新一個欄位";
@@ -259,7 +259,6 @@ async function submitMember(content, imageFile, userName, visibility) {
     self_intro: content || "",
     avatar: "",
   };
-  console.log("memberData:", memberData);
 
   // 圖片
   if (imageFile) {
@@ -270,7 +269,6 @@ async function submitMember(content, imageFile, userName, visibility) {
   }
 
   try {
-    console.log("here1:");
     await fetchUpdateMember(memberData);
   } catch (error) {
     console.error("Error submitting member:", error);
