@@ -27,9 +27,9 @@ def db_get_search( search: str , page : int , member_id : str) -> FollowMemberLi
             member.account_id LIKE %s 
         LIMIT %s OFFSET %s
     """
-        cursor.execute(select_sql, (member_id, '%'+search+'%' , limit , offset))
+        cursor.execute(select_sql, (member_id, '%'+search+'%' , limit+1 , offset))
         search_member_data = cursor.fetchall()
-        # print("beingFollow_data:",beingFollow_data)
+        
 
         conut_sql = """
         SELECT COUNT(DISTINCT member.account_id) as total_members
@@ -38,9 +38,9 @@ def db_get_search( search: str , page : int , member_id : str) -> FollowMemberLi
     """
         cursor.execute(conut_sql, ('%' + search + '%',))
         total_members = cursor.fetchone()['total_members']
-        # print("total_fans:",total_fans)
 
         has_more_data = len(search_member_data) > limit
+        
         if has_more_data:
             search_member_data.pop()
             
