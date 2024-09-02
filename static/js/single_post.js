@@ -115,7 +115,7 @@ async function fetchGetCommentAndReply() {
     });
     const result = await response.json();
 
-    if (result.message === "沒有留言資料") {
+    if (result.message === "FAILED to get comment data") {
       const replyContainer = document.querySelector(".reply-title");
       const noData = document.createElement("div");
       noData.className = "no-data";

@@ -1413,7 +1413,7 @@ section.single-postsContainer {
 
 section.reply-header {
   .reply-title {
-    display: flex;
+    display: grid;
 
     justify-content: center;
     .no-data {
