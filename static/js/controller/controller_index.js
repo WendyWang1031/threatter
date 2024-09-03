@@ -125,8 +125,21 @@ async function fetchGetPost() {
 async function fetchGetMemberDetail() {
   console.log("fetchGetMemberDetail called");
   const account_id = localStorage.getItem("account_id");
+
+  const accountIdRegex = /^[a-zA-Z0-9_-]+$/;
+  if (!accountIdRegex.test(account_id)) {
+    console.error("Invalid account_id detected:", account_id);
+
+    localStorage.removeItem("account_id");
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userName");
+    alert("檢測到非法的帳戶格式，請重新註冊或登入");
+    return;
+  }
+
   console.log("account_id:", account_id);
   const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
+  console.log("memberUrl:", memberUrl);
   if (!account_id) {
     console.log("User not logged in, using default avatar.");
     return;
