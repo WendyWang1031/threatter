@@ -428,8 +428,8 @@ function generateYouTubeEmbed(url) {
     return `
       <div class="youtube-container">
         <iframe 
-          width="560" 
-          height="315" 
+          width="450" 
+          height="250" 
           src="https://www.youtube.com/embed/${videoId}" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
