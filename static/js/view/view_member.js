@@ -1,11 +1,11 @@
 export function displayMemberDetail(data) {
   // 主會員介面的顯示
   const name = document.querySelector(".user-name");
-  name.textContent = escapeHtml(data.name);
+  name.textContent = data.name;
   const accountId = document.querySelector(".user-account-id");
   accountId.textContent = "@ " + escapeHtml(data.account_id);
   const self_intro = document.querySelector(".user-self-intro");
-  self_intro.textContent = escapeHtml(data.self_intro);
+  self_intro.textContent = data.self_intro;
   const fans_counts = document.querySelector(".user-fans");
   fans_counts.textContent = data.fans_counts + " 位粉絲";
 
@@ -28,10 +28,9 @@ export function displayMemberDetail(data) {
 
   // 編輯會員介面的顯示
   const editName = document.querySelector("#username");
-  editName.placeholder = escapeHtml(data.name);
+  editName.placeholder = data.name;
   const editSelf = document.querySelector("#bio");
-  editSelf.placeholder =
-    data.self_intro === null ? "" : escapeHtml(data.self_intro);
+  editSelf.placeholder = data.self_intro === null ? "" : data.self_intro;
 
   const editAvatar = document.querySelector(".edit-profile-avatar");
   console.log("editAvatar:", editAvatar);
