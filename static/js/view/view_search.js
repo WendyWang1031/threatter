@@ -43,13 +43,7 @@ export function displayFollowerItem(data) {
     case "Following":
       buttonText = "追蹤中";
       break;
-    case "BeingFollow":
-      buttonText = "追蹤";
-      break;
     case "Pending":
-      buttonText = "取消請求";
-      break;
-    case "PendingBeingFollow":
       buttonText = "取消請求";
       break;
     default:
