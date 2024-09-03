@@ -1,5 +1,6 @@
 import * as Model from "../model/auth.js";
 import * as View from "../view/view.js";
+import { stringifyObjectValues } from "./controller_convert_to_string.js";
 
 const userRegisterUrl = "/api/user";
 const userSignInUrl = "/api/user/auth";
@@ -56,7 +57,8 @@ export function setupEventListeners() {
       const formData = new FormData(event.target);
       const data = Object.fromEntries(formData.entries());
 
-      const result = await Model.fetchApi(userSignInUrl, "PUT", data);
+      let result = await Model.fetchApi(userSignInUrl, "PUT", data);
+      result = stringifyObjectValues(result);
       if (result.ok) {
         localStorage.setItem("userToken", result.data.token);
         View.updateMessage(".hint-signin-message", "登入成功", true);
