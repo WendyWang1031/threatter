@@ -172,8 +172,13 @@ section.postsContainer {
         color: $font-color;
         margin-bottom: 10px;
         padding-left: 50px;
+
         .text {
           margin-bottom: 10px;
+          max-width: 100%;
+          width: auto;
+          word-wrap: break-word;
+          word-break: break-all;
         }
         .media img,
         .media video {
@@ -677,6 +682,8 @@ section.postsContainer {
         padding-left: 50px;
         .text {
           margin-bottom: 10px;
+          word-wrap: break-word;
+          word-break: break-all;
         }
         .media img,
         .media video {
@@ -1377,6 +1384,8 @@ section.single-postsContainer {
         padding-left: 50px;
         .text {
           margin-bottom: 10px;
+          word-wrap: break-word;
+          word-break: break-all;
         }
         .media img,
         .media video {
@@ -1560,6 +1569,8 @@ section.single-CommentContainer {
         padding-left: 50px;
         .text {
           margin-bottom: 10px;
+          word-wrap: break-word;
+          word-break: break-all;
         }
         .media img,
         .media video {
