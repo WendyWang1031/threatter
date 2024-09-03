@@ -16,6 +16,7 @@ import {
 } from "./controller/controller_delete_comment_reply.js";
 
 import { likePost, likeCommentAndReply } from "./controller/controller_like.js";
+import { stringifyObjectValues } from "./controller/controller_convert_to_string.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
@@ -74,7 +75,9 @@ async function fetchGetPost() {
     const response = await fetch(singlePostsUrl, {
       headers: headers,
     });
-    const result = await response.json();
+
+    let result = await response.json();
+    result = stringifyObjectValues(result);
 
     if (result) {
       // console.log("result:", result);
@@ -113,8 +116,9 @@ async function fetchGetCommentAndReply() {
     const response = await fetch(commentAndReplyUrl, {
       headers: headers,
     });
-    const result = await response.json();
-    console.log("Fetch result:", result);
+    let result = await response.json();
+    result = stringifyObjectValues(result);
+    console.log("result:", result);
 
     if (result.error) {
       console.log("message test 400");
