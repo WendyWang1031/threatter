@@ -7,6 +7,7 @@ $font-color: #424242;
 body {
   font-family: Arial, sans-serif;
   background-color: $light-gray;
+  overflow-x: hidden;
 }
 
 section.user-post-container-fake {
