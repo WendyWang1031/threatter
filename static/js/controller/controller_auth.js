@@ -80,6 +80,17 @@ export function setupEventListeners() {
       const formData = new FormData(event.target);
       const data = Object.fromEntries(formData.entries());
 
+      // 驗證：只能包含字母、數字、下底線
+      const accountIdRegex = /^[a-zA-Z0-9_-]+$/;
+      if (!accountIdRegex.test(data.account_id)) {
+        View.updateMessage(
+          ".hint-signup-message",
+          "帳號只能包含字母、數字、下底線",
+          false
+        );
+        return;
+      }
+
       const result = await Model.fetchApi(userRegisterUrl, "POST", data);
       if (result.ok) {
         View.updateMessage(
