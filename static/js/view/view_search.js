@@ -10,13 +10,19 @@ export function displayFollowerItem(data) {
     avatarHtml = `<i class="fa-regular fa-circle-user profile-pic"></i>`;
   }
 
+  let account_id = data.user.account_id;
+  account_id = escapeHtml(account_id);
+
+  let name = data.user.name;
+  name = escapeHtml(name);
+
   item.innerHTML = `
         ${avatarHtml}
           <div class="list-user-info">
             <a href="/member/${encodeURIComponent(
-              data.user.account_id
-            )}" class="list-username">${data.user.account_id}</a>
-            <div class="list-user-fullname">${data.user.name}</div>
+              account_id
+            )}" class="list-username">${account_id}</a>
+            <div class="list-user-fullname">${name}</div>
             
           </div>
         `;
@@ -138,4 +144,13 @@ export function displayFollowerItem(data) {
   item.appendChild(button);
 
   return item;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
