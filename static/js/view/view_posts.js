@@ -213,7 +213,7 @@ function displayReplyElement(reply) {
                     Your browser does not support the video tag.
                   </video>`;
   if (reply.content.media?.audios)
-    mediaHtml += `<audio controls><source src="${media.audios}" type="audio/mpeg">Your browser does not support the audio element.</audio>`;
+    mediaHtml += `<audio controls><source src="${reply.content.media.audios}" type="audio/mpeg">Your browser does not support the audio element.</audio>`;
 
   replyElement.innerHTML = `
             <div class="reply-area-header">

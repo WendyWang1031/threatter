@@ -11,6 +11,8 @@ export function stringifyObjectValues(data) {
     return newObj;
   } else if (data === null) {
     return null;
+  } else if (typeof data === "boolean") {
+    return data;
   } else {
     return String(data);
   }
