@@ -24,7 +24,28 @@ def db_check_post_exist_or_not(account_id : str , post_id : str):
     
         except Exception as e:
             print(f"Error getting post existension details: {e}")
-            connection.rollback()
+            return False
+        finally:
+            cursor.close()
+            connection.close()
+
+def db_check_post_visibility(account_id : str , post_id : str):
+        connection = get_db_connection_pool()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        try:
+
+            check_exist_post_sql = """
+            SELECT visibility
+            FROM content
+            WHERE member_id = %s AND content_id = %s
+            """
+            cursor.execute(check_exist_post_sql, ( account_id , post_id))
+            check_visibility = cursor.fetchone()
+
+            return check_visibility['visibility']
+
+        except Exception as e:
+            print(f"Error getting post existension details: {e}")
             return False
         finally:
             cursor.close()

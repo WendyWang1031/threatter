@@ -154,14 +154,18 @@ async def get_post_member_page(current_user: Optional[dict], account_id: str , p
 async def get_post_single_page(current_user: Optional[dict], account_id: str , post_id : str) -> JSONResponse :
     try:
         member_id = current_user["account_id"] if current_user else None
-        relation = db_check_member_target_relation(member_id , account_id) 
-        if relation is False:
-            return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
         
         post_exist_result = db_check_post_exist_or_not(account_id , post_id)
         if post_exist_result is False:
             return data_not_found_error_response(FAILED_GET_POST_DATA_ERROR)
         
+        post_visibility = db_check_post_visibility(account_id, post_id)
+        
+        if post_visibility !='Public':
+            relation = db_check_member_target_relation(member_id , account_id) 
+            if relation is False:
+                return forbidden_error_response(USER_NOT_AUTHENTICATED_ERROR)
+
         post_data = db_get_single_post_data(member_id , account_id , post_id)
         if post_data is None: 
             return bad_request_error_response(FAILED_GET_MEMBER_POST_DATA_ERROR)
