@@ -28,7 +28,19 @@ function buildUrl({ accountId, postId, commentId, type }) {
 }
 
 export function validateForm(type, accountId, postId, commentId) {
-  const content = document.querySelector(".post-input").value;
+  const content = document.querySelector(".post-input").value.trim();
+  const errorMessage = document.querySelector(".error-message");
+  errorMessage.style.display = "none";
+
+  if (content === "") {
+    errorMessage.textContent = "文字內容不能為空或是包含空白字符";
+    errorMessage.style.display = "block";
+    return false;
+  } else if (content.length > 500) {
+    errorMessage.textContent = "文字內容不得超過 500 字元";
+    errorMessage.style.display = "block";
+    return false;
+  }
 
   // 根據 type 設置 visibility
   let visibility = "public";
@@ -59,7 +71,7 @@ export function validateForm(type, accountId, postId, commentId) {
   console.log("videoUploadInput:", videoUploadInput);
 
   if (content === "" && !imageFile && !videoFile && !audioFile) {
-    alert("請填寫文字欄位或上傳圖片、影片或音源");
+    errorMessage.textContent = "請填寫文字欄位或上傳圖片、影片或音源";
     return false;
   }
   const url = buildUrl({ type, accountId, postId, commentId });

@@ -11,6 +11,9 @@ export function closeCreatePost() {
 
       postForm.reset();
 
+      const errorMessage = document.querySelector(".error-message");
+      errorMessage.style.display = "none";
+
       // 清空所有值
       const fileInputs = postForm.querySelectorAll('input[type="file"]');
       fileInputs.forEach((input) => {

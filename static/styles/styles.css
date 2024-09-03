@@ -277,6 +277,7 @@ section.create-poster-card .create-poster-container .post-form .media-preview {
   outline: none;
   resize: none;
 }
+section.create-poster-card .create-poster-container .post-form .error-message,
 section.create-poster-card .create-poster-container .post-form .post-input {
   padding: 10px;
   border: none;
