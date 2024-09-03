@@ -274,7 +274,7 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
         cursor.close()
         connection.close()
 
-def db_get_member_post_data(member_id : str , account_id : str , page : int) -> Optional[PostListRes] | None:
+def db_get_member_post_data(member_id : Optional[str] , account_id : str , page : int) -> Optional[PostListRes] | None:
     connection = get_db_connection_pool()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
@@ -284,6 +284,22 @@ def db_get_member_post_data(member_id : str , account_id : str , page : int) -> 
 
         limit = 15 
         offset = page * limit
+
+        if member_id is None:
+
+            sql = """
+            select content.* ,
+                member.name , member.account_id , member.avatar,  
+                FALSE AS like_state
+            FROM content
+            
+            Left Join member on content.member_id = member.account_id
+            Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+            WHERE content.member_id = %s 
+                AND content.content_type = 'Post' AND content.visibility = 'Public'
+            ORDER BY created_at DESC LIMIT %s OFFSET %s
+        """
+            params = (account_id, account_id, limit+1, offset)
         
         if member_id == account_id:
 
@@ -299,6 +315,8 @@ def db_get_member_post_data(member_id : str , account_id : str , page : int) -> 
             ORDER BY created_at DESC LIMIT %s OFFSET %s
         """
             params = (account_id, account_id, limit+1, offset)
+
+        
         
         else:
             sql = """
@@ -342,8 +360,8 @@ def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_i
         if member_id is None:
             sql = """
                 select content.* ,
-                member.name , member.account_id , member.avatar 
-                
+                member.name , member.account_id , member.avatar ,
+                FALSE AS like_state
                 FROM content
                 
                 Left Join member on content.member_id = member.account_id
