@@ -684,6 +684,8 @@ section.postsContainer {
           margin-bottom: 10px;
           word-wrap: break-word;
           word-break: break-all;
+          max-width: 100%;
+          width: auto;
         }
         .media img,
         .media video {
@@ -1386,6 +1388,8 @@ section.single-postsContainer {
           margin-bottom: 10px;
           word-wrap: break-word;
           word-break: break-all;
+          max-width: 100%;
+          width: auto;
         }
         .media img,
         .media video {
@@ -1571,6 +1575,8 @@ section.single-CommentContainer {
           margin-bottom: 10px;
           word-wrap: break-word;
           word-break: break-all;
+          max-width: 100%;
+          width: auto;
         }
         .media img,
         .media video {

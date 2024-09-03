@@ -612,6 +612,8 @@ section.postsContainer .indivisial-area .post .post-content .text {
   margin-bottom: 10px;
   word-wrap: break-word;
   word-break: break-all;
+  max-width: 100%;
+  width: auto;
 }
 section.postsContainer .indivisial-area .post .post-content .media img,
 section.postsContainer .indivisial-area .post .post-content .media video {
@@ -1236,6 +1238,8 @@ section.single-postsContainer .indivisial-area .post .post-content .text {
   margin-bottom: 10px;
   word-wrap: break-word;
   word-break: break-all;
+  max-width: 100%;
+  width: auto;
 }
 section.single-postsContainer .indivisial-area .post .post-content .media img,
 section.single-postsContainer .indivisial-area .post .post-content .media video {
@@ -1422,6 +1426,8 @@ section.single-CommentContainer .indivisial-area .post .reply-content .text {
   margin-bottom: 10px;
   word-wrap: break-word;
   word-break: break-all;
+  max-width: 100%;
+  width: auto;
 }
 section.single-CommentContainer .indivisial-area .post .post-content .media img,
 section.single-CommentContainer .indivisial-area .post .post-content .media video,
