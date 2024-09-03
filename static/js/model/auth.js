@@ -62,4 +62,5 @@ export async function fetchApi(url, method, data) {
 export function clearUserSession() {
   localStorage.removeItem("userToken");
   localStorage.removeItem("account_id");
+  localStorage.removeItem("userName");
 }
