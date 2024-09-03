@@ -21,10 +21,11 @@ export function displayContentElement(post) {
   }
 
   // 文字內容
-  const textContent =
-    post.content && post.content.text
-      ? convertUrlsToLinks(post.content.text)
-      : "";
+  let userText = post.content && post.content.text ? post.content.text : "";
+
+  userText = escapeHtml(userText);
+
+  const textContent = convertUrlsToLinks(userText);
 
   // 媒體內容
   let mediaHtml = "";
@@ -117,7 +118,8 @@ export function displayCommentElement(comment) {
     ? `<img src="${avatar}" alt="${account_id}'s avatar" class="profile-pic">`
     : `<i class="fa-regular fa-circle-user profile-pic"></i>`;
 
-  const textContent = convertUrlsToLinks(text);
+  let userText = escapeHtml(text);
+  const textContent = convertUrlsToLinks(userText);
 
   // 媒體內容
   let mediaHtml = "";
@@ -198,10 +200,12 @@ function displayReplyElement(reply) {
   }
 
   // 文字內容
-  const textContent =
-    reply.content && reply.content.text
-      ? convertUrlsToLinks(reply.content.text)
-      : "";
+
+  let userText = reply.content && reply.content.text ? reply.content.text : "";
+
+  userText = escapeHtml(userText);
+
+  const textContent = convertUrlsToLinks(userText);
 
   // 媒體內容
   let mediaHtml = "";
@@ -435,4 +439,13 @@ function generateYouTubeEmbed(url) {
   }
 
   return url;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
