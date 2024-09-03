@@ -170,6 +170,17 @@ async function fetchGetCommentAndReply() {
 
 async function fetchGetMemberDetail() {
   const account_id = localStorage.getItem("account_id");
+  const accountIdRegex = /^[a-zA-Z0-9_-]+$/;
+  if (!accountIdRegex.test(account_id)) {
+    console.error("Invalid account_id detected:", account_id);
+
+    localStorage.removeItem("account_id");
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userName");
+    alert("檢測到非法的帳戶格式，請重新註冊或登入");
+    return;
+  }
+
   const memberUrl = `/api/member/${encodeURIComponent(account_id)}`;
   if (!account_id) {
     console.log("User not logged in, using default avatar.");
