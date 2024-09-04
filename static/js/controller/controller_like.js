@@ -43,6 +43,9 @@ export function likePost() {
           // 構建請求數據
           const likePostData = { like: !isLiked };
 
+          // 觸發愛心動畫
+          triggerHeartAnimation(likeIcon);
+
           // 更新點讚狀態
           fetchUpdatePostLike(accountId, postId, likePostData).catch(
             (error) => {
@@ -168,6 +171,9 @@ export function likeCommentAndReply() {
         // 構建請求數據
         const likeCommentOrReplyData = { like: !isLiked };
 
+        // 觸發愛心動畫
+        triggerHeartAnimation(likeIcon);
+
         // 更新點讚狀態
         fetchUpdateCommentOrReplyLike(
           accountId,
@@ -227,4 +233,23 @@ async function fetchUpdateCommentOrReplyLike(
     console.error("Error updating like the comment or reply", error);
   } finally {
   }
+}
+
+function triggerHeartAnimation(likeIcon) {
+  // 創建一個愛心元素
+  const heartAnimation = document.createElement("i");
+  heartAnimation.classList.add("fa", "fa-heart", "heart-animation");
+
+  // 設置愛心的位置，根據讚的圖標的位置顯示動畫
+  const iconRect = likeIcon.getBoundingClientRect();
+  heartAnimation.style.left = `${iconRect.left + window.scrollX}px`;
+  heartAnimation.style.top = `${iconRect.top + window.scrollY}px`;
+
+  // 將愛心元素添加到 body
+  document.body.appendChild(heartAnimation);
+
+  // 在動畫結束後移除這個愛心元素
+  heartAnimation.addEventListener("animationend", () => {
+    heartAnimation.remove();
+  });
 }
