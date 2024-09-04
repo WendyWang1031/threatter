@@ -24,15 +24,25 @@ users = [
     {"account_id": "ghnto2993", "password": "ghnto2993"},
     {"account_id": "ozfqy0625", "password": "ozfqy0625"},
     {"account_id": "zzic319", "password": "zzic319"},
-    {"account_id": "ioats200", "password": "ioats200"},
+    {"account_id": "ioats200", "password": "ioats200"}
     
 ]
 
 posts = [
-    {"post_id": "P-b82ed171", "account_id": "5566"},
-    {"post_id": "P-136da150", "account_id": "pudding"},
-    {"post_id": "P-e7dea6af", "account_id": "gctab252906"},
-    {"post_id": "P-249115d3", "account_id": "yzmso6437"}
+    {"post_id": "P-e2903114", "account_id": "eijcp24502"},
+    {"post_id": "P-48f1be56", "account_id": "tmwg05163"},
+    {"post_id": "P-ed0b5001", "account_id": "jqdx54297"},
+    {"post_id": "P-1953689b", "account_id": "esxjg48232"},
+    {"post_id": "P-4ba53c05", "account_id": "poat450588"},
+    {"post_id": "P-92a09bc5", "account_id": "kptqu153"},
+    {"post_id": "P-1c39e68f", "account_id": "bxnpp095"},
+    {"post_id": "P-1ab5a502", "account_id": "zyny8104"},
+    {"post_id": "P-f3eecdd3", "account_id": "ydtif750948"},
+    {"post_id": "P-cca3731e", "account_id": "ikbig663"},
+    {"post_id": "P-5d626c32", "account_id": "yzmso6437"},
+    {"post_id": "P-3f44d874", "account_id": "gctab252906"},
+    {"post_id": "P-a663ec43", "account_id": "pudding"},
+    {"post_id": "P-c9965727", "account_id": "5566"}
     
 ]
 
@@ -80,7 +90,7 @@ def mass_like_simulation(users, posts, max_workers=5):
             for future in as_completed(futures):
                 future.result()
 
-        time.sleep(random.uniform(1, 3))
+        time.sleep(random.uniform(3, 3))
 
 
 mass_like_simulation(users, posts, max_workers=5)
