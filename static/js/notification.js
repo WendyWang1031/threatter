@@ -97,6 +97,7 @@ export function setupTabSwitching() {
 
 async function fetchAndDisplayFollowReq(targetList) {
   const token = localStorage.getItem("userToken");
+  document.getElementById("loading").classList.remove("hidden");
 
   try {
     isWaitingForDataReq = true;
@@ -145,6 +146,7 @@ async function fetchAndDisplayFollowReq(targetList) {
     console.error("Error fetching follower Request:", error);
     isWaitingForDataReq = false;
   } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }
 
