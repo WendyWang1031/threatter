@@ -32,32 +32,14 @@ export function validateForm(type, accountId, postId, commentId) {
   const errorMessage = document.querySelector(".error-message");
   errorMessage.style.display = "none";
 
-  if (content === "") {
-    errorMessage.textContent = "文字內容不能為空或是包含空白字符";
-    errorMessage.style.display = "block";
-    return false;
-  } else if (content.length > 500) {
-    errorMessage.textContent = "文字內容不得超過 500 字元";
-    errorMessage.style.display = "block";
-    return false;
-  }
-
-  // 根據 type 設置 visibility
-  let visibility = "public";
-  if (type === "post") {
-    const privacySelect = document.getElementById("privacy-options");
-    visibility = privacySelect.value;
-  }
-
-  // 初始媒體類型的值
-  let imageFile = null;
-  let videoFile = null;
-  let audioFile = null;
-
   // 抓取所有媒體類型
   const imageUploadInput = document.getElementById("image-upload");
   const videoUploadInput = document.getElementById("video-upload");
   const audioUploadInput = document.getElementById("audio-upload");
+  // 初始媒體類型的值
+  let imageFile = null;
+  let videoFile = null;
+  let audioFile = null;
 
   if (imageUploadInput.files.length > 0) {
     imageFile = imageUploadInput.files[0];
@@ -70,10 +52,33 @@ export function validateForm(type, accountId, postId, commentId) {
   }
   console.log("videoUploadInput:", videoUploadInput);
 
+  // 檢查：如果沒有文字和沒有任何媒體檔案，提示錯誤
   if (content === "" && !imageFile && !videoFile && !audioFile) {
     errorMessage.textContent = "請填寫文字欄位或上傳圖片、影片或音源";
+    errorMessage.style.display = "block";
     return false;
   }
+
+  // 當只有文字輸入，沒有上傳媒體時，檢查文字是否有效
+  if (!imageFile && !videoFile && !audioFile) {
+    if (content === "") {
+      errorMessage.textContent = "文字內容不能為空或是包含空白字符";
+      errorMessage.style.display = "block";
+      return false;
+    } else if (content.length > 500) {
+      errorMessage.textContent = "文字內容不得超過 500 字元";
+      errorMessage.style.display = "block";
+      return false;
+    }
+  }
+
+  // 根據 type 設置 visibility
+  let visibility = "public";
+  if (type === "post") {
+    const privacySelect = document.getElementById("privacy-options");
+    visibility = privacySelect.value;
+  }
+
   const url = buildUrl({ type, accountId, postId, commentId });
   submitData(content, imageFile, videoFile, audioFile, url, postId, visibility);
   return true;
