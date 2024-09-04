@@ -32,6 +32,10 @@ export function displayMemberDetail(data) {
   const editSelf = document.querySelector("#bio");
   editSelf.placeholder = data.self_intro === null ? "" : data.self_intro;
 
+  // 設定隱私狀態
+  const privacyCheckbox = document.querySelector("#privacy");
+  privacyCheckbox.checked = data.visibility === "Private";
+
   const editAvatar = document.querySelector(".edit-profile-avatar");
   console.log("editAvatar:", editAvatar);
 

@@ -628,7 +628,7 @@ section.postsContainer {
             margin-right: 10px;
           }
           .created_at {
-            font-size: 12px;
+            font-size: 14px;
             color: #b0b0b0;
             font-weight: 100;
           }
@@ -1221,6 +1221,25 @@ section.member-self-area {
             width: 20px;
             height: 20px;
             cursor: pointer;
+            color: #d7d7d7;
+            appearance: none;
+            background-color: #f0f0f0;
+            border: 2px solid #d7d7d7;
+            border-radius: 3px;
+            position: relative;
+            &:checked {
+              background-color: #a6a6a6;
+              border-color: #a6a6a6;
+
+              &::after {
+                content: "✔";
+                color: white;
+                font-size: 14px;
+                position: absolute;
+                top: 2px;
+                left: 3px;
+              }
+            }
           }
         }
       }
@@ -1332,7 +1351,7 @@ section.single-postsContainer {
             margin-right: 10px;
           }
           .created_at {
-            font-size: 12px;
+            font-size: 14px;
             color: #b0b0b0;
             font-weight: 100;
           }
@@ -1518,7 +1537,7 @@ section.single-CommentContainer {
             font-weight: bold;
           }
           .created_at {
-            font-size: 12px;
+            font-size: 14px;
             color: #b0b0b0;
             font-weight: 100;
           }
@@ -2052,7 +2071,7 @@ section.notify-area {
             }
 
             .created_at {
-              font-size: 12px;
+              font-size: 14px;
               color: #999;
               width: 10%;
               text-align: center;

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f2f5;
@@ -562,7 +563,7 @@ section.postsContainer .indivisial-area .post .post-header .user-info-post .acco
   margin-right: 10px;
 }
 section.postsContainer .indivisial-area .post .post-header .user-info-post .created_at {
-  font-size: 12px;
+  font-size: 14px;
   color: #b0b0b0;
   font-weight: 100;
 }
@@ -1092,6 +1093,26 @@ section.member-self-area .profile-header .profile-nav .nav-button:active {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  color: #d7d7d7;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #f0f0f0;
+  border: 2px solid #d7d7d7;
+  border-radius: 3px;
+  position: relative;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.privacy-toggle input[type=checkbox]:checked {
+  background-color: #a6a6a6;
+  border-color: #a6a6a6;
+}
+.edit-profile-modal .edit-profile-content .edit-profile-form .form-group.privacy-toggle input[type=checkbox]:checked::after {
+  content: "✔";
+  color: white;
+  font-size: 14px;
+  position: absolute;
+  top: 2px;
+  left: 3px;
 }
 .edit-profile-modal .edit-profile-content .edit-profile-form .save-button {
   width: 100%;
@@ -1188,7 +1209,7 @@ section.single-postsContainer .indivisial-area .post .post-header .user-info-pos
   margin-right: 10px;
 }
 section.single-postsContainer .indivisial-area .post .post-header .user-info-post .created_at {
-  font-size: 12px;
+  font-size: 14px;
   color: #b0b0b0;
   font-weight: 100;
 }
@@ -1367,7 +1388,7 @@ section.single-CommentContainer .indivisial-area .post .post-header .user-info-p
 section.single-CommentContainer .indivisial-area .post .post-header .user-info-reply .created_at,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-post .created_at,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-reply .created_at {
-  font-size: 12px;
+  font-size: 14px;
   color: #b0b0b0;
   font-weight: 100;
 }
@@ -1838,7 +1859,7 @@ section.notify-area .notify-header .notify-lists .notify-list .list-item .list-f
   white-space: nowrap;
 }
 .notify-area .notify-header .notify-lists .notify-list .indivisual-list .header-area .created_at {
-  font-size: 12px;
+  font-size: 14px;
   color: #999;
   width: 10%;
   text-align: center;
