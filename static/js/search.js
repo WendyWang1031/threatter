@@ -97,6 +97,5 @@ async function fetchAndDisplaySearch(query) {
   } catch (error) {
     console.error("Error searching:", error);
     isWaitingForData = false;
-  } finally {
   }
 }
