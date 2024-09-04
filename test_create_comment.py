@@ -68,20 +68,31 @@ posts = [
 ]
 
 comment_texts = [
-    "馬爾地夫吧！不過我得確保有Wi-Fi，不然我就沒法在沙灘上懶散地刷手機了。",
-    "我想去哈利波特的魔法學校！學個咒語，然後瞬間移動回家就不怕錯過任何假期了！",
-    "我想去南極！看看企鵝怎麼滑冰，然後和牠們一起來個冰上派對。",
-    "我選加勒比海，躺在吊床上喝椰子汁，看著海盜船從遠處漂過。",
-    "我想去月球，順便幫NASA測試下新的月球漫步姿勢",
-    "我想去日本，吃遍所有的拉麵和壽司",
-    "我想去環球影城",
-    "我想去火星，然後成為第一個在外星拍Vlog的地球人",
-    "我想去北極，和北極熊一起冰上散步",
-    "我要去埃及，看金字塔和木乃伊，然後說服自己其實只是去曬太陽的",
-    "我想去亞馬遜叢林",
-    "我想去環遊世界，一邊打卡一邊拍美照，然後告訴朋友我只是'出去散散步",
-    "我想去韓國追星",
-    "我想去海王星，聽說那裡的風速超快，順便試試風速滑翔傘"
+    "《Happy》 by Pharrell Williams",
+    "《Eye of the Tiger》！今天真的是戰鬥模式，挑戰滿滿的一天！",
+    "《Banana Pancakes》 by Jack Johnson，今天的節奏就是慢悠悠的。",
+    "《Someone Like You》 by Adele，今天的心情有點低落，這首歌陪我度過。",
+    "《Can’t Stop the Feeling》 by Justin Timberlake！今天感覺超High，根本停不下來",
+    "《Let It Go》 from Frozen！因為今天工作太多，我選擇'放下，隨它去～'！",
+    "《I’m So Tired》 by Lauv & Troye Sivan，今天真的累到不行，只想睡一整天",
+    "慢慢喜歡你—莫文蔚",
+    "累—張惠妹，今天真的累爆了",
+    "《On Top of the World》 by Imagine Dragons",
+    "《Dancing Queen》 by ABBA",
+    "落日飛車 Young Man ",
+    "Back In Love - Leisure",
+    "'Good as Hell' by Lizzo",
+    "'Work Hard, Play Hard' by Wiz Khalifa",
+    "'Sunday Morning' by Maroon 5",
+    "Fix You' by Coldplay",
+    "落日飛車 金牛座的牢騷",
+    "Uptown Funk' by Mark Ronson ft. Bruno Mars",
+    "The Lazy Song' by Bruno Mars",
+    "Somewhere Only We Know' by Keane",
+    "Stayin' Alive' by Bee Gees",
+    "Don't Stop Me Now' by Queen",
+    "Yesterday' by The Beatles",
+    "I Will Survive' by Gloria Gaynor",
 
 ]
 
@@ -141,7 +152,7 @@ def mass_comment_simulation(users, post, max_workers=5):
 
         time.sleep(random.uniform(3, 5))  
 
-specific_post = {"post_id": "P-ed0b5001", "account_id": "jqdx54297"}
+specific_post = {"post_id": "P-1953689b", "account_id": "esxjg48232"}
 mass_comment_simulation(users, specific_post, max_workers=5)
 
 
