@@ -1,30 +1,32 @@
 import random
 import requests
 import time
+import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-base_url = "http://127.0.0.1:8000"
+environment = os.getenv("ENVIRONMENT", "local")
+base_url = os.getenv("BASE_URL", "http://127.0.0.1:8000")
 
 users = [
-    {"account_id": "5566", "password": "5566"},
-    {"account_id": "pudding", "password": "pudding"},
-    {"account_id": "gctab252906", "password": "gctab252906"},
-    {"account_id": "yzmso6437", "password": "yzmso6437"},
-    {"account_id": "ikbig663", "password": "ikbig663"},
+    {"account_id": "ygxje0062", "password": "ygxje0062"},
+    {"account_id": "izxh728", "password": "izxh728"},
+    {"account_id": "kwjq55064", "password": "kwjq55064"},
+    {"account_id": "vqur22561", "password": "vqur22561"},
+    {"account_id": "beezu249796", "password": "beezu249796"},
     {"account_id": "ydtif750948", "password": "ydtif750948"},
-    {"account_id": "zyny8104", "password": "zyny8104"},
-    {"account_id": "bxnpp095", "password": "bxnpp095"},
-    {"account_id": "kptqu153", "password": "kptqu153"},
-    {"account_id": "poat450588", "password": "poat450588"},
-    {"account_id": "esxjg48232", "password": "esxjg48232"},
-    {"account_id": "jqdx54297", "password": "jqdx54297"},
-    {"account_id": "tmwg05163", "password": "tmwg05163"},
-    {"account_id": "eijcp24502", "password": "eijcp24502"},
-    {"account_id": "kaehu018", "password": "kaehu018"},
-    {"account_id": "ghnto2993", "password": "ghnto2993"},
-    {"account_id": "ozfqy0625", "password": "ozfqy0625"},
-    {"account_id": "zzic319", "password": "zzic319"},
-    {"account_id": "ioats200", "password": "ioats200"}
+    {"account_id": "tslqd7005", "password": "tslqd7005"},
+    {"account_id": "pepx035335", "password": "pepx035335"},
+    {"account_id": "rclcg797595", "password": "rclcg797595"},
+    {"account_id": "zblu786761", "password": "zblu786761"},
+    {"account_id": "kloin3605", "password": "kloin3605"},
+    {"account_id": "uaduq409439", "password": "uaduq409439"},
+    {"account_id": "wngyp399142", "password": "wngyp399142"},
+    {"account_id": "nkxbn80472", "password": "nkxbn80472"},
+    {"account_id": "rjtu517640", "password": "rjtu517640"},
+    {"account_id": "wzbp403928", "password": "wzbp403928"},
+    {"account_id": "itqk0380", "password": "itqk0380"},
+    {"account_id": "qxth827", "password": "qxth827"},
+    {"account_id": "wvgk7478", "password": "wvgk7478"}
     
 ]
 
