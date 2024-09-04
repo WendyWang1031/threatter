@@ -130,17 +130,10 @@ export function displayFollowerItem(data) {
       };
 
       // 根據當前的 follow_state 決定 follow 的狀態
-      const followAction =
-        data.follow_state === "None" || data.follow_state === "BeingFollow";
-
+      const followAction = data.user.follow_state !== "Following";
       // 即時更新按鈕狀態
-      if (followAction) {
-        button.textContent = "追蹤中";
-        data.follow_state = "Following";
-      } else {
-        button.textContent = "追蹤";
-        data.follow_state = "None";
-      }
+      button.textContent = followAction ? "追蹤中" : "追蹤";
+      data.user.follow_state = followAction ? "Following" : "None";
 
       const response = await fetch("/api/follow", {
         method: "POST",
