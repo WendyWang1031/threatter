@@ -66,6 +66,7 @@ export function uploadAvatar() {
 }
 
 export async function fetchMemberDetail() {
+  document.getElementById("loading").classList.remove("hidden");
   const followProfileButtonContainer = document.querySelector(
     ".follow-profile-button"
   );
@@ -220,6 +221,8 @@ export async function fetchMemberDetail() {
     }
   } catch (error) {
     console.error("Error fetching member data:", error);
+  } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }
 
