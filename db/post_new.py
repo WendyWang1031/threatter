@@ -281,7 +281,6 @@ def db_get_member_post_data(member_id : Optional[str] , account_id : str , page 
         connection.begin()
   
         ## 顯示以下貼文內容
-
         limit = 15 
         offset = page * limit
 
@@ -294,14 +293,14 @@ def db_get_member_post_data(member_id : Optional[str] , account_id : str , page 
             FROM content
             
             Left Join member on content.member_id = member.account_id
-            Left Join likes on content.content_id = likes.content_id AND likes.member_id = %s
+            
             WHERE content.member_id = %s 
                 AND content.content_type = 'Post' AND content.visibility = 'Public'
             ORDER BY created_at DESC LIMIT %s OFFSET %s
         """
-            params = (account_id, account_id, limit+1, offset)
+            params = (account_id, limit+1, offset)
         
-        if member_id == account_id:
+        elif member_id == account_id:
 
             sql = """
             select content.* ,
@@ -335,7 +334,7 @@ def db_get_member_post_data(member_id : Optional[str] , account_id : str , page 
                         (member_relation.relation_state = 'Following')))
             ORDER BY created_at DESC LIMIT %s OFFSET %s
             """
-            params = (account_id, member_id, account_id, limit+1, offset)
+            params = (member_id, member_id, account_id, limit+1, offset)
         
         return db_get_post_data(sql, params, multiple=True)
 
