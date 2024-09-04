@@ -602,9 +602,9 @@ section.postsContainer {
   .indivisial-area {
     display: flex;
     justify-content: center;
-    cursor: pointer;
 
     .post {
+      cursor: pointer;
       display: grid;
       grid-template-columns: 1fr;
       grid-template-areas:
