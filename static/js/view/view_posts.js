@@ -20,6 +20,14 @@ export function displayContentElement(post) {
     avatarHtml = `<i class="fa-regular fa-circle-user profile-pic"></i>`;
   }
 
+  // 判斷 visibility 並決定圖標
+  let visibilityIcon = "";
+  if (post.visibility === "Public") {
+    visibilityIcon = `<i class="fa-solid fa-earth-americas"></i>`;
+  } else if (post.visibility === "Private") {
+    visibilityIcon = `<i class="fa-solid fa-user-group"></i>`;
+  }
+
   // 文字內容
   let userText = post.content && post.content.text ? post.content.text : "";
 
@@ -63,7 +71,7 @@ export function displayContentElement(post) {
               )}" class="account_id">${account_id}</a> 
               <div class="created_at">${formatTimeToTaipeiTime(
                 post.created_at
-              )}</div>
+              )}  ${visibilityIcon}</div>
               </div>
               <div class="menu-button">
               <i class="fa fa-ellipsis-h"></i>

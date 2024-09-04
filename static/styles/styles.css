@@ -562,7 +562,7 @@ section.postsContainer .indivisial-area .post .post-header .user-info-post .acco
   margin-right: 10px;
 }
 section.postsContainer .indivisial-area .post .post-header .user-info-post .created_at {
-  font-size: 16px;
+  font-size: 12px;
   color: #b0b0b0;
   font-weight: 100;
 }
@@ -1188,7 +1188,7 @@ section.single-postsContainer .indivisial-area .post .post-header .user-info-pos
   margin-right: 10px;
 }
 section.single-postsContainer .indivisial-area .post .post-header .user-info-post .created_at {
-  font-size: 16px;
+  font-size: 12px;
   color: #b0b0b0;
   font-weight: 100;
 }
@@ -1367,7 +1367,7 @@ section.single-CommentContainer .indivisial-area .post .post-header .user-info-p
 section.single-CommentContainer .indivisial-area .post .post-header .user-info-reply .created_at,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-post .created_at,
 section.single-CommentContainer .indivisial-area .post .reply-area-header .user-info-reply .created_at {
-  font-size: 16px;
+  font-size: 12px;
   color: #b0b0b0;
   font-weight: 100;
 }
