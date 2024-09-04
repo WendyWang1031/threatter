@@ -34,7 +34,16 @@ async def db_create_comment_data(comment_data : CommentReq , account_id: str,  p
         """
         cursor.execute(sql , (member_id , post_id, content_id, 'Comment', 
                               comment_data.visibility, content, image_url, video_url, audio_url) )
-        
+
+       # 同時對貼文總回覆數 +1
+        update_post_sql = """
+            UPDATE content 
+            SET reply_counts = reply_counts + 1 
+            WHERE content_id = %s
+        """
+        cursor.execute(update_post_sql, (post_id,))
+
+
         connection.commit()
 
         if account_id != member_id:
@@ -84,6 +93,23 @@ async def db_create_reply_data(comment_data : CommentReq , account_id: str , pos
         """
         cursor.execute(sql , (member_id , comment_id, content_id, 'Reply', 
                               comment_data.visibility, content, image_url, video_url, audio_url) )
+        
+        # 直接對該留言的回覆數 +1
+        update_comment_sql = """
+            UPDATE content 
+            SET reply_counts = reply_counts + 1 
+            WHERE content_id = %s
+        """
+        cursor.execute(update_comment_sql, (comment_id,))
+
+        # 同時對貼文總回覆數 +1
+        update_post_sql = """
+            UPDATE content 
+            SET reply_counts = reply_counts + 1 
+            WHERE content_id = %s
+        """
+        cursor.execute(update_post_sql, (post_id,))
+        
         connection.commit()
         
         if account_id != member_id:
