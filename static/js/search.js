@@ -63,8 +63,11 @@ async function fetchAndDisplaySearch(query) {
     result = stringifyObjectValues(result);
 
     const targetList = document.querySelector(".search-list");
+
     if (currentPage === 0) {
       targetList.innerHTML = "";
+      const hintMessage = document.querySelector(".hint-message");
+      hintMessage.style.display = "none";
     }
 
     let lastItem = document.querySelector(".list-item:last-child");

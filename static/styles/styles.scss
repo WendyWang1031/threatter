@@ -2183,6 +2183,13 @@ section.search-area {
     .search-lists {
       // max-height: 650px;
       overflow-y: auto;
+      .hint-message {
+        padding: 50px;
+        text-align: center;
+        color: #9a9a9a;
+        height: 200px;
+        background-color: $bg-color;
+      }
 
       .search-list {
         display: none;

@@ -1955,6 +1955,13 @@ section.search-area .search-header .search-nav {
 section.search-area .search-header .search-lists {
   overflow-y: auto;
 }
+section.search-area .search-header .search-lists .hint-message {
+  padding: 50px;
+  text-align: center;
+  color: #9a9a9a;
+  height: 200px;
+  background-color: #fff;
+}
 section.search-area .search-header .search-lists .search-list {
   display: none;
 }
