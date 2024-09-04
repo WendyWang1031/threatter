@@ -54,38 +54,48 @@ async def get_post_home(current_user: Optional[dict], page: int) -> JSONResponse
         
         member_id = current_user["account_id"] if current_user else None
         
-        cached_posts, cached_next_page = await RedisManager.get_popular_posts(page)
-        if cached_posts:
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "cached": True,
-                    "next_page": cached_next_page,
-                    "data": cached_posts
-                }
-            )
+        # cached_posts, cached_next_page = await RedisManager.get_popular_posts(page)
+        # if cached_posts:
+        #     return JSONResponse(
+        #         status_code=status.HTTP_200_OK,
+        #         content={
+        #             "cached": True,
+        #             "next_page": cached_next_page,
+        #             "data": cached_posts
+        #         }
+        #     )
         
+        # post_data = db_get_popular_posts(member_id , 60 , page)
+        # if post_data is None:
+        #     return data_not_found_error_response(FAILED_GET_POST_DATA_ERROR)
+        
+        # posts_to_cache = post_data.dict() if hasattr(post_data, 'dict') else post_data
+        # posts_to_cache = convert_post_data(posts_to_cache)
+        # await RedisManager.cache_popular_posts(page, posts_to_cache)
+
+        # next_page = posts_to_cache.get("next_page")
+        # data_to_cache = posts_to_cache.get("data", [])
+
+        # response = JSONResponse(
+        # status_code = status.HTTP_200_OK,
+        # content={
+        #         "cached": False,
+        #         "next_page": next_page,
+        #         "data": data_to_cache
+        #     }
+        # )
+        # return response
         post_data = db_get_popular_posts(member_id , 60 , page)
         if post_data is None:
             return data_not_found_error_response(FAILED_GET_POST_DATA_ERROR)
         
-        posts_to_cache = post_data.dict() if hasattr(post_data, 'dict') else post_data
-        posts_to_cache = convert_post_data(posts_to_cache)
-        await RedisManager.cache_popular_posts(page, posts_to_cache)
-
-        next_page = posts_to_cache.get("next_page")
-        data_to_cache = posts_to_cache.get("data", [])
-
+        
         response = JSONResponse(
-        status_code = status.HTTP_200_OK,
-        content={
-                "cached": False,
-                "next_page": next_page,
-                "data": data_to_cache
-            }
-        )
+                status_code = status.HTTP_200_OK,
+                content = json.loads(post_data.json())
+                )
         return response
-
+        
 
     except Exception as e :
         return interanal_server_error_response(str(e))
