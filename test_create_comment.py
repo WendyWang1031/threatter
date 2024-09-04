@@ -32,36 +32,37 @@ users = [
 
 posts = [
     {"post_id": "P-e2903114", "account_id": "eijcp24502"},
-    # {"post_id": "P-48f1be56", "account_id": "tmwg05163"},
-    # {"post_id": "P-ed0b5001", "account_id": "jqdx54297"},
-    # {"post_id": "P-1953689b", "account_id": "esxjg48232"},
-    # {"post_id": "P-4ba53c05", "account_id": "poat450588"},
-    # {"post_id": "P-92a09bc5", "account_id": "kptqu153"},
-    # {"post_id": "P-1c39e68f", "account_id": "bxnpp095"},
-    # {"post_id": "P-1ab5a502", "account_id": "zyny8104"},
-    # {"post_id": "P-f3eecdd3", "account_id": "ydtif750948"},
-    # {"post_id": "P-cca3731e", "account_id": "ikbig663"},
-    # {"post_id": "P-5d626c32", "account_id": "yzmso6437"},
-    # {"post_id": "P-3f44d874", "account_id": "gctab252906"},
-    # {"post_id": "P-a663ec43", "account_id": "pudding"},
-    # {"post_id": "P-c9965727", "account_id": "5566"}
+    {"post_id": "P-48f1be56", "account_id": "tmwg05163"},
+    {"post_id": "P-ed0b5001", "account_id": "jqdx54297"},
+    {"post_id": "P-1953689b", "account_id": "esxjg48232"},
+    {"post_id": "P-4ba53c05", "account_id": "poat450588"},
+    {"post_id": "P-92a09bc5", "account_id": "kptqu153"},
+    {"post_id": "P-1c39e68f", "account_id": "bxnpp095"},
+    {"post_id": "P-1ab5a502", "account_id": "zyny8104"},
+    {"post_id": "P-f3eecdd3", "account_id": "ydtif750948"},
+    {"post_id": "P-cca3731e", "account_id": "ikbig663"},
+    {"post_id": "P-5d626c32", "account_id": "yzmso6437"},
+    {"post_id": "P-3f44d874", "account_id": "gctab252906"},
+    {"post_id": "P-a663ec43", "account_id": "pudding"},
+    {"post_id": "P-c9965727", "account_id": "5566"}
     
 ]
 
 comment_texts = [
-    "咖啡、會議、加班",
-    "陽光、放鬆、音樂",
-    "挑戰、突破、成就",
-    "混亂、意外、驚喜",
-    "美食、朋友、歡笑",
-    "運動、疲憊、滿足",
-    "專注、學習、成長",
-    "經痛、發瘋、躺平",
-    "躺著、發呆、不說話",
-    "看書、追劇、吃零食",
-    "聽廣播、追串文、看廢文",
-    "發瘋、發瘋、發瘋",
-    "emo、emo、emo"
+    "我想和大象聊天！牠們看起來那麼有智慧，我很好奇牠們記得多少事情。",
+    "和鳥聊聊，牠們每天在空中飛來飛去一定有很多特別的視角",
+    "我想和鴕鳥聊，想問牠們為什麼遇到問題總是把頭埋進沙子裡？牠們真的以為這樣就解決了嗎",
+    "想和貓聊天，到底什麼時候才會正眼看我們一眼？",
+    "我超想和蝙蝠聊天，想問牠們到底怎麼邊倒著掛著邊睡得那麼爽",
+    "我想和斑馬聊天，想知道牠們的條紋到底是黑底白紋還是白底黑紋？",
+    "我會和海鷗聊聊，想問牠們為什麼總愛偷吃人類的食物，這是牠們的日常娛樂嗎",
+    "我會和鯊魚聊聊，想知道牠們吃人真的只是個'意外'嗎？",
+    "我超想和蝙蝠聊天，想問牠們到底怎麼邊倒著掛著邊睡得那麼爽？",
+    "我要跟金魚聊聊，想問牠們是不是三秒鐘就忘記自己剛才在做什麼",
+    "我想和海獺聊聊，想問牠們為什麼吃東西的時候還要把手放在肚子上",
+    "我想和樹懶聊天，問問牠們怎麼做到在世界末日也能保持這麼淡定的",
+    "我想和鴛鴦聊聊，問問牠們為什麼永遠都成雙成對，單身狗會怎麼辦？",
+    "我要跟螞蟻聊聊，問牠們是不是全地球最勤奮的動物，還有牠們怎麼看待我們這些懶人"
 
 ]
 
@@ -121,7 +122,7 @@ def mass_comment_simulation(users, post, max_workers=5):
 
         time.sleep(random.uniform(3, 5))  
 
-specific_post = {"post_id": "P-e2903114", "account_id": "eijcp24502"}
+specific_post = {"post_id": "P-48f1be56", "account_id": "tmwg05163"}
 mass_comment_simulation(users, specific_post, max_workers=5)
 
 
