@@ -26,7 +26,26 @@ users = [
     {"account_id": "wzbp403928", "password": "wzbp403928"},
     {"account_id": "itqk0380", "password": "itqk0380"},
     {"account_id": "qxth827", "password": "qxth827"},
-    {"account_id": "wvgk7478", "password": "wvgk7478"}
+    {"account_id": "wvgk7478", "password": "wvgk7478"},
+    {"account_id": "5566", "password": "5566"},
+    {"account_id": "pudding", "password": "pudding"},
+    {"account_id": "gctab252906", "password": "gctab252906"},
+    {"account_id": "yzmso6437", "password": "yzmso6437"},
+    {"account_id": "ikbig663", "password": "ikbig663"},
+    {"account_id": "ydtif750948", "password": "ydtif750948"},
+    {"account_id": "zyny8104", "password": "zyny8104"},
+    {"account_id": "bxnpp095", "password": "bxnpp095"},
+    {"account_id": "kptqu153", "password": "kptqu153"},
+    {"account_id": "poat450588", "password": "poat450588"},
+    {"account_id": "esxjg48232", "password": "esxjg48232"},
+    {"account_id": "jqdx54297", "password": "jqdx54297"},
+    {"account_id": "tmwg05163", "password": "tmwg05163"},
+    {"account_id": "eijcp24502", "password": "eijcp24502"},
+    {"account_id": "kaehu018", "password": "kaehu018"},
+    {"account_id": "ghnto2993", "password": "ghnto2993"},
+    {"account_id": "ozfqy0625", "password": "ozfqy0625"},
+    {"account_id": "zzic319", "password": "zzic319"},
+    {"account_id": "ioats200", "password": "ioats200"},
     
 ]
 
@@ -49,20 +68,20 @@ posts = [
 ]
 
 comment_texts = [
-    "我想和大象聊天！牠們看起來那麼有智慧，我很好奇牠們記得多少事情。",
-    "和鳥聊聊，牠們每天在空中飛來飛去一定有很多特別的視角",
-    "我想和鴕鳥聊，想問牠們為什麼遇到問題總是把頭埋進沙子裡？牠們真的以為這樣就解決了嗎",
-    "想和貓聊天，到底什麼時候才會正眼看我們一眼？",
-    "我超想和蝙蝠聊天，想問牠們到底怎麼邊倒著掛著邊睡得那麼爽",
-    "我想和斑馬聊天，想知道牠們的條紋到底是黑底白紋還是白底黑紋？",
-    "我會和海鷗聊聊，想問牠們為什麼總愛偷吃人類的食物，這是牠們的日常娛樂嗎",
-    "我會和鯊魚聊聊，想知道牠們吃人真的只是個'意外'嗎？",
-    "我超想和蝙蝠聊天，想問牠們到底怎麼邊倒著掛著邊睡得那麼爽？",
-    "我要跟金魚聊聊，想問牠們是不是三秒鐘就忘記自己剛才在做什麼",
-    "我想和海獺聊聊，想問牠們為什麼吃東西的時候還要把手放在肚子上",
-    "我想和樹懶聊天，問問牠們怎麼做到在世界末日也能保持這麼淡定的",
-    "我想和鴛鴦聊聊，問問牠們為什麼永遠都成雙成對，單身狗會怎麼辦？",
-    "我要跟螞蟻聊聊，問牠們是不是全地球最勤奮的動物，還有牠們怎麼看待我們這些懶人"
+    "馬爾地夫吧！不過我得確保有Wi-Fi，不然我就沒法在沙灘上懶散地刷手機了。",
+    "我想去哈利波特的魔法學校！學個咒語，然後瞬間移動回家就不怕錯過任何假期了！",
+    "我想去南極！看看企鵝怎麼滑冰，然後和牠們一起來個冰上派對。",
+    "我選加勒比海，躺在吊床上喝椰子汁，看著海盜船從遠處漂過。",
+    "我想去月球，順便幫NASA測試下新的月球漫步姿勢",
+    "我想去日本，吃遍所有的拉麵和壽司",
+    "我想去環球影城",
+    "我想去火星，然後成為第一個在外星拍Vlog的地球人",
+    "我想去北極，和北極熊一起冰上散步",
+    "我要去埃及，看金字塔和木乃伊，然後說服自己其實只是去曬太陽的",
+    "我想去亞馬遜叢林",
+    "我想去環遊世界，一邊打卡一邊拍美照，然後告訴朋友我只是'出去散散步",
+    "我想去韓國追星",
+    "我想去海王星，聽說那裡的風速超快，順便試試風速滑翔傘"
 
 ]
 
@@ -122,7 +141,7 @@ def mass_comment_simulation(users, post, max_workers=5):
 
         time.sleep(random.uniform(3, 5))  
 
-specific_post = {"post_id": "P-48f1be56", "account_id": "tmwg05163"}
+specific_post = {"post_id": "P-ed0b5001", "account_id": "jqdx54297"}
 mass_comment_simulation(users, specific_post, max_workers=5)
 
 
