@@ -22,7 +22,7 @@ let isWaitingForData = false;
 
 document.addEventListener("DOMContentLoaded", async function () {
   PermissionAllIcon();
-  await checkUserState();
+  // await checkUserState();
 
   await fetchGetMemberDetail();
   // 更新貼文內容
