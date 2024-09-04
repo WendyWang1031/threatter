@@ -150,6 +150,7 @@ async function fetchAndDisplayFollowReq(targetList) {
 
 async function fetchAndDisplayNotification(targetList) {
   const token = localStorage.getItem("userToken");
+  document.getElementById("loading").classList.remove("hidden");
 
   try {
     isWaitingForDataAni = true;
@@ -195,5 +196,6 @@ async function fetchAndDisplayNotification(targetList) {
     console.error("Error fetching notifications:", error);
     isWaitingForDataAni = false;
   } finally {
+    document.getElementById("loading").classList.add("hidden");
   }
 }
