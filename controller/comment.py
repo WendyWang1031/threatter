@@ -21,7 +21,7 @@ async def create_comments(content_data : CommentReq ,
 
         if not content_data.content.text and not (content_data.content.media and (content_data.content.media.images or content_data.content.media.videos or content_data.content.media.audios)):
             return bad_request_error_response(FAILED_UPDATE_COMMENT_DATA_FIELD_EMPTY_ERROR) 
-        
+
         result = await db_create_comment_data(content_data , account_id , post_id , member_id)
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR) 
@@ -45,8 +45,8 @@ async def create_replies(content_data : CommentReq ,
 
         if not content_data.content.text and not (content_data.content.media and (content_data.content.media.images or content_data.content.media.videos or content_data.content.media.audios)):
             return bad_request_error_response(FAILED_UPDATE_REPLY_DATA_FIELD_EMPTY_ERROR) 
- 
-        result =await db_create_reply_data(content_data , account_id , post_id , comment_id , member_id)
+
+        result = await db_create_reply_data(content_data , account_id , post_id , comment_id , member_id)
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR)
         
