@@ -68,31 +68,39 @@ posts = [
 ]
 
 comment_texts = [
-    "《Happy》 by Pharrell Williams",
-    "《Eye of the Tiger》！今天真的是戰鬥模式，挑戰滿滿的一天！",
-    "《Banana Pancakes》 by Jack Johnson，今天的節奏就是慢悠悠的。",
-    "《Someone Like You》 by Adele，今天的心情有點低落，這首歌陪我度過。",
-    "《Can’t Stop the Feeling》 by Justin Timberlake！今天感覺超High，根本停不下來",
-    "《Let It Go》 from Frozen！因為今天工作太多，我選擇'放下，隨它去～'！",
-    "《I’m So Tired》 by Lauv & Troye Sivan，今天真的累到不行，只想睡一整天",
-    "慢慢喜歡你—莫文蔚",
-    "累—張惠妹，今天真的累爆了",
-    "《On Top of the World》 by Imagine Dragons",
-    "《Dancing Queen》 by ABBA",
-    "落日飛車 Young Man ",
-    "Back In Love - Leisure",
-    "'Good as Hell' by Lizzo",
-    "'Work Hard, Play Hard' by Wiz Khalifa",
-    "'Sunday Morning' by Maroon 5",
-    "Fix You' by Coldplay",
-    "落日飛車 金牛座的牢騷",
-    "Uptown Funk' by Mark Ronson ft. Bruno Mars",
-    "The Lazy Song' by Bruno Mars",
-    "Somewhere Only We Know' by Keane",
-    "Stayin' Alive' by Bee Gees",
-    "Don't Stop Me Now' by Queen",
-    "Yesterday' by The Beatles",
-    "I Will Survive' by Gloria Gaynor",
+    "我一定要把餐具按顏色或大小排好才開始吃，不然就會覺得不舒服",
+    "我喜歡把爆米花按口味分好，再按順序吃，吃到最後感覺像在開美食會",
+    "吃披薩一定要從邊緣開始吃，看能不能先吃掉所有餅邊再吃中心。",
+    "我吃巧克力時一定要一小塊一小塊地慢慢吃，不能一次咬太大口",
+    "我不管是什麼食物，都喜歡全部混在一起，這樣可以省事",
+    "吃餅乾時，我一定要先把餅乾咬成完美的圓形！",
+    "我吃三明治一定要先把麵包邊剝掉，最後才吃中間部分，因為這樣吃起來才有層次感",
+    "我喝果汁前一定要先搖一搖，幻想自己像在調製一杯超高級雞尾酒",
+    "直接用手抓",
+    "喝咖啡時一定要先聞一聞香氣，閉上眼感受一下",
+    "我喜歡一邊吃東西一邊思考人生的意義",
+    "我吃餅乾前，先會把它掰成兩半，然後看哪邊的餡最多，再先吃餡少的那邊，讓最美味的留在最後 ",
+    "吃冰淇淋的時候一定要先舔一圈邊緣，確保它不會融化滴下來",
+    "我吃什麼都要跟家裡的貓分享一點",
+    "每次吃蛋糕都要把外面的奶油先刮掉，因為我懷疑它們在圖謀不軌，糖分太高",
+    "我每次吃飯都會看著手錶，確保吃飯的時間在20分鐘內結束",
+    "我吃薯條的時候，總會偷偷留幾根，因為不想一次吃完",
+    "我吃壽司一定要先把上面的魚片吃掉，再吃下面的米飯",
+    "我吃三明治總是從中間咬下去，這樣可以省下兩邊的時間，直接進入核心",
+    "我吃洋芋片時喜歡閉著眼睛隨便抓一片",
+    "吃披薩時一定要把料全部挑出來吃，最後才吃餅皮",
+    "我喝飲料時會先用吸管吸一口，然後再觀察杯子裡的水位，推算我還能喝幾口",
+    "吃泡麵前一定要先把所有調味包按順序排列好，然後像在進行一場神聖儀式一樣倒進去",
+    "我吃水果沙拉時，一定要把所有水果按顏色分類",
+    "吃披薩時一定要把所有的餡料都撥到每一口都一樣多",
+    "吃炸雞時一定要先把骨頭周圍的肉精確地啃乾淨",
+    "吃漢堡時，總會先從一邊開始咬，然後轉著吃，最後變成一個奇怪的形狀",
+    "吃壽司時，喜歡一口吞掉，因為感覺自己像忍者一樣迅速解決敵人",
+    "吃甜點時總要先摸摸它，確認它沒有'偷偷'加太多糖，才敢下口",
+    "我每次吃麥片，都會先把裡面的果乾撿出來",
+    "我吃披薩時從餅皮開始",
+    "吃零食時總會先留下最後一片",
+    "我吃餅乾一定要先踩在地上",
 
 ]
 
@@ -152,7 +160,7 @@ def mass_comment_simulation(users, post, max_workers=5):
 
         time.sleep(random.uniform(3, 5))  
 
-specific_post = {"post_id": "P-1953689b", "account_id": "esxjg48232"}
+specific_post = {"post_id": "P-1ab5a502", "account_id": "zyny8104"}
 mass_comment_simulation(users, specific_post, max_workers=5)
 
 
