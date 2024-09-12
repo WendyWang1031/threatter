@@ -16,6 +16,7 @@ from service.router_follow import follow_router
 from service.router_comment import comment_router
 from service.router_SSE import notification_router
 from service.router_presigned_url import presigned_router
+from service.router_bg_collection import bg_collection_router
 from service.redis import RedisManager
 
 @asynccontextmanager
@@ -37,6 +38,7 @@ app.include_router(follow_router)
 app.include_router(comment_router)
 app.include_router(notification_router)
 app.include_router(presigned_router)
+app.include_router(bg_collection_router)
 
 # class ConnectionManager:
 #     def __init__(self):
