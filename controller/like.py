@@ -7,8 +7,8 @@ from db.check_relation import *
 from db.check_post import *
 from db.update_counts import *
 from util.error_response import *
+from service.redis import RedisManager
 from service.security import security_get_current_user
-
 
 async def post_post_like(post_like : LikeReq , 
                         account_id : str, 
@@ -30,6 +30,12 @@ async def post_post_like(post_like : LikeReq ,
         result = await db_like_post(account_id , post_like , post_id , member_id)        
         if result is False:
             return bad_request_error_response(FAILED_UPDATE_DATA_ERROR)
+        
+        # 創建 Redis 連線管理器
+        await RedisManager.init_redis()
+        redis_client = RedisManager.get_redis()
+        # 加權按讚分數  
+        await redis_client.zincrby('popular_posts_zset', 2, post_id)
 
         result = (LikeRes(total_likes = result)).dict()
         response = JSONResponse(
