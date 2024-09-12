@@ -97,6 +97,19 @@ class RedisManager:
         # print(f"Retrieving page {page} with next_page {next_page} and data length {len(post_list)}")
         
         return post_list, next_page
+    
+    @classmethod
+    async def update_redis_zset_with_posts(posts):
+        zset_key = "popular_posts_zset"
+        redis_client = await RedisManager.get_redis()
+        
+        async with redis_client.pipeline() as pipe:
+            for post in posts:
+                post_id = post['content_id']
+                score = post['popularity_score']
+                # 插入 ZSET
+                pipe.zadd(zset_key, {post_id: score})
+            await pipe.execute()
 
     
     @classmethod
