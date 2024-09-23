@@ -42,6 +42,9 @@ The project is a social platform supporting post creation, comment replies, and 
 
 ## Usage
 
+- Display notification operations
+  <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/notification_gif.gif" alt="notification" width="800"/>
+
 - Login and Registration  
   <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/sign%20in.png" alt="login-signin" width="400"/>
 
