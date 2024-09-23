@@ -20,6 +20,7 @@ Website Link : https://threatter.site/
 The project is a social platform supporting post creation, comment replies, and following users. It addresses the need for content filtering and recommendation by providing personalized post suggestions as well as popular post recommendations. Additionally, the platform includes a real-time notification system to keep users updated on interactions promptly.
 
 ## System Architecture
+<img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/%E5%B0%88%E6%A1%88%E5%BE%8C%E7%AB%AF%E6%B5%81%E7%A8%8B%204%20.png" alt="System Architecture" width="800"/>
 
 ## Features
 
@@ -41,21 +42,30 @@ The project is a social platform supporting post creation, comment replies, and 
 
 ## Usage
 
-- Login and Registration
+- Login and Registration  
+  <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/sign%20in.png" alt="login-signin" width="400"/>
 
-- View Personalized Post Recommendations
+- View Personalized Post Recommendations  
+  <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/personal_posts.png" alt="personal-recommand" width="400"/>
 
-- View Popular Post Recommendations
+- View Popular Post Recommendations  
+  <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/pop_posts.png" alt="pop-recommand" width="400"/>
 
-- Edit Profile Page
+- Edit Profile Page  
+  <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/member_page.png" alt="member-personal-page" width="400"/>
 
-- View Notifications
+- View Notifications  
+  <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/notificaition.png" alt="notify" width="400"/>
 
-## Table Schema
+## Table Schema  
+<img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/db_schema.png" alt="schema" width="800"/>
 
 ## API Documentation
 
 The APIs in this project are designed following RESTful standards.
+<img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/user.png" alt="user" width="600"/>
+<img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/post.png" alt="post" width="600"/>
+<img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/follow.png" alt="follow" width="600"/>
 
 ## Contact
 
