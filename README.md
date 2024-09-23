@@ -4,6 +4,8 @@ A social networksite inspired by Meta's 'threads'.
 
 Website Link : https://threatter.site/
 
+<img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/home.gif" alt="Threatter Home" width="800"/>
+
 ## Table of Contents
 
 - [Introduction](#introduction)
