@@ -22,6 +22,7 @@ Website Link : https://threatter.site/
 The project is a social platform supporting post creation, comment replies, and following users. It addresses the need for content filtering and recommendation by providing personalized post suggestions as well as popular post recommendations. Additionally, the platform includes a real-time notification system to keep users updated on interactions promptly.
 
 ## System Architecture
+
 <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/%E5%B0%88%E6%A1%88%E5%BE%8C%E7%AB%AF%E6%B5%81%E7%A8%8B%204%20.png" alt="System Architecture" width="800"/>
 
 ## Features
@@ -30,6 +31,10 @@ The project is a social platform supporting post creation, comment replies, and 
 - Personalized Post Recommendations: Recommendation system based on user's follows
 - Popular Post Recommendations: Highlights popular content based on interaction data
 - Real-Time Notifications: Pushes interaction updates to users using real-time streaming (Sever-Sent-Events)
+
+<img src="https://github.com/WendyWang1031/threatter/blob/develop/readme_images/posts_design.png" alt="Post " width="800"/>
+
+<img src="https://github.com/WendyWang1031/threatter/blob/develop/readme_images/Redis_pubsub.png" alt="redis " width="800"/>
 
 ## Tech Stack
 
@@ -62,7 +67,8 @@ The project is a social platform supporting post creation, comment replies, and 
 - View Notifications  
   <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/notificaition.png" alt="notify" width="400"/>
 
-## Table Schema  
+## Table Schema
+
 <img src="https://github.com/WendyWang1031/threatter/blob/main/readme_images/db_schema.png" alt="schema" width="800"/>
 
 ## API Documentation
