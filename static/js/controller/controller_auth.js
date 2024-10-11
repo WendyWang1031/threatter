@@ -12,6 +12,18 @@ export function setupEventListeners() {
       View.setElementDisplay(".signin-mask", "flex")
     );
 
+  //測試帳號
+  document.querySelector(".quick-login").addEventListener("click", async () => {
+    const testAccount = "test_user";
+    const testPassword = "test_password";
+
+    document.getElementById("signin-account-id").value = testAccount;
+    document.getElementById("signin-password").value = testPassword;
+
+    const event = new Event("submit");
+    document.querySelector(".signin").dispatchEvent(event);
+  });
+
   document.querySelector(".go-to-signup").addEventListener("click", () => {
     View.setElementDisplay(".signin-mask", "none");
     View.setElementDisplay(".signup-mask", "flex");
