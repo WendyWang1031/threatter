@@ -1,12 +1,14 @@
 from model.model import *
 import pymysql.cursors
 from typing import Any
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from datetime import datetime
 from util.follow_util import *
 
+DBManager.init_db_pool()
+
 def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         sql = """select name , account_id , avatar , self_intro , visibility 
@@ -56,7 +58,7 @@ def db_get_member_data(member_id : str , account_id : str ) -> MemberDetail | No
         connection.close()
 
 def db_update_member_data(member_id : str  , member_data : MemberUpdateReq ) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:

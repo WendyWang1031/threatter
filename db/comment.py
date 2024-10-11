@@ -1,14 +1,16 @@
 import pymysql.cursors
 from typing import Optional
 from model.model import *
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from db.re_post_data import *
 from db.notification import *
 from service.common import *
 from util.follow_util import *
 
+DBManager.init_db_pool()
+
 async def db_create_comment_data(comment_data : CommentReq , account_id: str,  post_id : str , member_id : str) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -61,7 +63,7 @@ async def db_create_comment_data(comment_data : CommentReq , account_id: str,  p
         connection.close()
 
 async def db_create_reply_data(comment_data : CommentReq , account_id: str , post_id : str , comment_id : str , member_id : str) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -129,7 +131,7 @@ async def db_create_reply_data(comment_data : CommentReq , account_id: str , pos
 
 
 def db_delete_comment_and_reply(comment_id : str , member_id : str) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         delete_child_replies_sql = """
@@ -160,7 +162,7 @@ def db_delete_comment_and_reply(comment_id : str , member_id : str) -> bool :
         connection.close()
 
 def db_get_comments_and_replies_data(member_id: Optional[str] , account_id : str , post_id : str , page : int) -> Optional[PostListRes] | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()

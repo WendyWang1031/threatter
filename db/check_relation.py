@@ -1,14 +1,16 @@
 import pymysql.cursors
 from typing import Optional
 from model.model import *
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from util.follow_util import *
+
+DBManager.init_db_pool()
 
 def db_check_existence_and_relations(account_id: str, 
                                      post_id: Optional[str] = None, 
                                      comment_id: Optional[str] = None, 
                                      member_id: Optional[str] = None) -> dict:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -81,7 +83,7 @@ def db_check_existence_and_relations(account_id: str,
         connection.close()
 
 def db_check_target_exist_or_not(account_id : str ):
-        connection = get_db_connection_pool()
+        connection = DBManager.get_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         try:
 
@@ -109,7 +111,7 @@ def db_check_target_exist_or_not(account_id : str ):
 
 
 def db_check_each_other_relation(member_id: str , account_id : str ):
-        connection = get_db_connection_pool()
+        connection = DBManager.get_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         try:
 
@@ -131,7 +133,7 @@ def db_check_each_other_relation(member_id: str , account_id : str ):
             connection.close()
 
 def db_check_member_target_relation(member_id: Optional[str] , account_id : str ):
-        connection = get_db_connection_pool()
+        connection = DBManager.get_connection()
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         try:
             if member_id == account_id:
@@ -164,19 +166,3 @@ def db_check_member_target_relation(member_id: Optional[str] , account_id : str 
         finally:
             cursor.close()
             connection.close()
-
-def has_permission_to_view(member_id: Optional[str], post_visibility: str, relation_state: Optional[str]) -> bool:
-    # 如果貼文內容是公開，任何人都能觀看
-    if post_visibility == "Public":
-        return True
-
-    
-    # 觀看私人貼文的條件是必須已追蹤
-    if post_visibility == "Private" and relation_state == "Following":
-        return True
-    
-    # print("member_id:",member_id)
-    # print("post_visibility:",post_visibility)
-    # print("relation_state:",relation_state)
-    
-    return False

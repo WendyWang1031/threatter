@@ -3,15 +3,15 @@ from typing import Optional
 from model.model import *
 import json
 
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from db.check_relation import *
 from db.get_member_data import *
 from service.redis import RedisManager
 
-
+DBManager.init_db_pool()
 
 def db_get_notification(member_id : str , page : int, limit : int ) -> NotificationRes | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -174,7 +174,7 @@ async def db_update_notification(
     if member_id == account_id:
         return
     
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
     event_data_json = None
@@ -326,7 +326,7 @@ async def db_update_notification(
 
 
 def db_post_read_notification(member_id: str, current_time: datetime):
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor()
     try:
         # print("db current_time:",current_time)

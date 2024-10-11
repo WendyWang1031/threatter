@@ -2,8 +2,10 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from db.check_relation import *
+
+DBManager.init_db_pool()
 
 def db_get_members_list_data(member_data , total_count , page : int , has_more_data: bool) -> FollowMemberListRes | None:
     
@@ -40,7 +42,7 @@ def db_get_members_list_data(member_data , total_count , page : int , has_more_d
 
 
 def db_get_member_single_data(account_id: str , relation_state) -> FollowMember :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:

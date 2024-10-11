@@ -2,11 +2,12 @@ import bcrypt
 import pymysql.cursors
 from model.model_user import *
 from typing import Any
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 
+DBManager.init_db_pool()
 
 def db_insert_new_user(user_register_req : UserRegisterReq) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -31,7 +32,7 @@ def db_insert_new_user(user_register_req : UserRegisterReq) -> bool :
         connection.close()
 
 def db_check_user_accountId_email_exists(check_exist : UserCheckExistReq) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -54,7 +55,7 @@ def db_check_user_accountId_email_exists(check_exist : UserCheckExistReq) -> boo
 
 
 def db_check_accountId_password(user_login : UserPutReq ) -> dict [str, Any] | bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()

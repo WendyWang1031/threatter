@@ -2,12 +2,14 @@ import pymysql.cursors
 from typing import Union, Optional
 from model.model import *
 
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from db.check_relation import *
+
+DBManager.init_db_pool()
 
 ## 貼文
 def db_get_post_data(query_sql: str, params: tuple, multiple: bool = True) -> Optional[Union[PostListRes, Post]]:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -100,7 +102,7 @@ def _generate_post_object(data) -> Post:
 
 ## 留言
 def db_get_data(query_sql: str, params: tuple, multiple: bool = True) -> Optional[Union[PostListRes, CommentDetailListRes]]:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -176,7 +178,7 @@ def _generate_list(data, limit, page) -> CommentDetailListRes:
 
 
 def get_replies_for_comment(comment_id: str) -> List[Comment]:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         replies_sql = """

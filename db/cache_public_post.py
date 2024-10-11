@@ -3,10 +3,12 @@ from typing import Optional
 from model.model import *
 from db.re_post_data import *
 from service.common import *
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
+
+DBManager.init_db_pool()
 
 def db_get_popular_to_zset_posts(time_frame: int):
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()

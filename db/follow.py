@@ -2,14 +2,16 @@ import pymysql.cursors
 from typing import Optional
 from model.model import *
 
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from db.check_relation import *
 from db.get_member_data import *
 from db.notification import *
 from util.follow_util import *
 
+DBManager.init_db_pool()
+
 async def db_follow_target(follow : FollowReq , member_id : str) -> str :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -68,7 +70,7 @@ async def db_follow_target(follow : FollowReq , member_id : str) -> str :
         connection.close()
 
 async def db_private_user_res_follow(followAns : FollowAns , account_id: str , member_id : str) :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -126,7 +128,7 @@ async def db_private_user_res_follow(followAns : FollowAns , account_id: str , m
 
 # 誰對我提出請求，正在等待我的回應
 def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         
@@ -169,7 +171,7 @@ def db_get_pending_target(member_id : str , page : int) -> FollowMemberListRes |
 
 
 def db_get_follow_target(member_id : str ,account_id : str , page : int) -> FollowMemberListRes | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
 
@@ -218,7 +220,7 @@ def db_get_follow_target(member_id : str ,account_id : str , page : int) -> Foll
 
 
 def db_get_follow_fans(member_id : str , account_id : str , page : int) -> FollowMemberListRes | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         

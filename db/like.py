@@ -1,12 +1,13 @@
 import pymysql.cursors
 from typing import Optional
 from model.model import *
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 from db.notification import *
 
+DBManager.init_db_pool()
 
 async def db_like_post(account_id : str , post_like : LikeReq , post_id : str , member_id : str) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -54,7 +55,7 @@ async def db_like_post(account_id : str , post_like : LikeReq , post_id : str , 
         connection.close()
 
 async def db_like_comment_or_reply(account_id : str , post_id : str , comment_like : LikeReq , comment_id : str , member_id : str) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:

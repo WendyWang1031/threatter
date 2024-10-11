@@ -1,13 +1,14 @@
 import pymysql.cursors
 from typing import Optional
 from model.model import *
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 
 from db.get_member_data import *
 
+DBManager.init_db_pool()
 
 def db_get_search( search: str , page : int , member_id : str) -> FollowMemberListRes | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()

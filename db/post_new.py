@@ -4,12 +4,12 @@ from model.model import *
 from db.check_relation import *
 from db.re_post_data import *
 from service.common import *
-from db.connection_pool import get_db_connection_pool
+from db.connection_pool import DBManager
 
-
+DBManager.init_db_pool()
 
 def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[PostListRes] | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -60,7 +60,7 @@ def db_get_home_post_data(member_id: Optional[str] , page : int) -> Optional[Pos
 def db_get_personalized_recommendations(
                         member_id: str,
                         page : int) -> Optional[PostListRes] | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -120,7 +120,7 @@ def db_get_personalized_recommendations(
 def db_get_popular_posts(member_id: Optional[str],
                         time_frame: int,
                         page : int) -> Optional[PostListRes] | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -177,7 +177,7 @@ def db_get_popular_posts(member_id: Optional[str],
         connection.close()
 
 def db_create_post_data(post_data : PostCreateReq , member_id : str ) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     
     try:
@@ -217,7 +217,7 @@ def db_create_post_data(post_data : PostCreateReq , member_id : str ) -> bool :
         connection.close()
 
 def db_delete_post(post_id : str , member_id : str ) -> bool :
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         select_comment_sql = """
@@ -275,7 +275,7 @@ def db_delete_post(post_id : str , member_id : str ) -> bool :
         connection.close()
 
 def db_get_member_post_data(member_id : Optional[str] , account_id : str , page : int) -> Optional[PostListRes] | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
@@ -350,7 +350,7 @@ def db_get_member_post_data(member_id : Optional[str] , account_id : str , page 
 
 
 def db_get_single_post_data(member_id: Optional[str] , account_id : str , post_id : int) -> Optional[Post] | None:
-    connection = get_db_connection_pool()
+    connection = DBManager.get_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
     try:
         connection.begin()
