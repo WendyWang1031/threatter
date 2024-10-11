@@ -758,6 +758,7 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
   outline: none;
 }
 .signin-mask form.signin .sign-content .main .signin-button,
+.signin-mask form.signin .sign-content .main .quick-login,
 .signin-mask form.signin .sign-content .main .go-to-signup {
   width: 100%;
   padding: 10px;
@@ -769,6 +770,7 @@ section.postsContainer .indivisial-area .post .post-stats .stat span {
   cursor: pointer;
 }
 .signin-mask form.signin .sign-content .main .signin-button:hover,
+.signin-mask form.signin .sign-content .main .quick-login:hover,
 .signin-mask form.signin .sign-content .main .go-to-signup:hover {
   background-color: #777575;
 }
